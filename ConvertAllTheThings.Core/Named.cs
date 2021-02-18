@@ -20,7 +20,6 @@ namespace ConvertAllTheThings.Core
 
         public string Name { get; private set; }
         public string NameSpace { get; private set; }
-
         public string FullName => NameSpace + "." + Name;
 
         protected Named(string name, string nameSpace)
@@ -31,16 +30,19 @@ namespace ConvertAllTheThings.Core
             NameSpace = nameSpace;
             RegisterThisINamed();
         }
-
-        public void ChangeNameAndNameSpace(string newName, string newNameSpace)
+        // may delete
+        protected void RegisterThisINamed()
         {
-            ThrowIfNameAndNameSpaceNotValid(newName, newNameSpace, GetType());
-
-            Name = newName;
-            NameSpace = newNameSpace;
+            s_types_nameds[GetType()].Add(this);
         }
 
-        
+        // may delete
+        protected void UnRegisterThisINamed()
+        {
+            s_types_nameds[GetType()].Remove(this);
+        }
+
+        #region static methods
         private static void ThrowIfNameAndNameSpaceNotValid(string name, string nameSpace, Type type)
         {
             if (string.IsNullOrWhiteSpace(name) || string.IsNullOrWhiteSpace(nameSpace))
@@ -64,12 +66,6 @@ namespace ConvertAllTheThings.Core
             return true;
         }
 
-        public static bool NameAndNameSpaceValid<T>(string name, string nameSpace)
-            where T : Named
-        {
-            return NameAndNameSpaceValid(name, nameSpace, typeof(T));
-        }
-
         private static bool NameAlreadyRegistered(string name, string nameSpace, Type type)
         {
             var matches = from named in s_types_nameds[type]
@@ -79,6 +75,12 @@ namespace ConvertAllTheThings.Core
             return matches.Any();
         }
 
+        public static bool NameAndNameSpaceValid<T>(string name, string nameSpace)
+            where T : Named
+        {
+            return NameAndNameSpaceValid(name, nameSpace, typeof(T));
+        }
+
         public static bool NameAlreadyRegistered<T>(string name, string nameSpace)
             where T : Named
         {
@@ -86,16 +88,16 @@ namespace ConvertAllTheThings.Core
         }
 
         public static bool TryGetFromName<T>(
-            string name, 
-            string nameSpace, 
+            string name,
+            string nameSpace,
             out T? namedObject,
-            out NameLookupError error) 
+            out NameLookupError error)
             where T : Named
         {
             var nameds = s_types_nameds[typeof(T)];
             var matches = (from named in nameds
-                          where named.Name == name && named.NameSpace == nameSpace
-                          select named).ToArray();
+                           where named.Name == name && named.NameSpace == nameSpace
+                           select named).ToArray();
 
             if (matches.Length == 1)
             {
@@ -164,14 +166,14 @@ namespace ConvertAllTheThings.Core
             throw error switch
             {
                 NameLookupError.NoError => new ApplicationException(),
-                
+
                 NameLookupError.NoneFound => new InvalidOperationException(
-                    $"No instances of {typeof(T).Name} with name {name}."), 
-                
+                    $"No instances of {typeof(T).Name} with name {name}."),
+
                 NameLookupError.NeedNamespace => new InvalidOperationException(
                     $"Too many instances of {typeof(T).Name} with name {name}. " +
                     $"Must give a NameSpace to specify."),
-                
+
                 _ => new NotImplementedException(),
             };
         }
@@ -184,18 +186,18 @@ namespace ConvertAllTheThings.Core
             else
                 throw new InvalidOperationException();
         }
-
-        // may delete
-        protected void RegisterThisINamed()
+        #endregion
+        public void ChangeNameAndNameSpace(string newName, string newNameSpace)
         {
-            s_types_nameds[GetType()].Add(this);
+            ThrowIfNameAndNameSpaceNotValid(newName, newNameSpace, GetType());
+
+            Name = newName;
+            NameSpace = newNameSpace;
         }
 
-        // may delete
-        protected void UnRegisterThisINamed()
-        {
-            s_types_nameds[GetType()].Remove(this);
-        }
+        
+        
+
 
         #region IDisposable boilerplate
         protected virtual void Dispose(bool disposing)
