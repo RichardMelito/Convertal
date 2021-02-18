@@ -28,19 +28,19 @@ namespace ConvertAllTheThings.Core
 
             Name = name;
             NameSpace = nameSpace;
-            RegisterThisINamed();
-        }
-        // may delete
-        protected void RegisterThisINamed()
-        {
             s_types_nameds[GetType()].Add(this);
         }
 
-        // may delete
-        protected void UnRegisterThisINamed()
+
+        public void ChangeNameAndNameSpace(string newName, string newNameSpace)
         {
-            s_types_nameds[GetType()].Remove(this);
+            ThrowIfNameAndNameSpaceNotValid(newName, newNameSpace, GetType());
+
+            Name = newName;
+            NameSpace = newNameSpace;
         }
+
+
 
         #region static methods
         private static void ThrowIfNameAndNameSpaceNotValid(string name, string nameSpace, Type type)
@@ -187,13 +187,6 @@ namespace ConvertAllTheThings.Core
                 throw new InvalidOperationException();
         }
         #endregion
-        public void ChangeNameAndNameSpace(string newName, string newNameSpace)
-        {
-            ThrowIfNameAndNameSpaceNotValid(newName, newNameSpace, GetType());
-
-            Name = newName;
-            NameSpace = newNameSpace;
-        }
 
         
         
@@ -207,7 +200,7 @@ namespace ConvertAllTheThings.Core
                 if (disposing)
                 {
                     // TODO: dispose managed state (managed objects)
-                    UnRegisterThisINamed();
+                    s_types_nameds[GetType()].Remove(this);
                 }
 
                 // TODO: free unmanaged resources (unmanaged objects) and override finalizer
