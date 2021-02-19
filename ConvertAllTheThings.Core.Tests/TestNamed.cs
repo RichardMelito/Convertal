@@ -36,14 +36,8 @@ namespace ConvertAllTheThings.Core.Tests
             }
         }
 
-        /*  GetFromName
-         *  TryGetFromName
+        /*  
          *  Construction
-         *  NameAndNameSpaceValid
-         *  NameAlreadyRegistered
-         *  Other types
-         *  Dispose
-         *  ChangeNameANdNameSpace
          */
 
         [AssemblyInitialize]
@@ -144,7 +138,7 @@ namespace ConvertAllTheThings.Core.Tests
         [TestMethod]
         public void TestChangeNameAndNameSpace()
         {
-            TestNamedClass toTest = new("name3", "ns3");
+            using TestNamedClass toTest = new("name3", "ns3");
             
             toTest.ChangeNameAndNameSpace("newName", "ns1");
             Assert.AreEqual("newName", toTest.Name);
@@ -156,6 +150,49 @@ namespace ConvertAllTheThings.Core.Tests
 
             Assert.ThrowsException<InvalidOperationException>(
                 () => toTest.ChangeNameAndNameSpace("name2", "ns2"));
+        }
+
+        [TestMethod]
+        public void TestDispose()
+        {
+            NameLookupError error;
+
+            using (TestNamedClass toTest = new TestNamedClass("name3", "ns3"))
+            {
+                Assert.IsTrue(TryGetFromName<TestNamedClass>(
+                    "name3",
+                    "ns3",
+                    out var same,
+                    out error));
+
+                Assert.AreSame(toTest, same);
+                Assert.AreEqual(NameLookupError.NoError, error);
+            }
+
+            Assert.IsFalse(TryGetFromName<TestNamedClass>(
+                "name3",
+                "ns3",
+                out var shouldBeNull,
+                out error));
+
+            Assert.IsNull(shouldBeNull);
+            Assert.AreEqual(NameLookupError.NoneFound, error);
+        }
+
+        [TestMethod]
+        public void TestConstruction()
+        {
+            Assert.ThrowsException<ArgumentException>(
+                () => new TestNamedClass("name3", ""));
+
+            Assert.ThrowsException<ArgumentException>(
+                () => new TestNamedClass("", "ns3"));
+
+            Assert.ThrowsException<ArgumentException>(
+                () => new TestNamedClass("\t", " "));
+
+            Assert.ThrowsException<InvalidOperationException>(
+                () => new TestNamedClass("name1", "ns1"));
         }
     }
 }
