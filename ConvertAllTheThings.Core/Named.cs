@@ -8,6 +8,25 @@ namespace ConvertAllTheThings.Core
 {
     public abstract class Named : IDisposable
     {
+        public class FullNameComparer : Comparer<Named>
+        {
+            public override int Compare(Named? x, Named? y)
+            {
+                if (x is null || y is null)
+                {
+                    if ((x is null) && (y is null))
+                        return 0;
+
+                    if (x is null)
+                        return -1;
+
+                    return 1;
+                }
+                
+                return string.Compare(x.FullName, y.FullName);
+            }
+        }
+
         public enum NameLookupError
         {
             NoError,
