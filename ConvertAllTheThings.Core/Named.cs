@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace ConvertAllTheThings.Core
 {
-    public abstract class Named : IDisposable
+    public abstract class Named : IDisposable, IComparable<Named>, IEquatable<Named>
     {
         public class FullNameComparer : Comparer<Named>
         {
@@ -59,6 +59,25 @@ namespace ConvertAllTheThings.Core
             NameSpace = newNameSpace;
         }
 
+        public int CompareTo(Named? other)
+        {
+            return FullNameComparer.Default.Compare(this, other);
+        }
+
+        public bool Equals(Named? other)
+        {
+            return ReferenceEquals(this, other);
+        }
+
+        public override bool Equals(object? obj)
+        {
+            return ReferenceEquals(this, obj);
+        }
+
+        public override int GetHashCode()
+        {
+            return HashCode.Combine(Name, NameSpace, GetType());
+        }
 
 
         #region static methods
@@ -204,6 +223,16 @@ namespace ConvertAllTheThings.Core
                 s_types_nameds[typeof(T)] = new List<Named>();
             else
                 throw new InvalidOperationException();
+        }
+
+        public static bool operator ==(Named? lhs, Named? rhs)
+        {
+            return ReferenceEquals(lhs, rhs);
+        }
+
+        public static bool operator !=(Named? lhs, Named? rhs)
+        {
+            return !(lhs == rhs);
         }
         #endregion
 

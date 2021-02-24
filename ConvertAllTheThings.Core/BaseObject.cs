@@ -6,6 +6,11 @@ using System.Threading.Tasks;
 
 namespace ConvertAllTheThings.Core
 {
+    public interface IBase
+    {
+
+    }
+
     public abstract class BaseObject : Named
     {
         protected BaseObject(string name, string nameSpace)

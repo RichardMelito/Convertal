@@ -9,7 +9,7 @@ using ConvertAllTheThings.Core.Extensions;
 namespace ConvertAllTheThings.Core
 {
     public class BaseComposition<T> : IEquatable<BaseComposition<T>>
-        where T : BaseObject
+        where T : IBase, IComparable<T>, IEquatable<T>
     {
         /*  describes a collection of base quantities or base units from which 
          *  derived quantities or units are formed. 
@@ -22,7 +22,7 @@ namespace ConvertAllTheThings.Core
             Composition = composition;
         }
 
-        BaseComposition(T baseObject)
+        public BaseComposition(T baseObject)
         {
             Composition = new Dictionary<T, decimal>
                 {
@@ -54,7 +54,7 @@ namespace ConvertAllTheThings.Core
 
             var basesInRhs = rhs.Composition.Keys.Except(basesInBothSides);
             foreach (var rhsBase in basesInRhs)
-                resultingComposition[rhsBase] = rhs.Composition[rhsBase] * multiplyFactor;
+                resultingComposition[rhsBase] = rhs.Composition[rhsBase] * multiplyFactor);
 
             return new BaseComposition<T>(resultingComposition.AsReadOnly());
         }
