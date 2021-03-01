@@ -64,7 +64,6 @@ namespace ConvertAllTheThings.Core
         public int CompareTo(Named? other)
         {
             return DefaultComparer.Compare(this, other);
-            //return FullNameComparer.CompareNameds(this, other);
         }
 
         public bool Equals(Named? other)

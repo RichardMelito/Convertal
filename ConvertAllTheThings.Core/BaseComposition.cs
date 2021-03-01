@@ -15,7 +15,15 @@ namespace ConvertAllTheThings.Core
          *  derived quantities or units are formed. 
          */
 
+        public static readonly BaseComposition<T> Empty;
+
         public IReadOnlyDictionary<T, decimal> Composition { get; }
+
+        static BaseComposition()
+        {
+            Empty = new BaseComposition<T>(
+                new Dictionary<T, decimal>().AsReadOnly());
+        }
 
         BaseComposition(IReadOnlyDictionary<T, decimal> composition)
         {
@@ -55,6 +63,9 @@ namespace ConvertAllTheThings.Core
             var basesInRhs = rhs.Composition.Keys.Except(basesInBothSides);
             foreach (var rhsBase in basesInRhs)
                 resultingComposition[rhsBase] = rhs.Composition[rhsBase] * multiplyFactor;
+
+            if (resultingComposition.Count == 0)
+                return Empty;
 
             return new BaseComposition<T>(resultingComposition.AsReadOnly());
         }
