@@ -38,18 +38,6 @@ namespace ConvertAllTheThings.Core.Tests
             {
                 return base.Equals(other);
             }
-
-            //public bool Equals(SimBase? other)
-            //{
-            //    var res = ReferenceEquals(this, other);
-            //    return res;
-            //}
-
-            //public override int GetHashCode()
-            //{
-            //    var res = base.GetHashCode();
-            //    return res;
-            //}
         }
 
         [TestMethod]

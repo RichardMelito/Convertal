@@ -54,7 +54,7 @@ namespace ConvertAllTheThings.Core
 
             var basesInRhs = rhs.Composition.Keys.Except(basesInBothSides);
             foreach (var rhsBase in basesInRhs)
-                resultingComposition[rhsBase] = rhs.Composition[rhsBase] * multiplyFactor);
+                resultingComposition[rhsBase] = rhs.Composition[rhsBase] * multiplyFactor;
 
             return new BaseComposition<T>(resultingComposition.AsReadOnly());
         }

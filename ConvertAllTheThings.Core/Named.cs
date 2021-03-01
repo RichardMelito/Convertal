@@ -22,7 +22,7 @@ namespace ConvertAllTheThings.Core
 
                     return 1;
                 }
-                
+
                 return string.Compare(x.FullName, y.FullName);
             }
         }
@@ -33,6 +33,8 @@ namespace ConvertAllTheThings.Core
             NoneFound,
             NeedNamespace
         }
+
+        public static readonly FullNameComparer DefaultComparer = new FullNameComparer();
 
         private static readonly Dictionary<Type, List<Named>> s_types_nameds = new();
         private bool _disposedValue;
@@ -61,7 +63,8 @@ namespace ConvertAllTheThings.Core
 
         public int CompareTo(Named? other)
         {
-            return FullNameComparer.Default.Compare(this, other);
+            return DefaultComparer.Compare(this, other);
+            //return FullNameComparer.CompareNameds(this, other);
         }
 
         public bool Equals(Named? other)
