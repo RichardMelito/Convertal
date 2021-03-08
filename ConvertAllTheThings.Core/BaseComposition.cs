@@ -19,6 +19,21 @@ namespace ConvertAllTheThings.Core
 
         public IReadOnlyDictionary<T, decimal> Composition { get; }
 
+        public string? CommonNameSpace
+        {
+            get
+            {
+                var firstNameSpace = Composition.Keys.First().NameSpace;
+                var allSameNameSpace = Composition.Keys.All(
+                    baseKey => baseKey.NameSpace == firstNameSpace);
+
+                if (allSameNameSpace)
+                    return firstNameSpace;
+                else
+                    return null;
+            }
+        }
+
         static BaseComposition()
         {
             Empty = new BaseComposition<T>(
@@ -36,6 +51,36 @@ namespace ConvertAllTheThings.Core
                 {
                     { baseObject, 1m }
                 }.AsReadOnly();
+        }
+
+        public string ToString(string? commonNameSpace)
+        {
+            var sameNameSpace = (commonNameSpace is not null) && 
+                (commonNameSpace == CommonNameSpace);
+
+            return ToString(fullName: sameNameSpace);
+        }
+
+        public override string ToString()
+        {
+            return ToString(CommonNameSpace is null);
+        }
+
+        public string ToString(bool fullName)
+        {
+            StringBuilder stringBuilder = new();
+
+            var count = 0;
+            foreach (var (baseKey, power) in Composition)
+            {
+                var name = fullName ? baseKey.FullName : baseKey.Name;
+                stringBuilder.Append($"({name}^{power})");
+                ++count;
+                if (count != (Composition.Count))
+                    stringBuilder.Append('*');
+            }
+
+            return stringBuilder.ToString();
         }
 
         public static BaseComposition<T> MultiplyOrDivide(

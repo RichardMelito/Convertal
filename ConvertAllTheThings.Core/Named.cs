@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace ConvertAllTheThings.Core
 {
-    public abstract class Named : IDisposable, IComparable<Named>, IEquatable<Named>
+    public abstract class Named : INamed, IDisposable, IComparable<Named>, IEquatable<Named>
     {
         public class FullNameComparer : Comparer<Named>
         {
@@ -42,6 +42,8 @@ namespace ConvertAllTheThings.Core
         public string Name { get; private set; }
         public string NameSpace { get; private set; }
         public string FullName => NameSpace + "." + Name;
+
+        // TODO protect the Unnamed namespace
 
         protected Named(string name, string nameSpace)
         {
