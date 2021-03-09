@@ -6,35 +6,14 @@ using System.Threading.Tasks;
 
 namespace ConvertAllTheThings.Core
 {
-    public abstract class Named : INamed, IDisposable, IComparable<Named>, IEquatable<Named>
+    public abstract class Named : INamed, IDisposable//, IComparable<Named>, IEquatable<Named>
     {
-        public class FullNameComparer : Comparer<Named>
-        {
-            public override int Compare(Named? x, Named? y)
-            {
-                if (x is null || y is null)
-                {
-                    if ((x is null) && (y is null))
-                        return 0;
-
-                    if (x is null)
-                        return -1;
-
-                    return 1;
-                }
-
-                return string.Compare(x.FullName, y.FullName);
-            }
-        }
-
         public enum NameLookupError
         {
             NoError,
             NoneFound,
             NeedNamespace
         }
-
-        public static readonly FullNameComparer DefaultComparer = new FullNameComparer();
 
         private static readonly Dictionary<Type, List<Named>> s_types_nameds = new();
         private bool _disposedValue;
@@ -63,24 +42,9 @@ namespace ConvertAllTheThings.Core
             NameSpace = newNameSpace;
         }
 
-        public int CompareTo(Named? other)
-        {
-            return DefaultComparer.Compare(this, other);
-        }
-
-        public bool Equals(Named? other)
-        {
-            return ReferenceEquals(this, other);
-        }
-
-        public override bool Equals(object? obj)
-        {
-            return ReferenceEquals(this, obj);
-        }
-
         public override int GetHashCode()
         {
-            return HashCode.Combine(Name, NameSpace, GetType());
+            return ((INamed)this).HashCode;
         }
 
 
