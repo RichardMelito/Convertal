@@ -6,8 +6,8 @@ using System.Threading.Tasks;
 
 namespace ConvertAllTheThings.Core
 {
-    public interface INamed : IMaybeNamed
+    public interface IBaseUnit : IUnit, IBase
     {
-        string Name => MaybeName!;
+        BaseQuantity BaseQuantity => (BaseQuantity)Quantity;
     }
 }

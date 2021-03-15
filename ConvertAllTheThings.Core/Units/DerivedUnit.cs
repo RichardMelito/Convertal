@@ -6,8 +6,7 @@ using System.Threading.Tasks;
 
 namespace ConvertAllTheThings.Core
 {
-    public interface INamed : IMaybeNamed
+    public class DerivedUnit : Unit
     {
-        string Name => MaybeName!;
     }
 }

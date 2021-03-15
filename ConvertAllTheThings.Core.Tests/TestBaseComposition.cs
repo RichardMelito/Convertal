@@ -7,7 +7,7 @@ namespace ConvertAllTheThings.Core.Tests
     [TestClass]
     public class TestBaseComposition
     {
-        class SimBase : Named, IBase, IEquatable<SimBase>
+        class SimBase : MaybeNamed, IBase, IEquatable<SimBase>
         {
             private static int s_id = -1;
 

@@ -6,8 +6,8 @@ using System.Threading.Tasks;
 
 namespace ConvertAllTheThings.Core
 {
-    public interface INamed : IMaybeNamed
+    public interface IMaybeNamed
     {
-        string Name => MaybeName!;
+        string? MaybeName { get; }
     }
 }

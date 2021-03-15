@@ -1,14 +1,14 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using ConvertAllTheThings.Core;
-using static ConvertAllTheThings.Core.Named;
+using static ConvertAllTheThings.Core.MaybeNamed;
 
 namespace ConvertAllTheThings.Core.Tests
 {
     [TestClass]
     public class TestNamed
     {
-        class TestNamedClass : Named
+        class TestNamedClass : MaybeNamed
         {
             static TestNamedClass()
             {
@@ -22,7 +22,7 @@ namespace ConvertAllTheThings.Core.Tests
             }
         }
 
-        class OtherTestNamedClass : Named
+        class OtherTestNamedClass : MaybeNamed
         {
             static OtherTestNamedClass()
             {
@@ -130,9 +130,9 @@ namespace ConvertAllTheThings.Core.Tests
         [TestMethod]
         public void TestNameAndNameSpaceValid()
         {
-            Assert.IsFalse(NameAndNameSpaceValid<TestNamedClass>("name1", "ns1"));
-            Assert.IsTrue(NameAndNameSpaceValid<TestNamedClass>("DNE", "ns1"));
-            Assert.IsTrue(NameAndNameSpaceValid<TestNamedClass>("name1", "DNE"));
+            Assert.IsFalse(NameIsValid<TestNamedClass>("name1", "ns1"));
+            Assert.IsTrue(NameIsValid<TestNamedClass>("DNE", "ns1"));
+            Assert.IsTrue(NameIsValid<TestNamedClass>("name1", "DNE"));
         }
 
         [TestMethod]
@@ -140,16 +140,16 @@ namespace ConvertAllTheThings.Core.Tests
         {
             using TestNamedClass toTest = new("name3", "ns3");
             
-            toTest.ChangeNameAndNameSpace("newName", "ns1");
-            Assert.AreEqual("newName", toTest.Name);
+            toTest.ChangeName("newName", "ns1");
+            Assert.AreEqual("newName", toTest.MaybeName);
             Assert.AreEqual("ns1", toTest.NameSpace);
 
-            toTest.ChangeNameAndNameSpace("name1", "newNameSpace");
-            Assert.AreEqual("name1", toTest.Name);
+            toTest.ChangeName("name1", "newNameSpace");
+            Assert.AreEqual("name1", toTest.MaybeName);
             Assert.AreEqual("newNameSpace", toTest.NameSpace);
 
             Assert.ThrowsException<InvalidOperationException>(
-                () => toTest.ChangeNameAndNameSpace("name2", "ns2"));
+                () => toTest.ChangeName("name2", "ns2"));
         }
 
         [TestMethod]
