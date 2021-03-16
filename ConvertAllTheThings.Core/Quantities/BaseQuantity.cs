@@ -48,6 +48,16 @@ namespace ConvertAllTheThings.Core
             return quantity;
         }
 
+        public override int GetHashCode()
+        {
+            return base.GetHashCode();
+        }
+
+        public override bool Equals(object? obj)
+        {
+            return base.Equals(obj);
+        }
+
         public bool Equals(BaseQuantity? other)
         {
             return base.Equals(other);

@@ -23,6 +23,8 @@ namespace ConvertAllTheThings.Core
         private static readonly Dictionary<BaseComposition<BaseQuantity>, Quantity> s_compositions_quantities = new();
         private bool _initialized = false;
 
+        public static EmptyQuantity Empty => EmptyQuantity.Empty;
+
         public abstract IUnit FundamentalUnit { get; }
         public abstract BaseComposition<BaseQuantity> BaseQuantityComposition { get; }
 
@@ -43,6 +45,16 @@ namespace ConvertAllTheThings.Core
 
             s_compositions_quantities.Add(BaseQuantityComposition, this);
             _initialized = true;
+        }
+
+        public static Quantity GetFromBaseComposition(BaseComposition<IBaseUnit> composition)
+        {
+            var quantityComposition = BaseComposition<BaseQuantity>.
+                CreateFromExistingBaseComposition(
+                composition,
+                baseUnit => baseUnit.BaseQuantity);
+
+            return GetFromBaseComposition(quantityComposition);
         }
 
         public static Quantity GetFromBaseComposition(BaseComposition<BaseQuantity> composition)

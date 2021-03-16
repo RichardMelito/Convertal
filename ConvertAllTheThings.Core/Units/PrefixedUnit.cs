@@ -6,24 +6,30 @@ using System.Threading.Tasks;
 
 namespace ConvertAllTheThings.Core
 {
-    public class PrefixedUnit : IUnit, INamed
+    public abstract class PrefixedUnit : IUnit, INamed
     {
         public Quantity Quantity => Unit.Quantity;
 
         public string? MaybeName => Prefix.MaybeName! + "_" + Unit.MaybeName!;
 
         public decimal FundamentalMultiplier => Unit.FundamentalMultiplier * Prefix.Multiplier;
-        public virtual Unit Unit { get; }
+        public abstract Unit Unit { get; }
         public Prefix Prefix { get; }
 
-        public PrefixedUnit(Unit unit, Prefix prefix)
+        public BaseComposition<IBaseUnit>? MaybeBaseUnitComposition { get; protected set; }
+
+        public override string ToString()
+        {
+            return MaybeName!;
+        }
+
+        protected PrefixedUnit(Unit unit, Prefix prefix)
         {
             if (unit.MaybeName is null)
                 throw new ArgumentNullException(
                     nameof(unit), 
                     "Unit in PrefixedUnit must have a name.");
 
-            Unit = unit;
             Prefix = prefix;
         }
 

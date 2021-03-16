@@ -8,12 +8,25 @@ namespace ConvertAllTheThings.Core
 {
     public class BaseUnit : Unit, IBaseUnit
     {
-        // TODO check that BaseUnits can be retrieved from Named<Unit>.GetFromName
+        // TODO check that BaseUnits etc. can be retrieved from Named<Unit>.GetFromName
 
+        /// <summary>
+        /// Only to be called from <see cref="BaseQuantity.DefineNewBaseQuantity(string, string, Prefix?)"/>
+        /// </summary>
+        /// <param name="name"></param>
+        /// <param name="quantity"></param>
+        /// <param name="fundamentalMultiplier"></param>
         internal BaseUnit(string name, BaseQuantity quantity, decimal fundamentalMultiplier)
             : base(name, quantity, fundamentalMultiplier)
         {
-            //Quantity = quantity;
+            MaybeBaseUnitComposition = new(this);
+        }
+
+        // for defining from an existng IBaseUnit
+        public BaseUnit(string name, IBaseUnit otherUnit, decimal fundamentalMultiplier)
+            : base(name, otherUnit, fundamentalMultiplier)
+        {
+            MaybeBaseUnitComposition = new(this);
         }
     }
 }

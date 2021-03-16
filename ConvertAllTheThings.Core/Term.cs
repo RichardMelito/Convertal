@@ -17,12 +17,17 @@ namespace ConvertAllTheThings.Core
         }
 
         public static Term operator *(decimal multiplier, Term term)
-            => new Term(multiplier * term.Magnitude, term.Unit);
+            => new (multiplier * term.Magnitude, term.Unit);
 
         public static Term operator *(Term term, decimal multiplier)
-            => new Term(multiplier * term.Magnitude, term.Unit);
+            => new (multiplier * term.Magnitude, term.Unit);
 
         public static Term operator /(Term term, decimal divisor)
-            => new Term(term.Magnitude / divisor, term.Unit);
+            => new (term.Magnitude / divisor, term.Unit);
+
+        public static Term operator *(Term lhs, Term rhs)
+        {
+
+        }
     }
 }

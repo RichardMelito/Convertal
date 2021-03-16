@@ -6,15 +6,14 @@ using System.Threading.Tasks;
 
 namespace ConvertAllTheThings.Core
 {
-    public class PrefixedBaseUnit : PrefixedUnit, IBaseUnit
+    public class PrefixedDerivedUnit : PrefixedUnit, IDerivedUnit
     {
-        public override BaseUnit Unit { get; }
+        public override DerivedUnit Unit { get; }
 
-        public PrefixedBaseUnit(BaseUnit unit, Prefix prefix)
+        public PrefixedDerivedUnit(DerivedUnit unit, Prefix prefix) 
             : base(unit, prefix)
         {
             Unit = unit;
-            MaybeBaseUnitComposition = new(this);
         }
     }
 }

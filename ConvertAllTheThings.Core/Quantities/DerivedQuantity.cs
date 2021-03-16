@@ -6,11 +6,11 @@ using System.Threading.Tasks;
 
 namespace ConvertAllTheThings.Core
 {
-    public class DerivedQuantity : Quantity
+    public class DerivedQuantity : Quantity, IDerived
     {
         public override BaseComposition<BaseQuantity> BaseQuantityComposition { get; }
 
-        public override IUnit FundamentalUnit => throw new NotImplementedException();
+        public override IUnit FundamentalUnit { get; }
 
         /// <summary>
         /// To be called only from <see cref="Quantity.GetFromBaseComposition(BaseComposition{BaseQuantity})"/>
@@ -20,6 +20,7 @@ namespace ConvertAllTheThings.Core
             : base(null)
         {
             BaseQuantityComposition = composition;
+            FundamentalUnit = new DerivedUnit(this);
             Init();
         }
     }

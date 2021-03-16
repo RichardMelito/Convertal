@@ -11,6 +11,7 @@ namespace ConvertAllTheThings.Core
         bool IsFundamental => Quantity.FundamentalUnit.Equals(this);
         decimal FundamentalMultiplier { get; }
         Quantity Quantity { get; }
+        BaseComposition<IBaseUnit>? MaybeBaseUnitComposition { get; }
 
         Term ConvertTo(IUnit resultingIUnit)
         {

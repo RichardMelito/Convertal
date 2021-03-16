@@ -8,9 +8,14 @@ namespace ConvertAllTheThings.Core
 {
     public abstract class MaybeNamed : IMaybeNamed, IDisposable, IComparable<MaybeNamed>, IEquatable<MaybeNamed>
     {
-        public class MaybeNameComparer : Comparer<MaybeNamed>
+        public class MaybeNameComparer : Comparer<IMaybeNamed>
         {
-            public override int Compare(MaybeNamed? x, MaybeNamed? y)
+            public override int Compare(IMaybeNamed? x, IMaybeNamed? y)
+            {
+                return PerformCompare(x, y);
+            }
+
+            public static int PerformCompare(IMaybeNamed? x, IMaybeNamed? y)
             {
                 if (x is null || y is null)
                 {

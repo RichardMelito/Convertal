@@ -30,6 +30,7 @@ namespace ConvertAllTheThings.Core
             Composition = composition;
         }
 
+
         public BaseComposition(T baseObject)
         {
             Composition = new Dictionary<T, decimal>
@@ -52,6 +53,22 @@ namespace ConvertAllTheThings.Core
             }
 
             return stringBuilder.ToString();
+        }
+
+        internal static BaseComposition<T> CreateFromExistingBaseComposition<TExistingBase>(
+            BaseComposition<TExistingBase> existingBaseComposition,
+            Func<TExistingBase, T> convertor)
+
+            where TExistingBase : IBase, IComparable<TExistingBase>, IEquatable<TExistingBase>
+        {
+            SortedDictionary<T, decimal> convertedComposition = new();
+            foreach (var (existingBase, power) in existingBaseComposition.Composition)
+            {
+                var convertedBase = convertor(existingBase);
+                convertedComposition.Add(convertedBase, power);
+            }
+
+            return new(convertedComposition.AsReadOnly());
         }
 
         public static BaseComposition<T> MultiplyOrDivide(
