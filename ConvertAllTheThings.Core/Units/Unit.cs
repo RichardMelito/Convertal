@@ -16,10 +16,6 @@ namespace ConvertAllTheThings.Core
         public decimal FundamentalMultiplier { get; }
         public BaseComposition<IBaseUnit>? MaybeBaseUnitComposition { get; protected set; } = null;
 
-        public override string ToString()
-        {
-            return MaybeName ?? MaybeBaseUnitComposition!.ToString();
-        }
 
         protected Unit(string? name, Quantity quantity, decimal fundamentalMultiplier)
             : base(name)
@@ -46,6 +42,22 @@ namespace ConvertAllTheThings.Core
                 var multiplier = DecimalEx.Pow(unit.FundamentalMultiplier, power);
                 FundamentalMultiplier *= multiplier;
             }
+        }
+
+
+        public override string ToString()
+        {
+            return MaybeName ?? MaybeBaseUnitComposition!.ToString();
+        }
+
+        public bool Equals(IUnit? other)
+        {
+            return base.Equals(other);
+        }
+
+        public override int GetHashCode()
+        {
+            return HashCode.Combine(base.GetHashCode(), Quantity, FundamentalMultiplier);
         }
     }
 }

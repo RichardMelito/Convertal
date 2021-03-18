@@ -32,13 +32,7 @@ namespace ConvertAllTheThings.Core
             }
         }
 
-        public enum NameLookupError // TODO
-        {
-            NoError,
-            NoneFound
-        }
-
-        public static readonly MaybeNameComparer DefaultComparer = new MaybeNameComparer();
+        public static readonly MaybeNameComparer DefaultComparer = new();
 
         private static readonly Dictionary<Type, List<MaybeNamed>> s_types_nameds = new();
         private bool _disposedValue;
@@ -65,6 +59,11 @@ namespace ConvertAllTheThings.Core
             MaybeName = newName;
             if (needToAddToDictionary)
                 s_types_nameds[GetType()].Add(this);
+        }
+
+        public override string ToString()
+        {
+            return MaybeName ?? base.ToString()!;
         }
 
         public int CompareTo(MaybeNamed? other)
@@ -150,8 +149,7 @@ namespace ConvertAllTheThings.Core
 
         public static bool TryGetFromName<T>(
             string name,
-            out T? namedObject,
-            out NameLookupError error)
+            out T? namedObject)
             where T : MaybeNamed
         {
             var nameds = s_types_nameds[typeof(T)];
@@ -162,13 +160,11 @@ namespace ConvertAllTheThings.Core
             if (matches.Length == 1)
             {
                 namedObject = (T)matches.First();
-                error = NameLookupError.NoError;
                 return true;
             }
             else if (matches.Length == 0)
             {
                 namedObject = null;
-                error = NameLookupError.NoneFound;
                 return false;
             }
             else
@@ -180,19 +176,11 @@ namespace ConvertAllTheThings.Core
         public static T GetFromName<T>(string name)
             where T : MaybeNamed
         {
-            NameLookupError error;
-            if (TryGetFromName<T>(name, out var res, out error))
+            if (TryGetFromName<T>(name, out var res))
                 return res!;
 
-            throw error switch
-            {
-                NameLookupError.NoError => new ApplicationException(),
-
-                NameLookupError.NoneFound => new InvalidOperationException(
-                    $"No instances of {typeof(T).Name} with name {name}."),
-
-                _ => new NotImplementedException(),
-            };
+            throw new InvalidOperationException($"No instances of " +
+                $"{typeof(T).Name} with name {name}.");
         }
 
         protected static void AddTypeToDictionary<T>()

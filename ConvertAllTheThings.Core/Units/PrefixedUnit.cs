@@ -33,6 +33,24 @@ namespace ConvertAllTheThings.Core
             Prefix = prefix;
         }
 
+        public bool Equals(IUnit? other)
+        {
+            if (other is not PrefixedUnit cast)
+                return false;
+
+            return Unit.Equals(cast.Unit) && Prefix.Equals(cast.Prefix);
+        }
+
+        public override bool Equals(object? obj)
+        {
+            return Equals(obj as PrefixedUnit);
+        }
+
+        public override int GetHashCode()
+        {
+            return HashCode.Combine(Unit, Prefix);
+        }
+
         //public Term ConvertTo(IUnit resultingIUnit)
         //{
         //    var unprefixedConversion = Unit.ConvertTo(resultingIUnit);

@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace ConvertAllTheThings.Core
 {
-    public interface IUnit : IMaybeNamed
+    public interface IUnit : IMaybeNamed, IEquatable<IUnit>
     {
         bool IsFundamental => Quantity.FundamentalUnit.Equals(this);
         decimal FundamentalMultiplier { get; }

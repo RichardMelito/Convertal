@@ -35,6 +35,11 @@ namespace ConvertAllTheThings.Core
             
         }
 
+        public override string ToString()
+        {
+            return MaybeName ?? BaseQuantityComposition.ToString();
+        }
+
         protected void Init()
         {
             if (_initialized)
@@ -65,22 +70,30 @@ namespace ConvertAllTheThings.Core
             return new DerivedQuantity(composition);
         }
 
+        public static Quantity MultiplyOrDivide(Quantity lhs, Quantity rhs, bool multiplication)
+        {
+            var resultingComposition = BaseComposition<BaseQuantity>.MultiplyOrDivide(
+                lhs.BaseQuantityComposition,
+                rhs.BaseQuantityComposition,
+                multiplication: multiplication);
+
+            return GetFromBaseComposition(resultingComposition);
+        }
+
         public static Quantity operator* (Quantity lhs, Quantity rhs)
         {
-            var resultingComposition = lhs.BaseQuantityComposition * rhs.BaseQuantityComposition;
-            return GetFromBaseComposition(resultingComposition);
+            return MultiplyOrDivide(lhs, rhs, multiplication: true);
         }
 
         public static Quantity operator/ (Quantity lhs, Quantity rhs)
         {
-            var resultingComposition = lhs.BaseQuantityComposition / rhs.BaseQuantityComposition;
-            return GetFromBaseComposition(resultingComposition);
+            return MultiplyOrDivide(lhs, rhs, multiplication: false);
         }
 
 
         protected override void Dispose(bool disposing)
         {
-            // TODO: dispose of associated units
+            // TODO: dispose of associated units and dependent derived quantities. Will be messy
 
 
             if (_disposed)

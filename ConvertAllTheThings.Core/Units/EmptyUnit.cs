@@ -23,5 +23,10 @@ namespace ConvertAllTheThings.Core
         {
 
         }
+
+        public bool Equals(IUnit? other)
+        {
+            return base.Equals(other);
+        }
     }
 }
