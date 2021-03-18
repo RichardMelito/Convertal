@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using DecimalMath;
 
 namespace ConvertAllTheThings.Core
 {
@@ -31,6 +32,14 @@ namespace ConvertAllTheThings.Core
         {
             var converted = Unit.ConvertTo(resultingIUnit);
             return Magnitude * converted;
+        }
+
+        public Term Pow(decimal power)
+        {
+            var fundamental = ConvertUnitToFundamental();
+            var resMagnitude = DecimalEx.Pow(fundamental.Magnitude, power);
+            var resQuantity = fundamental.Quantity.Pow(power);
+            return new(resMagnitude, resQuantity.FundamentalUnit);
         }
 
         public static Term operator *(decimal multiplier, Term term)

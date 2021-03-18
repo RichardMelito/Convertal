@@ -102,7 +102,7 @@ namespace ConvertAllTheThings.Core
             if (decimal.TryParse(name, out _))
                 throw new ArgumentException("MaybeName must not be a number.");
 
-            if (!name.All(char.IsLetter))
+            if (!name.All(char.IsLetterOrDigit))
                 throw new ArgumentException("MaybeName must be composed of alphanumeric characters.");
 
             if (NameAlreadyRegistered(name, type))

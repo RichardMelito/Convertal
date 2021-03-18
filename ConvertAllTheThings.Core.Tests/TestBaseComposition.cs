@@ -19,9 +19,15 @@ namespace ConvertAllTheThings.Core.Tests
             }
 
             public SimBase()
-                : base((++s_id).ToString(), "TEST")
+                : base("SimBase" + (++s_id))
             {
                 Id = s_id;
+            }
+
+            public SimBase(string name)
+                : base(name)
+            {
+                Id = ++s_id;
             }
 
             public BaseComposition<SimBase> MakeBaseComposition()
@@ -32,6 +38,16 @@ namespace ConvertAllTheThings.Core.Tests
             public bool Equals(SimBase? other)
             {
                 return base.Equals(other);
+            }
+
+            public override bool Equals(object? obj)
+            {
+                return Equals(obj as SimBase);
+            }
+
+            public override int GetHashCode()
+            {
+                return base.GetHashCode();
             }
         }
 
@@ -185,6 +201,55 @@ namespace ConvertAllTheThings.Core.Tests
             Assert.AreNotEqual(differentResult1, differentResult2);
             Assert.AreNotEqual(differentResult2, differentResult3);
             Assert.AreNotEqual(differentResult1, differentResult3);
+        }
+
+        [TestMethod]
+        public void TestPow()
+        {
+            SimBase lhsBase = new();
+            SimBase rhsBase = new();
+
+            var lhs = lhsBase.MakeBaseComposition();
+            var rhs = rhsBase.MakeBaseComposition();
+
+            var product = lhs * lhs * lhs / rhs;
+            var squared = product.Pow(2);
+            Assert.AreEqual(6m, squared.Composition[lhsBase]);
+            Assert.AreEqual(-2m, squared.Composition[rhsBase]);
+
+            var reciprocal = squared.Pow(-1);
+            Assert.AreEqual(-6m, reciprocal.Composition[lhsBase]);
+            Assert.AreEqual(2m, reciprocal.Composition[rhsBase]);
+
+            var sqrRoot1 = reciprocal.Pow(0.5m);
+            Assert.AreEqual(-3m, sqrRoot1.Composition[lhsBase]);
+            Assert.AreEqual(1m, sqrRoot1.Composition[rhsBase]);
+
+            var sqrRoot2 = sqrRoot1.Pow(0.5m);
+            Assert.AreEqual(-1.5m, sqrRoot2.Composition[lhsBase]);
+            Assert.AreEqual(0.5m, sqrRoot2.Composition[rhsBase]);
+        }
+
+        [TestMethod]
+        public void TestToString()
+        {
+            SimBase simBase1 = new("sim1");
+            SimBase simBase2 = new("sim2");
+            SimBase simBase3 = new("sim3");
+
+            var sim1 = simBase1.MakeBaseComposition();
+            var sim2 = simBase2.MakeBaseComposition();
+            var sim3 = simBase3.MakeBaseComposition();
+
+            var product = sim2 * sim1 * sim2 / sim3 / sim3;
+            Assert.AreEqual(
+                "(sim1^1)*(sim2^2)*(sim3^-2)", 
+                product.ToString());
+
+            var fourthRoot = product.Pow(0.25m);
+            Assert.AreEqual(
+                "(sim1^0.25)*(sim2^0.5)*(sim3^-0.5)",
+                fourthRoot.ToString());
         }
     }
 }

@@ -46,7 +46,13 @@ namespace ConvertAllTheThings.Core
             var count = 0;
             foreach (var (baseKey, power) in Composition)
             {
-                stringBuilder.Append($"({baseKey.Name}^{power})");
+                string powerString;
+                if (power == decimal.Truncate(power))
+                    powerString = ((int)power).ToString();
+                else
+                    powerString = power.ToString().TrimEnd('0');
+
+                stringBuilder.Append($"({baseKey.Name}^{powerString})");
                 ++count;
                 if (count != (Composition.Count))
                     stringBuilder.Append('*');
@@ -108,6 +114,21 @@ namespace ConvertAllTheThings.Core
 
         public static BaseComposition<T> operator /(BaseComposition<T> lhs, BaseComposition<T> rhs)
             => MultiplyOrDivide(lhs, rhs, false);
+
+        public BaseComposition<T> Pow(decimal power)
+        {
+            if (power == 0)
+                return Empty;
+
+            if (power == 1)
+                return this;
+
+            SortedDictionary<T, decimal> newDict = new();
+            foreach (var (baseObj, currentPower) in Composition)
+                newDict.Add(baseObj, currentPower * power);
+
+            return new BaseComposition<T>(newDict.AsReadOnly());
+        }
 
         public bool Equals(BaseComposition<T>? other)
         {

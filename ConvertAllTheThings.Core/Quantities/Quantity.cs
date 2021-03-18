@@ -52,6 +52,12 @@ namespace ConvertAllTheThings.Core
             _initialized = true;
         }
 
+        public Quantity Pow(decimal power)
+        {
+            return GetFromBaseComposition(BaseQuantityComposition.Pow(power));
+        }
+
+
         public static Quantity GetFromBaseComposition(BaseComposition<IBaseUnit> composition)
         {
             var quantityComposition = BaseComposition<BaseQuantity>.
@@ -89,6 +95,7 @@ namespace ConvertAllTheThings.Core
         {
             return MultiplyOrDivide(lhs, rhs, multiplication: false);
         }
+
 
 
         protected override void Dispose(bool disposing)
