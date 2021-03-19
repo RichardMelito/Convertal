@@ -8,6 +8,8 @@ namespace ConvertAllTheThings.Core
 {
     public abstract class PrefixedUnit : IUnit, INamed
     {
+        private bool _disposedValue;
+
         public Quantity Quantity => Unit.Quantity;
 
         public string? MaybeName => Prefix.MaybeName! + "_" + Unit.MaybeName!;
@@ -51,16 +53,35 @@ namespace ConvertAllTheThings.Core
             return HashCode.Combine(Unit, Prefix);
         }
 
-        //public Term ConvertTo(IUnit resultingIUnit)
-        //{
-        //    var unprefixedConversion = Unit.ConvertTo(resultingIUnit);
-        //    return unprefixedConversion * Prefix.Multiplier;
-        //}
+        #region IDisposable boilerplate
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!_disposedValue)
+            {
+                if (disposing)
+                {
+                    // TODO: dispose managed state (managed objects)
+                }
 
-        //public Term ConvertToFundamental()
-        //{
-        //    var unprefixedFundamental = Unit.ConvertToFundamental();
-        //    return unprefixedFundamental * Prefix.Multiplier;
-        //}
+                // TODO: free unmanaged resources (unmanaged objects) and override finalizer
+                // TODO: set large fields to null
+                _disposedValue = true;
+            }
+        }
+
+        // // TODO: override finalizer only if 'Dispose(bool disposing)' has code to free unmanaged resources
+        // ~PrefixedUnit()
+        // {
+        //     // Do not change this code. Put cleanup code in 'Dispose(bool disposing)' method
+        //     Dispose(disposing: false);
+        // }
+
+        public void Dispose()
+        {
+            // Do not change this code. Put cleanup code in 'Dispose(bool disposing)' method
+            Dispose(disposing: true);
+            GC.SuppressFinalize(this);
+        }
+        #endregion
     }
 }

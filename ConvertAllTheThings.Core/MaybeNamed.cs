@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using ConvertAllTheThings.Core.Extensions;
 
 namespace ConvertAllTheThings.Core
 {
@@ -50,6 +52,7 @@ namespace ConvertAllTheThings.Core
             s_types_nameds[GetTypeWithinDictionary()].Add(this);
         }
 
+        public abstract IEnumerable<IMaybeNamed> GetAllDependents();
 
         public void ChangeName(string newName)
         {
@@ -88,6 +91,11 @@ namespace ConvertAllTheThings.Core
 
 
         #region static methods
+        public static IEnumerable<T> GetAllMaybeNameds<T>()
+        {
+            return s_types_nameds[GetTypeWithinDictionary(typeof(T))].Cast<T>();
+        }
+
         // for resetting after unit tests
         internal static void ClearAll()
         {
@@ -137,7 +145,7 @@ namespace ConvertAllTheThings.Core
             }
         }
 
-        private static Type GetTypeWithinDictionary(Type type)
+        public static Type GetTypeWithinDictionary(Type type)
         {
             var originalType = type;
 
@@ -247,6 +255,10 @@ namespace ConvertAllTheThings.Core
                 {
                     // TODO: dispose managed state (managed objects)
                     s_types_nameds[GetTypeWithinDictionary()].Remove(this);
+
+                    var dependents = GetAllDependents().ToArray();
+                    foreach (var dependent in dependents)
+                        dependent.Dispose();
                 }
 
                 // TODO: free unmanaged resources (unmanaged objects) and override finalizer

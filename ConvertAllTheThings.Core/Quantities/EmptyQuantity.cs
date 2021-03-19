@@ -20,6 +20,11 @@ namespace ConvertAllTheThings.Core
             Init();
         }
 
+        public override IEnumerable<IMaybeNamed> GetAllDependents()
+        {
+            return Array.Empty<IMaybeNamed>();
+        }
+
         protected override void Dispose(bool disposing)
         {
             // The EmptyQuantity cannot be disposed

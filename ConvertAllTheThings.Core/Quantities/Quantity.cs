@@ -107,13 +107,22 @@ namespace ConvertAllTheThings.Core
             return MultiplyOrDivide(lhs, rhs, multiplication: false);
         }
 
+        public IEnumerable<IUnit> GetAllDependentIUnits()
+        {
+            var allUnits = GetAllMaybeNameds<Unit>();
+            var unitsWithThisQuantity = from unit in allUnits
+                                        where unit.Quantity == this
+                                        select unit;
 
+            var res = unitsWithThisQuantity.Cast<IUnit>();
+            foreach (var unit in unitsWithThisQuantity)
+                res = res.Union(unit.GetAllDependents());
+
+            return res;
+        }
 
         protected override void Dispose(bool disposing)
         {
-            // TODO: dispose of associated units and dependent derived quantities. Will be messy
-
-
             if (_disposed)
                 return;
 
@@ -121,17 +130,6 @@ namespace ConvertAllTheThings.Core
                 throw new ApplicationException(
                     $"Could not remove Quantity {MaybeName ?? "{null}"} with composition " +
                     $"{BaseQuantityComposition} from static dictionary.");
-
-            if (this is BaseQuantity thisAsBase)
-            {
-                var quantsComposedOfThis = from comp_quant in s_compositions_quantities
-                                           where comp_quant.Value is DerivedQuantity &&
-                                           comp_quant.Key.Composition.Keys.Contains(thisAsBase)
-                                           select (DerivedQuantity)comp_quant.Value;
-
-                foreach (var quantToDispose in quantsComposedOfThis.ToArray())
-                    quantToDispose.Dispose();
-            }
 
             _disposed = true;
             base.Dispose(disposing);

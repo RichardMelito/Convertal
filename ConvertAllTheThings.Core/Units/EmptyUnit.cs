@@ -34,5 +34,10 @@ namespace ConvertAllTheThings.Core
             // The EmptyUnit cannot be disposed
             return;
         }
+
+        public IEnumerable<IMaybeNamed> GetAllDependents()
+        {
+            return Array.Empty<IMaybeNamed>();
+        }
     }
 }

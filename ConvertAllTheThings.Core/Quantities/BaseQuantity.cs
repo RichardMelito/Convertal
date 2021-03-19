@@ -62,5 +62,30 @@ namespace ConvertAllTheThings.Core
         {
             return base.Equals(other);
         }
+
+        public override IEnumerable<IMaybeNamed> GetAllDependents()
+        {
+            var quantsComposedOfThis = from comp_quant in CompositionAndQuantitiesDictionary
+                                       where comp_quant.Value is DerivedQuantity &&
+                                       comp_quant.Key.Composition.ContainsKey(this)
+                                       select comp_quant.Value;
+
+            var res = quantsComposedOfThis.Cast<IMaybeNamed>();
+            res = res.Union(GetAllDependentIUnits());
+            foreach (var dependentQuantity in res)
+                res = res.Union(dependentQuantity.GetAllDependents());
+
+            res = res.OrderBy((x) => 
+            {
+                if (x is Quantity)
+                    return 5;
+                else if (x is IBaseUnit)
+                    return 0;
+                else
+                    return -5;
+            });
+
+            return res;
+        }
     }
 }

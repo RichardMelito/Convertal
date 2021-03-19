@@ -23,5 +23,10 @@ namespace ConvertAllTheThings.Core
             FundamentalUnit = new DerivedUnit(this);
             Init();
         }
+
+        public override IEnumerable<IMaybeNamed> GetAllDependents()
+        {
+            return GetAllDependentIUnits();
+        }
     }
 }
