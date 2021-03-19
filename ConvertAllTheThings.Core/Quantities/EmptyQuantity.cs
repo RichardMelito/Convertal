@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace ConvertAllTheThings.Core
 {
-    public class EmptyQuantity : Quantity
+    public sealed class EmptyQuantity : Quantity
     {
         public override EmptyUnit FundamentalUnit => EmptyUnit.Empty;
 
@@ -18,6 +18,12 @@ namespace ConvertAllTheThings.Core
             : base(null)
         {
             Init();
+        }
+
+        protected override void Dispose(bool disposing)
+        {
+            // The EmptyQuantity cannot be disposed
+            return;
         }
     }
 }

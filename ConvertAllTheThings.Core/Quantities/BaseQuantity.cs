@@ -24,7 +24,7 @@ namespace ConvertAllTheThings.Core
         public static BaseQuantity DefineNewBaseQuantity(
             string quantityName,
             string fundamentalUnitName,
-            Prefix? unitPrefix)
+            Prefix? unitPrefix = null)
         {
             // TODO
             ThrowIfNameNotValid<Unit>(fundamentalUnitName);

@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using ConvertAllTheThings.Core.Extensions;
 
 namespace ConvertAllTheThings.Core
 {
@@ -23,10 +25,19 @@ namespace ConvertAllTheThings.Core
         private static readonly Dictionary<BaseComposition<BaseQuantity>, Quantity> s_compositions_quantities = new();
         private bool _initialized = false;
 
+        public static IReadOnlyDictionary<BaseComposition<BaseQuantity>, Quantity> 
+            CompositionAndQuantitiesDictionary { get; } = s_compositions_quantities.AsReadOnly();
+
         public static EmptyQuantity Empty => EmptyQuantity.Empty;
 
         public abstract IUnit FundamentalUnit { get; }
         public abstract BaseComposition<BaseQuantity> BaseQuantityComposition { get; }
+
+        static Quantity()
+        {
+            AddTypeToDictionary<Quantity>();
+        }
+        internal static void InitializeClass() { }
 
         protected Quantity(
             string? name)
@@ -110,6 +121,17 @@ namespace ConvertAllTheThings.Core
                 throw new ApplicationException(
                     $"Could not remove Quantity {MaybeName ?? "{null}"} with composition " +
                     $"{BaseQuantityComposition} from static dictionary.");
+
+            if (this is BaseQuantity thisAsBase)
+            {
+                var quantsComposedOfThis = from comp_quant in s_compositions_quantities
+                                           where comp_quant.Value is DerivedQuantity &&
+                                           comp_quant.Key.Composition.Keys.Contains(thisAsBase)
+                                           select (DerivedQuantity)comp_quant.Value;
+
+                foreach (var quantToDispose in quantsComposedOfThis.ToArray())
+                    quantToDispose.Dispose();
+            }
 
             _disposed = true;
             base.Dispose(disposing);

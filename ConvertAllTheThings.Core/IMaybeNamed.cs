@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace ConvertAllTheThings.Core
 {
-    public interface IMaybeNamed
+    public interface IMaybeNamed : IDisposable
     {
         string? MaybeName { get; }
     }

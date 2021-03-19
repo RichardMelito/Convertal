@@ -16,6 +16,12 @@ namespace ConvertAllTheThings.Core
         public decimal FundamentalMultiplier { get; }
         public BaseComposition<IBaseUnit>? MaybeBaseUnitComposition { get; protected set; } = null;
 
+        static Unit()
+        {
+            AddTypeToDictionary<Unit>();
+        }
+
+        internal static void InitializeClass() { }
 
         protected Unit(string? name, Quantity quantity, decimal fundamentalMultiplier)
             : base(name)

@@ -44,21 +44,21 @@ namespace ConvertAllTheThings.Core
             if (name is null)
                 return;
 
-            ThrowIfNameNotValid(name, GetType());
+            ThrowIfNameNotValid(name, GetTypeWithinDictionary());
 
             MaybeName = name;
-            s_types_nameds[GetType()].Add(this);
+            s_types_nameds[GetTypeWithinDictionary()].Add(this);
         }
 
 
         public void ChangeName(string newName)
         {
-            ThrowIfNameNotValid(newName, GetType());
+            ThrowIfNameNotValid(newName, GetTypeWithinDictionary());
 
             var needToAddToDictionary = MaybeName is null;
             MaybeName = newName;
             if (needToAddToDictionary)
-                s_types_nameds[GetType()].Add(this);
+                s_types_nameds[GetTypeWithinDictionary()].Add(this);
         }
 
         public override string ToString()
@@ -83,15 +83,26 @@ namespace ConvertAllTheThings.Core
 
         public override int GetHashCode()
         {
-            return HashCode.Combine(MaybeName, GetType());
+            return HashCode.Combine(MaybeName, GetTypeWithinDictionary());
         }
 
 
         #region static methods
+        // for resetting after unit tests
+        internal static void ClearAll()
+        {
+            var flattenedDictionary = from list in s_types_nameds.Values
+                                      from maybeNamed in list
+                                      select maybeNamed;
+
+            foreach (var maybeNamed in flattenedDictionary.ToArray())
+                maybeNamed.Dispose();
+        }
+
         public static void ThrowIfNameNotValid<T>(string name)
             where T : MaybeNamed
         {
-            ThrowIfNameNotValid(name, typeof(T));
+            ThrowIfNameNotValid(name, GetTypeWithinDictionary(typeof(T)));
         }
 
         private static void ThrowIfNameNotValid(string name, Type type)
@@ -126,8 +137,31 @@ namespace ConvertAllTheThings.Core
             }
         }
 
+        private static Type GetTypeWithinDictionary(Type type)
+        {
+            var originalType = type;
+
+            while (!s_types_nameds.ContainsKey(type))
+            {
+                if (type.BaseType is null)
+                    throw new ArgumentException($"Neither type {originalType.Name} " +
+                        $"nor any of its base types are within the name lookup dictionary.");
+
+                type = type.BaseType;
+            }
+
+            return type;
+        }
+
+        public Type GetTypeWithinDictionary()
+        {
+            return GetTypeWithinDictionary(GetType());
+        }
+
         private static bool NameAlreadyRegistered(string name, Type type)
         {
+            type = GetTypeWithinDictionary(type);
+
             var matches = from named in s_types_nameds[type]
                           where named.MaybeName == name 
                           select named;
@@ -138,13 +172,13 @@ namespace ConvertAllTheThings.Core
         public static bool NameIsValid<T>(string name)
             where T : MaybeNamed
         {
-            return NameIsValid(name, typeof(T));
+            return NameIsValid(name, GetTypeWithinDictionary(typeof(T)));
         }
 
         public static bool NameAlreadyRegistered<T>(string name)
             where T : MaybeNamed
         {
-            return NameAlreadyRegistered(name, typeof(T));
+            return NameAlreadyRegistered(name, GetTypeWithinDictionary(typeof(T)));
         }
 
         public static bool TryGetFromName<T>(
@@ -152,7 +186,7 @@ namespace ConvertAllTheThings.Core
             out T? namedObject)
             where T : MaybeNamed
         {
-            var nameds = s_types_nameds[typeof(T)];
+            var nameds = s_types_nameds[GetTypeWithinDictionary(typeof(T))];
             var matches = (from named in nameds
                            where named.MaybeName == name 
                            select named).ToArray();
@@ -212,7 +246,7 @@ namespace ConvertAllTheThings.Core
                 if (disposing)
                 {
                     // TODO: dispose managed state (managed objects)
-                    s_types_nameds[GetType()].Remove(this);
+                    s_types_nameds[GetTypeWithinDictionary()].Remove(this);
                 }
 
                 // TODO: free unmanaged resources (unmanaged objects) and override finalizer

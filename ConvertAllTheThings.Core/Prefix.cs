@@ -12,6 +12,7 @@ namespace ConvertAllTheThings.Core
         {
             AddTypeToDictionary<Prefix>();
         }
+        internal static void InitializeClass() { }
 
         public decimal Multiplier { get; }
 

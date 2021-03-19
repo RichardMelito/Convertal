@@ -8,8 +8,6 @@ namespace ConvertAllTheThings.Core
 {
     public class BaseUnit : Unit, IBaseUnit
     {
-        // TODO check that BaseUnits etc. can be retrieved from Named<Unit>.GetFromName
-
         /// <summary>
         /// Only to be called from <see cref="BaseQuantity.DefineNewBaseQuantity(string, string, Prefix?)"/>
         /// </summary>

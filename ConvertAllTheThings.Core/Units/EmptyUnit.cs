@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 namespace ConvertAllTheThings.Core
 {
     // should maybe inherit from Unit?
-    public class EmptyUnit : IUnit
+    public sealed class EmptyUnit : IUnit
     {
         public static readonly EmptyUnit Empty = new();
 
@@ -27,6 +27,12 @@ namespace ConvertAllTheThings.Core
         public bool Equals(IUnit? other)
         {
             return base.Equals(other);
+        }
+
+        public void Dispose()
+        {
+            // The EmptyUnit cannot be disposed
+            return;
         }
     }
 }
