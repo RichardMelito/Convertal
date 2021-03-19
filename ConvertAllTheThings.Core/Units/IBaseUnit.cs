@@ -13,6 +13,27 @@ namespace ConvertAllTheThings.Core
         BaseComposition<IBaseUnit> BaseUnitComposition => MaybeBaseUnitComposition!;
 
 
+        static IEnumerable<IDerivedUnit> GetAllIDerivedUnitsComposedOf(IBaseUnit baseUnit)
+        {
+            var allUnits = MaybeNamed.GetAllMaybeNameds<Unit>().Cast<Unit>();
+
+            IEnumerable<IDerivedUnit> unitsComposedOfGiven = 
+                from unit in allUnits
+                where unit is DerivedUnit &&
+                unit.MaybeBaseUnitComposition is not null &&
+                unit.MaybeBaseUnitComposition.Composition.ContainsKey(baseUnit)
+                select (DerivedUnit)unit;
+
+            IEnumerable<IDerivedUnit> prefixedUnitsComposedOfGiven =
+                from prefixedUnit in PrefixedUnit.PrefixedUnits
+                where prefixedUnit is PrefixedDerivedUnit &&
+                prefixedUnit.MaybeBaseUnitComposition is not null &&
+                prefixedUnit.MaybeBaseUnitComposition.Composition.ContainsKey(baseUnit)
+                select (PrefixedDerivedUnit)prefixedUnit;
+
+            return unitsComposedOfGiven.Union(prefixedUnitsComposedOfGiven);
+        }
+
         bool IEquatable<IBaseUnit>.Equals(IBaseUnit? other)
         {
             return ReferenceEquals(this, other);

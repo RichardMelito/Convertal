@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using ConvertAllTheThings.Core.Extensions;
 
 namespace ConvertAllTheThings.Core
 {
@@ -20,9 +21,9 @@ namespace ConvertAllTheThings.Core
             Init();
         }
 
-        public override IEnumerable<IMaybeNamed> GetAllDependents()
+        public override IOrderedEnumerable<IMaybeNamed> GetAllDependents()
         {
-            return Array.Empty<IMaybeNamed>();
+            return Array.Empty<IMaybeNamed>().SortByTypeAndName();
         }
 
         protected override void Dispose(bool disposing)

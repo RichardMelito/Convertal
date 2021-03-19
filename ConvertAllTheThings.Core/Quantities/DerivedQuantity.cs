@@ -24,7 +24,7 @@ namespace ConvertAllTheThings.Core
             Init();
         }
 
-        public override IEnumerable<IMaybeNamed> GetAllDependents()
+        public override IOrderedEnumerable<IMaybeNamed> GetAllDependents()
         {
             return GetAllDependentIUnits();
         }

@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using ConvertAllTheThings.Core.Extensions;
 
 namespace ConvertAllTheThings.Core
 {
@@ -25,6 +27,10 @@ namespace ConvertAllTheThings.Core
             return MaybeName!;
         }
 
+        private static readonly List<PrefixedUnit> s_prefixedUnits = new();
+        public static readonly ReadOnlyCollection<PrefixedUnit> 
+            PrefixedUnits = s_prefixedUnits.AsReadOnly();
+
         protected PrefixedUnit(Unit unit, Prefix prefix)
         {
             if (unit.MaybeName is null)
@@ -33,6 +39,21 @@ namespace ConvertAllTheThings.Core
                     "Unit in PrefixedUnit must have a name.");
 
             Prefix = prefix;
+            s_prefixedUnits.Add(this);
+        }
+
+        public virtual IOrderedEnumerable<IMaybeNamed> GetAllDependents()
+        {
+            var dependentQuants = 
+                from quant in Quantity.CompositionAndQuantitiesDictionary.Values
+                where quant.FundamentalUnit == this
+                select quant;
+
+            var res = dependentQuants.Cast<IMaybeNamed>();
+            foreach (var quant in dependentQuants)
+                res = res.Union(quant.GetAllDependents());
+
+            return res.SortByTypeAndName();
         }
 
         public bool Equals(IUnit? other)
@@ -61,6 +82,9 @@ namespace ConvertAllTheThings.Core
                 if (disposing)
                 {
                     // TODO: dispose managed state (managed objects)
+                    if (!s_prefixedUnits.Remove(this))
+                        throw new ApplicationException($"Could not remove {this} from " +
+                            $"the PrefixedUnit dictionary.");
                 }
 
                 // TODO: free unmanaged resources (unmanaged objects) and override finalizer

@@ -14,5 +14,25 @@ namespace ConvertAllTheThings.Core.Extensions
         {
             return new ReadOnlyDictionary<TKey, TValue>(dict);
         }
+
+        public static IOrderedEnumerable<T> SortByTypeAndName<T>(this IEnumerable<T> toSort)
+            where T: notnull, IMaybeNamed
+        {
+            var res = toSort.OrderBy((x) =>
+            {
+                return x switch
+                {
+                    BaseQuantity => 300,
+                    DerivedQuantity => 200,
+                    IBaseUnit { IsFundamental: true } => 100,
+                    IDerivedUnit { IsFundamental: true } => 80,
+                    IBaseUnit => 50,
+                    IDerivedUnit => 30,
+                    _ => 0
+                };
+            }).ThenBy(x=>x, MaybeNamed.DefaultComparer);
+
+            return res;
+        }
     }
 }

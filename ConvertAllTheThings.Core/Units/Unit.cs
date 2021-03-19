@@ -50,7 +50,7 @@ namespace ConvertAllTheThings.Core
             }
         }
 
-        public override IEnumerable<IUnit> GetAllDependents()
+        public override IOrderedEnumerable<IUnit> GetAllDependents()
         {
 
         }

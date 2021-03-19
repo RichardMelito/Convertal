@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using ConvertAllTheThings.Core.Extensions;
 
 namespace ConvertAllTheThings.Core
 {
@@ -35,9 +36,9 @@ namespace ConvertAllTheThings.Core
             return;
         }
 
-        public IEnumerable<IMaybeNamed> GetAllDependents()
+        public IOrderedEnumerable<IMaybeNamed> GetAllDependents()
         {
-            return Array.Empty<IMaybeNamed>();
+            return Array.Empty<IMaybeNamed>().SortByTypeAndName();
         }
     }
 }

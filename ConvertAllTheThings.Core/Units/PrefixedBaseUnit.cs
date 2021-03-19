@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using ConvertAllTheThings.Core.Extensions;
 
 namespace ConvertAllTheThings.Core
 {
@@ -15,6 +16,17 @@ namespace ConvertAllTheThings.Core
         {
             Unit = unit;
             MaybeBaseUnitComposition = new(this);
+        }
+
+        public override IOrderedEnumerable<IMaybeNamed> GetAllDependents()
+        {
+            var unitsComposedOfThis = IBaseUnit.GetAllIDerivedUnitsComposedOf(this);
+
+            IEnumerable<IMaybeNamed> res = base.GetAllDependents();
+            foreach (var unit in unitsComposedOfThis)
+                res = res.Union(unit.GetAllDependents());
+
+            return res.SortByTypeAndName();
         }
     }
 }

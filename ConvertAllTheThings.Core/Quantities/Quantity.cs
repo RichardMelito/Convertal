@@ -107,9 +107,9 @@ namespace ConvertAllTheThings.Core
             return MultiplyOrDivide(lhs, rhs, multiplication: false);
         }
 
-        public IEnumerable<IUnit> GetAllDependentIUnits()
+        public IOrderedEnumerable<IUnit> GetAllDependentIUnits()
         {
-            var allUnits = GetAllMaybeNameds<Unit>();
+            var allUnits = GetAllMaybeNameds<Unit>().Cast<Unit>();
             var unitsWithThisQuantity = from unit in allUnits
                                         where unit.Quantity == this
                                         select unit;
@@ -118,7 +118,7 @@ namespace ConvertAllTheThings.Core
             foreach (var unit in unitsWithThisQuantity)
                 res = res.Union(unit.GetAllDependents());
 
-            return res;
+            return res.SortByTypeAndName();
         }
 
         protected override void Dispose(bool disposing)

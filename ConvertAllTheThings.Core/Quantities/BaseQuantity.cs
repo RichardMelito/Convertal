@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using ConvertAllTheThings.Core.Extensions;
 
 namespace ConvertAllTheThings.Core
 {
@@ -63,7 +64,7 @@ namespace ConvertAllTheThings.Core
             return base.Equals(other);
         }
 
-        public override IEnumerable<IMaybeNamed> GetAllDependents()
+        public override IOrderedEnumerable<IMaybeNamed> GetAllDependents()
         {
             var quantsComposedOfThis = from comp_quant in CompositionAndQuantitiesDictionary
                                        where comp_quant.Value is DerivedQuantity &&
@@ -75,17 +76,7 @@ namespace ConvertAllTheThings.Core
             foreach (var dependentQuantity in res)
                 res = res.Union(dependentQuantity.GetAllDependents());
 
-            res = res.OrderBy((x) => 
-            {
-                if (x is Quantity)
-                    return 5;
-                else if (x is IBaseUnit)
-                    return 0;
-                else
-                    return -5;
-            });
-
-            return res;
+            return res.SortByTypeAndName();
         }
     }
 }

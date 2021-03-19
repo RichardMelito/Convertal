@@ -52,7 +52,7 @@ namespace ConvertAllTheThings.Core
             s_types_nameds[GetTypeWithinDictionary()].Add(this);
         }
 
-        public abstract IEnumerable<IMaybeNamed> GetAllDependents();
+        public abstract IOrderedEnumerable<IMaybeNamed> GetAllDependents();
 
         public void ChangeName(string newName)
         {
@@ -91,9 +91,9 @@ namespace ConvertAllTheThings.Core
 
 
         #region static methods
-        public static IEnumerable<T> GetAllMaybeNameds<T>()
+        public static IEnumerable<MaybeNamed> GetAllMaybeNameds<T>()
         {
-            return s_types_nameds[GetTypeWithinDictionary(typeof(T))].Cast<T>();
+            return s_types_nameds[GetTypeWithinDictionary(typeof(T))];
         }
 
         // for resetting after unit tests
