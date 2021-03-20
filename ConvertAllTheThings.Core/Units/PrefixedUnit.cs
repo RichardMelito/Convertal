@@ -42,18 +42,42 @@ namespace ConvertAllTheThings.Core
             s_prefixedUnits.Add(this);
         }
 
-        public virtual IOrderedEnumerable<IMaybeNamed> GetAllDependents()
+        public static PrefixedBaseUnit GetPrefixedUnit(BaseUnit unit, Prefix prefix)
         {
-            var dependentQuants = 
-                from quant in Quantity.CompositionAndQuantitiesDictionary.Values
-                where quant.FundamentalUnit == this
-                select quant;
+            return (PrefixedBaseUnit)GetPrefixedUnit((Unit)unit, prefix);
+        }
 
-            var res = dependentQuants.Cast<IMaybeNamed>();
-            foreach (var quant in dependentQuants)
-                res = res.Union(quant.GetAllDependents());
+        public static PrefixedDerivedUnit GetPrefixedUnit(DerivedUnit unit, Prefix prefix)
+        {
+            return (PrefixedDerivedUnit)GetPrefixedUnit((Unit)unit, prefix);
+        }
 
-            return res.SortByTypeAndName();
+        public static PrefixedUnit GetPrefixedUnit(Unit unit, Prefix prefix)
+        {
+            var existingPrefixedUnit =
+                from prefixedUnit in PrefixedUnits
+                where prefixedUnit.Unit == unit &&
+                prefixedUnit.Prefix == prefix
+                select prefixedUnit;
+
+            switch (existingPrefixedUnit.Count())
+            {
+                case 0:
+                    if (unit is BaseUnit baseUnit)
+                        return new PrefixedBaseUnit(baseUnit, prefix);
+
+                    else if (unit is DerivedUnit derivedUnit)
+                        return new PrefixedDerivedUnit(derivedUnit, prefix);
+
+                    else
+                        throw new NotImplementedException();
+
+                case 1:
+                    return existingPrefixedUnit.First();
+
+                default:
+                    throw new ApplicationException(existingPrefixedUnit.Count().ToString());
+            }
         }
 
         public bool Equals(IUnit? other)
@@ -81,10 +105,19 @@ namespace ConvertAllTheThings.Core
             {
                 if (disposing)
                 {
+                    if (((IUnit)this).IsFundamental && !Quantity.Disposed)
+                        throw new InvalidOperationException($"Cannot dispose of" +
+                            $" fundamental unit {this} without first disposing of " +
+                            $"quantity {Quantity}.");
+
                     // TODO: dispose managed state (managed objects)
                     if (!s_prefixedUnits.Remove(this))
                         throw new ApplicationException($"Could not remove {this} from " +
                             $"the PrefixedUnit dictionary.");
+
+                    var dependents = ((IUnit)this).GetAllDependents().ToArray();
+                    foreach (var dependent in dependents)
+                        dependent.Dispose();
                 }
 
                 // TODO: free unmanaged resources (unmanaged objects) and override finalizer

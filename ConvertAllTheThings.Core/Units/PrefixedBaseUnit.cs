@@ -11,21 +11,22 @@ namespace ConvertAllTheThings.Core
     {
         public override BaseUnit Unit { get; }
 
-        public PrefixedBaseUnit(BaseUnit unit, Prefix prefix)
+        internal PrefixedBaseUnit(BaseUnit unit, Prefix prefix)
             : base(unit, prefix)
         {
             Unit = unit;
             MaybeBaseUnitComposition = new(this);
         }
 
-        public override IOrderedEnumerable<IMaybeNamed> GetAllDependents()
+        public IOrderedEnumerable<IMaybeNamed> GetAllDependents()
         {
             var unitsComposedOfThis = IBaseUnit.GetAllIDerivedUnitsComposedOf(this);
 
-            IEnumerable<IMaybeNamed> res = base.GetAllDependents();
+            IEnumerable<IMaybeNamed> res = ((IUnit)this).GetAllDependents();
             foreach (var unit in unitsComposedOfThis)
                 res = res.Union(unit.GetAllDependents());
 
+            // prefixedunit doesn't have an implementation?
             return res.SortByTypeAndName();
         }
     }

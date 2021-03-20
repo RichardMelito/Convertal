@@ -34,5 +34,10 @@ namespace ConvertAllTheThings.Core.Extensions
 
             return res;
         }
+
+        public static IEnumerable<T> AsEnumerable<T>(this T toEncapsulate)
+        {
+            return new T[] { toEncapsulate };
+        }
     }
 }

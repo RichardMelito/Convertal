@@ -15,17 +15,20 @@ namespace ConvertAllTheThings.Core
         }
         internal static void InitializeClass() { }
 
-        public override IOrderedEnumerable<IMaybeNamed> GetAllDependents()
+        public override IOrderedEnumerable<IMaybeNamed> GetAllDependents(ref IEnumerable<IMaybeNamed> toIgnore)
         {
+            toIgnore = toIgnore.Append(this);
+
             var prefixedUnitsWithThis =
                 from prefixedUnit in PrefixedUnit.PrefixedUnits
                 where prefixedUnit.Prefix == this
                 select prefixedUnit;
 
             IEnumerable<IMaybeNamed> res = prefixedUnitsWithThis;
-            foreach (var prefixedUnit in prefixedUnitsWithThis)
+            foreach (IUnit prefixedUnit in prefixedUnitsWithThis)
                 res = res.Union(prefixedUnit.GetAllDependents());
 
+            res = res.Except(this.AsEnumerable());
             return res.SortByTypeAndName();
         }
 

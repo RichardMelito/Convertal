@@ -10,7 +10,7 @@ namespace ConvertAllTheThings.Core
     {
         public override DerivedUnit Unit { get; }
 
-        public PrefixedDerivedUnit(DerivedUnit unit, Prefix prefix) 
+        internal PrefixedDerivedUnit(DerivedUnit unit, Prefix prefix) 
             : base(unit, prefix)
         {
             Unit = unit;

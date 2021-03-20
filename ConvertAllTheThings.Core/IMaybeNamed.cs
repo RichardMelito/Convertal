@@ -9,6 +9,6 @@ namespace ConvertAllTheThings.Core
     public interface IMaybeNamed : IDisposable
     {
         string? MaybeName { get; }
-        IOrderedEnumerable<IMaybeNamed> GetAllDependents();
+        IOrderedEnumerable<IMaybeNamed> GetAllDependents(ref IEnumerable<IMaybeNamed> toIgnore);
     }
 }

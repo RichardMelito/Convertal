@@ -52,7 +52,7 @@ namespace ConvertAllTheThings.Core
             s_types_nameds[GetTypeWithinDictionary()].Add(this);
         }
 
-        public abstract IOrderedEnumerable<IMaybeNamed> GetAllDependents();
+        public abstract IOrderedEnumerable<IMaybeNamed> GetAllDependents(ref IEnumerable<IMaybeNamed> toIgnore);
 
         public void ChangeName(string newName)
         {
@@ -256,7 +256,7 @@ namespace ConvertAllTheThings.Core
                     // TODO: dispose managed state (managed objects)
                     s_types_nameds[GetTypeWithinDictionary()].Remove(this);
 
-                    var dependents = GetAllDependents().ToArray();
+                    var dependents = GetAllDependents(this.AsEnumerable()).ToArray();
                     foreach (var dependent in dependents)
                         dependent.Dispose();
                 }

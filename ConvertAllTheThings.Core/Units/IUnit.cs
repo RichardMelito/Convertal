@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using ConvertAllTheThings.Core.Extensions;
 
 namespace ConvertAllTheThings.Core
 {
@@ -35,6 +36,21 @@ namespace ConvertAllTheThings.Core
                 return new Term(1m, this);
 
             return new Term(FundamentalMultiplier, Quantity.FundamentalUnit);
+        }
+
+        IOrderedEnumerable<IMaybeNamed> IMaybeNamed.GetAllDependents()
+        {
+            var dependentQuants =
+                from quant in Quantity.CompositionAndQuantitiesDictionary.Values
+                where quant.FundamentalUnit == this
+                select quant;
+
+            var res = dependentQuants.Cast<IMaybeNamed>();
+            foreach (var quant in dependentQuants)
+                res = res.Union(quant.GetAllDependents());
+
+            res = res.Except(this.AsEnumerable());
+            return res.SortByTypeAndName();
         }
     }
 }

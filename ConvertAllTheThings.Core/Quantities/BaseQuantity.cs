@@ -72,10 +72,11 @@ namespace ConvertAllTheThings.Core
                                        select comp_quant.Value;
 
             var res = quantsComposedOfThis.Cast<IMaybeNamed>();
-            res = res.Union(GetAllDependentIUnits());
-            foreach (var dependentQuantity in res)
+            foreach (var dependentQuantity in quantsComposedOfThis)
                 res = res.Union(dependentQuantity.GetAllDependents());
 
+            res = res.Union(base.GetAllDependents());
+            res = res.Except(this.AsEnumerable());
             return res.SortByTypeAndName();
         }
     }

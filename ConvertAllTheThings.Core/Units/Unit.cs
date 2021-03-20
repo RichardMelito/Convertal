@@ -4,11 +4,14 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using DecimalMath;
+using ConvertAllTheThings.Core.Extensions;
 
 namespace ConvertAllTheThings.Core
 {
     public abstract class Unit : MaybeNamed, IUnit
     {
+        private bool _disposed = false;
+
         public static EmptyUnit Empty => EmptyUnit.Empty;
 
         public Quantity Quantity { get; }
@@ -50,9 +53,19 @@ namespace ConvertAllTheThings.Core
             }
         }
 
-        public override IOrderedEnumerable<IUnit> GetAllDependents()
+        public override IOrderedEnumerable<IMaybeNamed> GetAllDependents()
         {
+            var prefixedUnitsWithThis =
+                from prefixedUnit in PrefixedUnit.PrefixedUnits
+                where prefixedUnit.Unit == this
+                select prefixedUnit;
 
+            IEnumerable<IMaybeNamed> res = prefixedUnitsWithThis;
+            foreach (IUnit prefixedUnit in prefixedUnitsWithThis)
+                res = res.Union(prefixedUnit.GetAllDependents());
+
+            res = res.Union(((IUnit)this).GetAllDependents());
+            return res.SortByTypeAndName();
         }
 
         public override string ToString()
@@ -68,6 +81,20 @@ namespace ConvertAllTheThings.Core
         public override int GetHashCode()
         {
             return HashCode.Combine(base.GetHashCode(), Quantity, FundamentalMultiplier);
+        }
+
+        protected override void Dispose(bool disposing)
+        {
+            if (_disposed)
+                return;
+
+            if (((IUnit)this).IsFundamental && !Quantity.Disposed)
+                throw new InvalidOperationException($"Cannot dispose of" +
+                    $" fundamental unit {this} without first disposing of " +
+                    $"quantity {Quantity}.");
+
+            _disposed = true;
+            base.Dispose(disposing);
         }
     }
 }

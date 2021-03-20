@@ -25,6 +25,8 @@ namespace ConvertAllTheThings.Core
         private static readonly Dictionary<BaseComposition<BaseQuantity>, Quantity> s_compositions_quantities = new();
         private bool _initialized = false;
 
+        public bool Disposed => _disposed;
+
         public static IReadOnlyDictionary<BaseComposition<BaseQuantity>, Quantity> 
             CompositionAndQuantitiesDictionary { get; } = s_compositions_quantities.AsReadOnly();
 
@@ -107,17 +109,18 @@ namespace ConvertAllTheThings.Core
             return MultiplyOrDivide(lhs, rhs, multiplication: false);
         }
 
-        public IOrderedEnumerable<IUnit> GetAllDependentIUnits()
+        public override IOrderedEnumerable<IMaybeNamed> GetAllDependents()
         {
             var allUnits = GetAllMaybeNameds<Unit>().Cast<Unit>();
             var unitsWithThisQuantity = from unit in allUnits
                                         where unit.Quantity == this
                                         select unit;
 
-            var res = unitsWithThisQuantity.Cast<IUnit>();
+            var res = unitsWithThisQuantity.Cast<IMaybeNamed>();
             foreach (var unit in unitsWithThisQuantity)
                 res = res.Union(unit.GetAllDependents());
 
+            res = res.Except(this.AsEnumerable());
             return res.SortByTypeAndName();
         }
 
