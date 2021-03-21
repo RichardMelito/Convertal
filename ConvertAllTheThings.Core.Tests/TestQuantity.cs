@@ -49,10 +49,10 @@ namespace ConvertAllTheThings.Core.Tests
             MaybeNamed.ClearAll();
         }
 
-        [TestMethod]
-        public void TestMultiplication()
-        {
+        //[TestMethod]
+        //public void TestMultiplication()
+        //{
 
-        }
+        //}
     }
 }

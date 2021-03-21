@@ -1,6 +1,9 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using ConvertAllTheThings.Core;
+using System.Linq;
+using System.Collections.Generic;
+using ConvertAllTheThings.Core.Extensions;
 
 namespace ConvertAllTheThings.Core.Tests
 {
@@ -28,6 +31,11 @@ namespace ConvertAllTheThings.Core.Tests
                 : base(name)
             {
                 Id = ++s_id;
+            }
+
+            public override IOrderedEnumerable<IMaybeNamed> GetAllDependents(ref IEnumerable<IMaybeNamed> toIgnore)
+            {
+                return Array.Empty<IMaybeNamed>().SortByTypeAndName();
             }
 
             public BaseComposition<SimBase> MakeBaseComposition()

@@ -3,6 +3,8 @@ using System;
 using System.Collections.Generic;
 using ConvertAllTheThings.Core;
 using static ConvertAllTheThings.Core.MaybeNamed;
+using System.Linq;
+using ConvertAllTheThings.Core.Extensions;
 
 namespace ConvertAllTheThings.Core.Tests
 {
@@ -21,6 +23,11 @@ namespace ConvertAllTheThings.Core.Tests
             {
 
             }
+
+            public override IOrderedEnumerable<IMaybeNamed> GetAllDependents(ref IEnumerable<IMaybeNamed> toIgnore)
+            {
+                return Array.Empty<IMaybeNamed>().SortByTypeAndName();
+            }
         }
 
         class OtherTestNamedClass : MaybeNamed
@@ -34,6 +41,11 @@ namespace ConvertAllTheThings.Core.Tests
                 : base(name)
             {
 
+            }
+
+            public override IOrderedEnumerable<IMaybeNamed> GetAllDependents(ref IEnumerable<IMaybeNamed> toIgnore)
+            {
+                return Array.Empty<IMaybeNamed>().SortByTypeAndName();
             }
         }
 
