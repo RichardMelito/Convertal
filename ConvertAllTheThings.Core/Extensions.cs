@@ -18,7 +18,7 @@ namespace ConvertAllTheThings.Core.Extensions
         public static IOrderedEnumerable<T> SortByTypeAndName<T>(this IEnumerable<T> toSort)
             where T: notnull, IMaybeNamed
         {
-            var res = toSort.OrderBy((x) =>
+            var res = toSort.OrderByDescending((x) =>
             {
                 return x switch
                 {
@@ -30,7 +30,8 @@ namespace ConvertAllTheThings.Core.Extensions
                     IDerivedUnit => 30,
                     _ => 0
                 };
-            }).ThenBy(x=>x, MaybeNamed.DefaultComparer);
+            });
+            res = res.ThenBy(x=>x, MaybeNamed.DefaultComparer);
 
             return res;
         }

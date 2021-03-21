@@ -40,19 +40,13 @@ namespace ConvertAllTheThings.Core.Tests
         [ClassCleanup]
         public static void CleanupClass()
         {
-            //var quantitiesToDispose = from quantity in CompositionAndQuantitiesDictionary.Values
-            //                          where quantity != Empty
-            //                          select quantity;
-
-            //while (quantitiesToDispose.Any())
-            //    quantitiesToDispose.First().Dispose();
             MaybeNamed.ClearAll();
         }
 
-        //[TestMethod]
-        //public void TestMultiplication()
-        //{
+        [TestMethod]
+        public void TestMultiplication()
+        {
 
-        //}
+        }
     }
 }

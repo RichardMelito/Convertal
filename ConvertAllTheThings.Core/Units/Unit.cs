@@ -55,7 +55,7 @@ namespace ConvertAllTheThings.Core
 
         public override IOrderedEnumerable<IMaybeNamed> GetAllDependents(ref IEnumerable<IMaybeNamed> toIgnore)
         {
-            var res = ((IUnit)this).GetAllDependents(ref toIgnore).AsEnumerable();
+            var res = IUnit.GetAllDependents(this, ref toIgnore).AsEnumerable();
 
             var prefixedUnitsWithThis =
                 from prefixedUnit in PrefixedUnit.PrefixedUnits

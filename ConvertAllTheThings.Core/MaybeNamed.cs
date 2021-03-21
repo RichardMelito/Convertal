@@ -103,7 +103,8 @@ namespace ConvertAllTheThings.Core
                                       from maybeNamed in list
                                       select maybeNamed;
 
-            foreach (var maybeNamed in flattenedDictionary.ToArray())
+            var sortedFlattenedDictionary = flattenedDictionary.SortByTypeAndName().ToArray();
+            foreach (var maybeNamed in sortedFlattenedDictionary)
                 maybeNamed.Dispose();
         }
 
