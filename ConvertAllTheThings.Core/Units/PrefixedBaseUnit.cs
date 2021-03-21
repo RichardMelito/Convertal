@@ -18,15 +18,16 @@ namespace ConvertAllTheThings.Core
             MaybeBaseUnitComposition = new(this);
         }
 
-        public IOrderedEnumerable<IMaybeNamed> GetAllDependents()
+        public IOrderedEnumerable<IMaybeNamed> GetAllDependents(ref IEnumerable<IMaybeNamed> toIgnore)
         {
+            var res = ((IUnit)this).GetAllDependents(ref toIgnore).AsEnumerable();
+
             var unitsComposedOfThis = IBaseUnit.GetAllIDerivedUnitsComposedOf(this);
+            res = res.Union(unitsComposedOfThis);
+            foreach (var unit in unitsComposedOfThis.Except(toIgnore))
+                res = res.Union(unit.GetAllDependents(ref toIgnore));
 
-            IEnumerable<IMaybeNamed> res = ((IUnit)this).GetAllDependents();
-            foreach (var unit in unitsComposedOfThis)
-                res = res.Union(unit.GetAllDependents());
-
-            // prefixedunit doesn't have an implementation?
+            res.ThrowIfSetContains(this);
             return res.SortByTypeAndName();
         }
     }

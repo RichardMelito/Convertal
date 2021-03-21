@@ -35,9 +35,28 @@ namespace ConvertAllTheThings.Core.Extensions
             return res;
         }
 
-        public static IEnumerable<T> AsEnumerable<T>(this T toEncapsulate)
+        public static IEnumerable<T> UnionAppend<T>(this IEnumerable<T> set, T toAppend)
+        {
+            if (set.Contains(toAppend))
+                return set;
+
+            return set.Append(toAppend);
+        }
+
+        public static IEnumerable<T> Encapsulate<T>(this T toEncapsulate)
         {
             return new T[] { toEncapsulate };
+        }
+
+        public static IEnumerable<T> Except<T>(this IEnumerable<T> set, T toExcept)
+        {
+            return set.Except(toExcept.Encapsulate());
+        }
+
+        public static void ThrowIfSetContains<T>(this IEnumerable<T> set, T toCheck)
+        {
+            if (set.Contains(toCheck))
+                throw new ApplicationException();
         }
     }
 }

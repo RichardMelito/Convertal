@@ -29,15 +29,17 @@ namespace ConvertAllTheThings.Core
         }
 
 
-        public override IOrderedEnumerable<IMaybeNamed> GetAllDependents()
+        public override IOrderedEnumerable<IMaybeNamed> GetAllDependents(ref IEnumerable<IMaybeNamed> toIgnore)
         {
+            var res = base.GetAllDependents(ref toIgnore).AsEnumerable();
+
             var unitsComposedOfThis = IBaseUnit.GetAllIDerivedUnitsComposedOf(this).Cast<IMaybeNamed>();
+            res = res.Union(unitsComposedOfThis);
 
-            IEnumerable<IMaybeNamed> res = base.GetAllDependents();
-            foreach (var unit in unitsComposedOfThis)
-                res = res.Union(unit.GetAllDependents());
+            foreach (var unit in unitsComposedOfThis.Except(toIgnore))
+                res = res.Union(unit.GetAllDependents(ref toIgnore));
 
-            res = res.Except(this.AsEnumerable());
+            res.ThrowIfSetContains(this);
             return res.SortByTypeAndName();
         }
     }

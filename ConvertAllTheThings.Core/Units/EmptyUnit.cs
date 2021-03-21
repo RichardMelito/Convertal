@@ -36,7 +36,7 @@ namespace ConvertAllTheThings.Core
             return;
         }
 
-        public IOrderedEnumerable<IMaybeNamed> GetAllDependents()
+        public IOrderedEnumerable<IMaybeNamed> GetAllDependents(ref IEnumerable<IMaybeNamed> toIgnore)
         {
             return Array.Empty<IMaybeNamed>().SortByTypeAndName();
         }

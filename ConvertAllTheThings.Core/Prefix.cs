@@ -17,7 +17,7 @@ namespace ConvertAllTheThings.Core
 
         public override IOrderedEnumerable<IMaybeNamed> GetAllDependents(ref IEnumerable<IMaybeNamed> toIgnore)
         {
-            toIgnore = toIgnore.Append(this);
+            toIgnore = toIgnore.UnionAppend(this);
 
             var prefixedUnitsWithThis =
                 from prefixedUnit in PrefixedUnit.PrefixedUnits
@@ -25,10 +25,10 @@ namespace ConvertAllTheThings.Core
                 select prefixedUnit;
 
             IEnumerable<IMaybeNamed> res = prefixedUnitsWithThis;
-            foreach (IUnit prefixedUnit in prefixedUnitsWithThis)
-                res = res.Union(prefixedUnit.GetAllDependents());
+            foreach (var prefixedUnit in prefixedUnitsWithThis.Except(toIgnore))
+                res = res.Union(prefixedUnit.GetAllDependents(ref toIgnore));
 
-            res = res.Except(this.AsEnumerable());
+            res.ThrowIfSetContains(this);
             return res.SortByTypeAndName();
         }
 

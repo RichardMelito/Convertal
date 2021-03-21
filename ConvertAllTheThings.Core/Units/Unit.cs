@@ -53,18 +53,20 @@ namespace ConvertAllTheThings.Core
             }
         }
 
-        public override IOrderedEnumerable<IMaybeNamed> GetAllDependents()
+        public override IOrderedEnumerable<IMaybeNamed> GetAllDependents(ref IEnumerable<IMaybeNamed> toIgnore)
         {
+            var res = ((IUnit)this).GetAllDependents(ref toIgnore).AsEnumerable();
+
             var prefixedUnitsWithThis =
                 from prefixedUnit in PrefixedUnit.PrefixedUnits
                 where prefixedUnit.Unit == this
                 select prefixedUnit;
 
-            IEnumerable<IMaybeNamed> res = prefixedUnitsWithThis;
-            foreach (IUnit prefixedUnit in prefixedUnitsWithThis)
-                res = res.Union(prefixedUnit.GetAllDependents());
+            res = res.Union(prefixedUnitsWithThis);
+            foreach (var prefixedUnit in prefixedUnitsWithThis.Except(toIgnore))
+                res = res.Union(prefixedUnit.GetAllDependents(ref toIgnore));
 
-            res = res.Union(((IUnit)this).GetAllDependents());
+            res.ThrowIfSetContains(this);
             return res.SortByTypeAndName();
         }
 

@@ -21,7 +21,7 @@ namespace ConvertAllTheThings.Core
             Init();
         }
 
-        public override IOrderedEnumerable<IMaybeNamed> GetAllDependents()
+        public override IOrderedEnumerable<IMaybeNamed> GetAllDependents(ref IEnumerable<IMaybeNamed> toIgnore)
         {
             return Array.Empty<IMaybeNamed>().SortByTypeAndName();
         }

@@ -64,19 +64,20 @@ namespace ConvertAllTheThings.Core
             return base.Equals(other);
         }
 
-        public override IOrderedEnumerable<IMaybeNamed> GetAllDependents()
+        public override IOrderedEnumerable<IMaybeNamed> GetAllDependents(ref IEnumerable<IMaybeNamed> toIgnore)
         {
+            var res = base.GetAllDependents(ref toIgnore).AsEnumerable();
+
             var quantsComposedOfThis = from comp_quant in CompositionAndQuantitiesDictionary
                                        where comp_quant.Value is DerivedQuantity &&
                                        comp_quant.Key.Composition.ContainsKey(this)
                                        select comp_quant.Value;
 
-            var res = quantsComposedOfThis.Cast<IMaybeNamed>();
-            foreach (var dependentQuantity in quantsComposedOfThis)
-                res = res.Union(dependentQuantity.GetAllDependents());
+            res = res.Union(quantsComposedOfThis);
+            foreach (var dependentQuantity in quantsComposedOfThis.Except(toIgnore))
+                res = res.Union(dependentQuantity.GetAllDependents(ref toIgnore));
 
-            res = res.Union(base.GetAllDependents());
-            res = res.Except(this.AsEnumerable());
+            res.ThrowIfSetContains(this);
             return res.SortByTypeAndName();
         }
     }

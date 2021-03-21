@@ -115,7 +115,8 @@ namespace ConvertAllTheThings.Core
                         throw new ApplicationException($"Could not remove {this} from " +
                             $"the PrefixedUnit dictionary.");
 
-                    var dependents = ((IUnit)this).GetAllDependents().ToArray();
+                    var toIgnore = this.Encapsulate().Cast<IMaybeNamed>();
+                    var dependents = ((IUnit)this).GetAllDependents(ref toIgnore).ToArray();
                     foreach (var dependent in dependents)
                         dependent.Dispose();
                 }

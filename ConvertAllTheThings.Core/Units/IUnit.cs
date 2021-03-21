@@ -38,18 +38,20 @@ namespace ConvertAllTheThings.Core
             return new Term(FundamentalMultiplier, Quantity.FundamentalUnit);
         }
 
-        IOrderedEnumerable<IMaybeNamed> IMaybeNamed.GetAllDependents()
+        IOrderedEnumerable<IMaybeNamed> IMaybeNamed.GetAllDependents(ref IEnumerable<IMaybeNamed> toIgnore)
         {
+            toIgnore = toIgnore.UnionAppend(this);
+
             var dependentQuants =
                 from quant in Quantity.CompositionAndQuantitiesDictionary.Values
                 where quant.FundamentalUnit == this
                 select quant;
 
             var res = dependentQuants.Cast<IMaybeNamed>();
-            foreach (var quant in dependentQuants)
-                res = res.Union(quant.GetAllDependents());
+            foreach (var quant in dependentQuants.Except(toIgnore))
+                res = res.Union(quant.GetAllDependents(ref toIgnore));
 
-            res = res.Except(this.AsEnumerable());
+            res.ThrowIfSetContains(this);
             return res.SortByTypeAndName();
         }
     }

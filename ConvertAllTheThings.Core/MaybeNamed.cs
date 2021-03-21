@@ -256,7 +256,8 @@ namespace ConvertAllTheThings.Core
                     // TODO: dispose managed state (managed objects)
                     s_types_nameds[GetTypeWithinDictionary()].Remove(this);
 
-                    var dependents = GetAllDependents(this.AsEnumerable()).ToArray();
+                    var toIgnore = this.Encapsulate().Cast<IMaybeNamed>();
+                    var dependents = GetAllDependents(ref toIgnore).ToArray();
                     foreach (var dependent in dependents)
                         dependent.Dispose();
                 }

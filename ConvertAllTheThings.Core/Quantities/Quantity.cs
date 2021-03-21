@@ -109,18 +109,20 @@ namespace ConvertAllTheThings.Core
             return MultiplyOrDivide(lhs, rhs, multiplication: false);
         }
 
-        public override IOrderedEnumerable<IMaybeNamed> GetAllDependents()
+        public override IOrderedEnumerable<IMaybeNamed> GetAllDependents(ref IEnumerable<IMaybeNamed> toIgnore)
         {
+            toIgnore = toIgnore.UnionAppend(this);
+
             var allUnits = GetAllMaybeNameds<Unit>().Cast<Unit>();
             var unitsWithThisQuantity = from unit in allUnits
                                         where unit.Quantity == this
                                         select unit;
 
             var res = unitsWithThisQuantity.Cast<IMaybeNamed>();
-            foreach (var unit in unitsWithThisQuantity)
-                res = res.Union(unit.GetAllDependents());
+            foreach (var unit in unitsWithThisQuantity.Except(toIgnore))
+                res = res.Union(unit.GetAllDependents(ref toIgnore));
 
-            res = res.Except(this.AsEnumerable());
+            res.ThrowIfSetContains(this);
             return res.SortByTypeAndName();
         }
 
