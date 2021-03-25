@@ -26,7 +26,7 @@ namespace ConvertAllTheThings.Core
             return Array.Empty<IMaybeNamed>().SortByTypeAndName();
         }
 
-        protected override void Dispose(bool disposing)
+        protected override void DisposeBody(bool disposeDependents)
         {
             // The EmptyQuantity cannot be disposed
             return;

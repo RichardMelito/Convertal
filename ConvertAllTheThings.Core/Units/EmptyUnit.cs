@@ -30,6 +30,12 @@ namespace ConvertAllTheThings.Core
             return base.Equals(other);
         }
 
+        void IMaybeNamed.DisposeThisAndDependents(bool disposeDependents)
+        {
+            // The EmptyUnit cannot be disposed
+            return;
+        }
+
         public void Dispose()
         {
             // The EmptyUnit cannot be disposed

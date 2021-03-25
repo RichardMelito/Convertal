@@ -98,33 +98,44 @@ namespace ConvertAllTheThings.Core
             return HashCode.Combine(Unit, Prefix);
         }
 
-        #region IDisposable boilerplate
-        protected virtual void Dispose(bool disposing)
+        void IMaybeNamed.DisposeThisAndDependents(bool disposeDependents)
+        {
+            DisposeBody(disposeDependents);
+        }
+
+        protected virtual void DisposeBody(bool disposeDependents)
         {
             if (!_disposedValue)
             {
-                if (disposing)
+                if (((IUnit)this).IsFundamental && !Quantity.Disposed)
+                    throw new InvalidOperationException($"Cannot dispose of" +
+                        $" fundamental unit {this} without first disposing of " +
+                        $"quantity {Quantity}.");
+
+                // TODO: dispose managed state (managed objects)
+                if (!s_prefixedUnits.Remove(this))
+                    throw new ApplicationException($"Could not remove {this} from " +
+                        $"the PrefixedUnit dictionary.");
+
+                if (disposeDependents)
                 {
-                    if (((IUnit)this).IsFundamental && !Quantity.Disposed)
-                        throw new InvalidOperationException($"Cannot dispose of" +
-                            $" fundamental unit {this} without first disposing of " +
-                            $"quantity {Quantity}.");
-
-                    // TODO: dispose managed state (managed objects)
-                    if (!s_prefixedUnits.Remove(this))
-                        throw new ApplicationException($"Could not remove {this} from " +
-                            $"the PrefixedUnit dictionary.");
-
                     var toIgnore = this.Encapsulate().Cast<IMaybeNamed>();
                     var dependents = ((IUnit)this).GetAllDependents(ref toIgnore).ToArray();
                     foreach (var dependent in dependents)
-                        dependent.Dispose();
+                        dependent.DisposeThisAndDependents(false);
                 }
 
                 // TODO: free unmanaged resources (unmanaged objects) and override finalizer
                 // TODO: set large fields to null
                 _disposedValue = true;
             }
+        }
+
+        #region IDisposable boilerplate
+        protected virtual void Dispose(bool disposing, bool disposeDependents = true)
+        {
+            if (disposing)
+                DisposeBody(disposeDependents);
         }
 
         // // TODO: override finalizer only if 'Dispose(bool disposing)' has code to free unmanaged resources

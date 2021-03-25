@@ -85,7 +85,7 @@ namespace ConvertAllTheThings.Core
             return HashCode.Combine(base.GetHashCode(), Quantity, FundamentalMultiplier);
         }
 
-        protected override void Dispose(bool disposing)
+        protected override void DisposeBody(bool disposeDependents)
         {
             if (_disposed)
                 return;
@@ -96,7 +96,7 @@ namespace ConvertAllTheThings.Core
                     $"quantity {Quantity}.");
 
             _disposed = true;
-            base.Dispose(disposing);
+            base.DisposeBody(disposeDependents);
         }
     }
 }

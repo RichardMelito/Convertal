@@ -126,7 +126,9 @@ namespace ConvertAllTheThings.Core
             return res.SortByTypeAndName();
         }
 
-        protected override void Dispose(bool disposing)
+
+
+        protected override void DisposeBody(bool disposeDependents)
         {
             if (_disposed)
                 return;
@@ -137,7 +139,7 @@ namespace ConvertAllTheThings.Core
                     $"{BaseQuantityComposition} from static dictionary.");
 
             _disposed = true;
-            base.Dispose(disposing);
+            base.DisposeBody(disposeDependents);
         }
     }
 }

@@ -247,26 +247,37 @@ namespace ConvertAllTheThings.Core
         
 
 
-        #region IDisposable boilerplate
-        protected virtual void Dispose(bool disposing)
+        #region IDisposable 
+        void IMaybeNamed.DisposeThisAndDependents(bool disposeDependents)
+        {
+            DisposeBody(disposeDependents);
+        }
+
+        protected virtual void DisposeBody(bool disposeDependents)
         {
             if (!_disposedValue)
             {
-                if (disposing)
-                {
-                    // TODO: dispose managed state (managed objects)
-                    s_types_nameds[GetTypeWithinDictionary()].Remove(this);
+                // TODO: dispose managed state (managed objects)
+                s_types_nameds[GetTypeWithinDictionary()].Remove(this);
 
+                if (disposeDependents)
+                {
                     var toIgnore = this.Encapsulate().Cast<IMaybeNamed>();
                     var dependents = GetAllDependents(ref toIgnore).ToArray();
                     foreach (var dependent in dependents)
-                        dependent.Dispose();
+                        dependent.DisposeThisAndDependents(false);
                 }
 
                 // TODO: free unmanaged resources (unmanaged objects) and override finalizer
                 // TODO: set large fields to null
                 _disposedValue = true;
             }
+        }
+
+        protected virtual void Dispose(bool disposing, bool disposeDependents = true)
+        {
+            if (disposing)
+                ((IMaybeNamed)this).DisposeThisAndDependents(disposeDependents);
         }
 
         // // TODO: override finalizer only if 'Dispose(bool disposing)' has code to free unmanaged resources
