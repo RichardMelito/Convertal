@@ -11,6 +11,7 @@ namespace ConvertAllTheThings.Core
         public static void InitializeAssembly()
         {
             Quantity.InitializeClass();
+            EmptyQuantity.InitializeClass();
             Unit.InitializeClass();
             Prefix.InitializeClass();
         }

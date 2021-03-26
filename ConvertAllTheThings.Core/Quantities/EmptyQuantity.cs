@@ -15,6 +15,16 @@ namespace ConvertAllTheThings.Core
 
         public static new readonly EmptyQuantity Empty = new();
 
+        static EmptyQuantity()
+        {
+
+        }
+
+        internal static new void InitializeClass()
+        {
+
+        }
+
         private EmptyQuantity()
             : base(null)
         {
