@@ -13,6 +13,7 @@ namespace ConvertAllTheThings.Core
         public static readonly EmptyUnit Empty = new();
 
         public decimal FundamentalMultiplier => 1m;
+        public decimal FundamentalOffset => 0;
 
         public Quantity Quantity => Quantity.Empty;
 

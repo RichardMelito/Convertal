@@ -17,6 +17,7 @@ namespace ConvertAllTheThings.Core
         public string? MaybeName => Prefix.MaybeName! + "_" + Unit.MaybeName!;
 
         public decimal FundamentalMultiplier => Unit.FundamentalMultiplier * Prefix.Multiplier;
+        public decimal FundamentalOffset => Unit.FundamentalOffset * Prefix.Multiplier; // TODO check
         public abstract Unit Unit { get; }
         public Prefix Prefix { get; }
 

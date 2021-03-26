@@ -9,6 +9,14 @@ namespace ConvertAllTheThings.Core
 {
     public class BaseUnit : Unit, IBaseUnit
     {
+
+        // for defining from an existng IBaseUnit
+        public BaseUnit(string name, IBaseUnit otherUnit, decimal multiplier, decimal offset = 0)
+            : base(name, otherUnit, multiplier, offset)
+        {
+            MaybeBaseUnitComposition = new(this);
+        }
+
         /// <summary>
         /// Only to be called from <see cref="BaseQuantity.DefineNewBaseQuantity(string, string, Prefix?)"/>
         /// </summary>
@@ -17,13 +25,6 @@ namespace ConvertAllTheThings.Core
         /// <param name="fundamentalMultiplier"></param>
         internal BaseUnit(string name, BaseQuantity quantity, decimal fundamentalMultiplier)
             : base(name, quantity, fundamentalMultiplier)
-        {
-            MaybeBaseUnitComposition = new(this);
-        }
-
-        // for defining from an existng IBaseUnit
-        public BaseUnit(string name, IBaseUnit otherUnit, decimal fundamentalMultiplier)
-            : base(name, otherUnit, fundamentalMultiplier)
         {
             MaybeBaseUnitComposition = new(this);
         }

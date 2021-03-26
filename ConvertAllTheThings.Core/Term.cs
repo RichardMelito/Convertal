@@ -25,13 +25,12 @@ namespace ConvertAllTheThings.Core
 
         public Term ConvertUnitToFundamental()
         {
-            return Magnitude * Unit.ConvertToFundamental();
+            return Unit.ConvertToFundamental(Magnitude);
         }
 
         public Term ConvertUnitTo(IUnit resultingIUnit)
         {
-            var converted = Unit.ConvertTo(resultingIUnit);
-            return Magnitude * converted;
+            return Unit.ConvertTo(Magnitude, resultingIUnit);
         }
 
         public Term Pow(decimal power)

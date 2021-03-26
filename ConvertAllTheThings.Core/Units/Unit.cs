@@ -17,6 +17,7 @@ namespace ConvertAllTheThings.Core
         public Quantity Quantity { get; }
 
         public decimal FundamentalMultiplier { get; }
+        public decimal FundamentalOffset { get; }
         public BaseComposition<IBaseUnit>? MaybeBaseUnitComposition { get; protected set; } = null;
 
         static Unit()
@@ -26,18 +27,22 @@ namespace ConvertAllTheThings.Core
 
         internal static void InitializeClass() { }
 
+        // only to be called when defining fundamental units for new
+        // quantities, and thus offset will always be 0
         protected Unit(string? name, Quantity quantity, decimal fundamentalMultiplier)
             : base(name)
         {
             Quantity = quantity;
             FundamentalMultiplier = fundamentalMultiplier;
+            FundamentalOffset = 0;
         }
 
-        protected Unit(string? name, IUnit otherUnit, decimal multiplier)
+        protected Unit(string? name, IUnit otherUnit, decimal multiplier, decimal offset)
             : base(name)
         {
             Quantity = otherUnit.Quantity;
             FundamentalMultiplier = otherUnit.FundamentalMultiplier * multiplier;
+            FundamentalOffset = (otherUnit.FundamentalOffset / multiplier) + offset;
         }
 
         protected Unit(string name, BaseComposition<IBaseUnit> composition)
@@ -51,6 +56,16 @@ namespace ConvertAllTheThings.Core
                 var multiplier = DecimalEx.Pow(unit.FundamentalMultiplier, power);
                 FundamentalMultiplier *= multiplier;
             }
+        }
+
+        public Term ConvertTo(decimal magnitudeOfThis, IUnit resultingIUnit)
+        {
+            return IUnit.ConvertTo(this, magnitudeOfThis, resultingIUnit);
+        }
+
+        public Term ConvertToFundamental(decimal magnitudeOfThis)
+        {
+            return IUnit.ConvertToFundamental(this, magnitudeOfThis);
         }
 
         public override IOrderedEnumerable<IMaybeNamed> GetAllDependents(ref IEnumerable<IMaybeNamed> toIgnore)
