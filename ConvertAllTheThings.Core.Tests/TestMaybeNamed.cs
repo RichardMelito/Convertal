@@ -116,16 +116,16 @@ namespace ConvertAllTheThings.Core.Tests
         }
 
         [TestMethod]
-        public void TestNameAndNameSpaceValid()
+        public void TestNameIsValid()
         {
             Assert.IsFalse(NameIsValid<TestNamedClass>("name1"));
             Assert.IsTrue(NameIsValid<TestNamedClass>("DNE"));
         }
 
         [TestMethod]
-        public void TestChangeNameAndNameSpace()
+        public void TestChangeName()
         {
-            using TestNamedClass toTest = new("name3");
+            TestNamedClass toTest = new("name3");
             
             toTest.ChangeName("newName");
             Assert.AreEqual("newName", toTest.MaybeName);

@@ -34,7 +34,7 @@ namespace ConvertAllTheThings.Core
 
         public decimal Multiplier { get; }
 
-        public Prefix(decimal multiplier, string name)
+        public Prefix(string name, decimal multiplier)
             : base (name)
         {
             Multiplier = multiplier;

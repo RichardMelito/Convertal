@@ -17,7 +17,7 @@ namespace ConvertAllTheThings.Core
         public string? MaybeName => Prefix.MaybeName! + "_" + Unit.MaybeName!;
 
         public decimal FundamentalMultiplier => Unit.FundamentalMultiplier * Prefix.Multiplier;
-        public decimal FundamentalOffset => Unit.FundamentalOffset * Prefix.Multiplier; // TODO check
+        public decimal FundamentalOffset => Unit.FundamentalOffset / Prefix.Multiplier;
         public abstract Unit Unit { get; }
         public Prefix Prefix { get; }
 
@@ -81,6 +81,17 @@ namespace ConvertAllTheThings.Core
             }
         }
 
+
+        public Term ConvertTo(decimal magnitudeOfThis, IUnit resultingIUnit)
+        {
+            return IUnit.ConvertTo(this, magnitudeOfThis, resultingIUnit);
+        }
+
+        public Term ConvertToFundamental(decimal magnitudeOfThis)
+        {
+            return IUnit.ConvertToFundamental(this, magnitudeOfThis);
+        }
+
         public bool Equals(IUnit? other)
         {
             if (other is not PrefixedUnit cast)
@@ -103,6 +114,8 @@ namespace ConvertAllTheThings.Core
         {
             DisposeBody(disposeDependents);
         }
+
+
 
         protected virtual void DisposeBody(bool disposeDependents)
         {

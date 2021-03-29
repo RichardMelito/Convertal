@@ -12,7 +12,7 @@ namespace ConvertAllTheThings.Core.Tests
     [TestClass]
     public class TestQuantity : BaseTestClass
     {
-        readonly Prefix _testPrefix = new(2, "TestPrefix");
+        readonly Prefix _testPrefix = new("TestPrefix", 2);
         readonly BaseQuantity _baseQuantity1;
         readonly BaseQuantity _baseQuantity2;
 
@@ -59,19 +59,19 @@ namespace ConvertAllTheThings.Core.Tests
         [TestMethod]
         public void TestMultiplication()
         {
-            using var prod1 = _baseQuantity1 * _baseQuantity1;
+            var prod1 = _baseQuantity1 * _baseQuantity1;
             Assert.IsInstanceOfType(prod1, typeof(DerivedQuantity));
             Assert.AreEqual(
                 _baseQuantity1.BaseQuantityComposition * _baseQuantity1.BaseQuantityComposition, 
                 prod1.BaseQuantityComposition);
 
-            using var prod2 = _baseQuantity1 * _baseQuantity2;
+            var prod2 = _baseQuantity1 * _baseQuantity2;
             Assert.IsInstanceOfType(prod2, typeof(DerivedQuantity));
             Assert.AreEqual(
                 _baseQuantity1.BaseQuantityComposition * _baseQuantity2.BaseQuantityComposition,
                 prod2.BaseQuantityComposition);
 
-            using var prod3 = prod1 * prod2;
+            var prod3 = prod1 * prod2;
             Assert.IsInstanceOfType(prod3, typeof(DerivedQuantity));
             Assert.AreEqual(
                 prod1.BaseQuantityComposition * prod2.BaseQuantityComposition,
@@ -81,19 +81,19 @@ namespace ConvertAllTheThings.Core.Tests
         [TestMethod]
         public void TestDivision()
         {
-            using var quotient1 = _baseQuantity1 / _baseQuantity2;
+            var quotient1 = _baseQuantity1 / _baseQuantity2;
             Assert.IsInstanceOfType(quotient1, typeof(DerivedQuantity));
             Assert.AreEqual(
                 _baseQuantity1.BaseQuantityComposition / _baseQuantity2.BaseQuantityComposition,
                 quotient1.BaseQuantityComposition);
 
-            using var quotient2 = _baseQuantity2 / _baseQuantity1;
+            var quotient2 = _baseQuantity2 / _baseQuantity1;
             Assert.IsInstanceOfType(quotient2, typeof(DerivedQuantity));
             Assert.AreEqual(
                 _baseQuantity2.BaseQuantityComposition / _baseQuantity1.BaseQuantityComposition,
                 quotient2.BaseQuantityComposition);
 
-            using var quotient3 = quotient1 / quotient2;
+            var quotient3 = quotient1 / quotient2;
             Assert.IsInstanceOfType(quotient3, typeof(DerivedQuantity));
             Assert.AreEqual(
                 quotient1.BaseQuantityComposition / quotient2.BaseQuantityComposition,
@@ -103,12 +103,12 @@ namespace ConvertAllTheThings.Core.Tests
         [TestMethod]
         public void TestMultiplicationAndDivision()
         {
-            using var product1 = _baseQuantity1 * _baseQuantity1;
+            var product1 = _baseQuantity1 * _baseQuantity1;
             var quotient1 = product1 / _baseQuantity1;
             Assert.AreSame(_baseQuantity1, quotient1);
 
-            using var product2 = _baseQuantity2 * _baseQuantity2 * _baseQuantity1;
-            using var quotient2 = product2 / (_baseQuantity1 * _baseQuantity2);
+            var product2 = _baseQuantity2 * _baseQuantity2 * _baseQuantity1;
+            var quotient2 = product2 / (_baseQuantity1 * _baseQuantity2);
             Assert.AreSame(_baseQuantity2, quotient2);
         }
 
@@ -118,7 +118,7 @@ namespace ConvertAllTheThings.Core.Tests
             var quotient1 = _baseQuantity1 / _baseQuantity1;
             Assert.AreSame(Empty, quotient1);
 
-            using var derived = _baseQuantity1 * _baseQuantity1 / _baseQuantity2;
+            var derived = _baseQuantity1 * _baseQuantity1 / _baseQuantity2;
             var quotient2 = derived / derived;
             Assert.AreSame(Empty, quotient2);
 
