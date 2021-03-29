@@ -23,6 +23,9 @@ namespace ConvertAllTheThings.Core
 
         static Term ConvertTo(IUnit toConvert, decimal magnitudeToConvert, IUnit resultingIUnit)
         {
+            if (toConvert.Equals(resultingIUnit))
+                return new Term(magnitudeToConvert, toConvert);
+
             if (resultingIUnit.Quantity != toConvert.Quantity)
                 throw new ArgumentException("Can only convert to other units of the same quantity.");
 
