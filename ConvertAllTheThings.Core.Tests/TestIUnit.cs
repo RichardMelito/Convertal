@@ -10,15 +10,8 @@ using static ConvertAllTheThings.Core.Tests.MoreAssertions;
 namespace ConvertAllTheThings.Core.Tests
 {
     [TestClass]
-    public class TestIUnit
+    public class TestIUnit : BaseTestClass
     {
-        const decimal DELTA = 0.000000001m;
-
-        static TestIUnit()
-        {
-            Global.InitializeAssembly();
-        }
-
         [TestMethod]
         public void TestOffsets()
         {

@@ -8,7 +8,7 @@ using ConvertAllTheThings.Core.Extensions;
 namespace ConvertAllTheThings.Core.Tests
 {
     [TestClass]
-    public class TestBaseComposition
+    public class TestBaseComposition : BaseTestClass
     {
         class SimBase : MaybeNamed, IBase, IEquatable<SimBase>
         {

@@ -9,7 +9,7 @@ using ConvertAllTheThings.Core.Extensions;
 namespace ConvertAllTheThings.Core.Tests
 {
     [TestClass]
-    public class TestMaybeNamed
+    public class TestMaybeNamed : BaseTestClass
     {
         class TestNamedClass : MaybeNamed
         {
@@ -53,30 +53,14 @@ namespace ConvertAllTheThings.Core.Tests
          *  Construction
          */
 
-        //static readonly List<MaybeNamed> s_testInstances = new();
 
-        [ClassInitialize]
-        public static void InitializeClass(TestContext _)
+        public TestMaybeNamed()
         {
             new TestNamedClass("name1");
             new TestNamedClass("name2");
             new TestNamedClass("uniqueName");
 
             new OtherTestNamedClass("name1");
-
-            //s_testInstances.Add(new TestNamedClass("name1"));
-            //s_testInstances.Add(new TestNamedClass("name2"));
-            //s_testInstances.Add(new TestNamedClass("uniqueName"));
-
-            //s_testInstances.Add(new OtherTestNamedClass("name1"));
-        }
-
-        [ClassCleanup]
-        public static void CleanupClass()
-        {
-            MaybeNamed.ClearAll();
-            //foreach (var test in s_testInstances)
-            //    test.Dispose();
         }
 
         [TestMethod]
