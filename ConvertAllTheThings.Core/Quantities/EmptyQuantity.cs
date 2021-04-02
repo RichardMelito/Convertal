@@ -11,7 +11,7 @@ namespace ConvertAllTheThings.Core
     {
         public override EmptyUnit FundamentalUnit => EmptyUnit.Empty;
 
-        public override BaseComposition<BaseQuantity> BaseQuantityComposition => BaseComposition<BaseQuantity>.Empty;
+        public override NamedComposition<BaseQuantity> BaseQuantityComposition => NamedComposition<BaseQuantity>.Empty;
 
         public static new readonly EmptyQuantity Empty = new();
 

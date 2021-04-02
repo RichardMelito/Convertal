@@ -18,10 +18,10 @@ namespace ConvertAllTheThings.Core
 
         public decimal FundamentalMultiplier => Unit.FundamentalMultiplier * Prefix.Multiplier;
         public decimal FundamentalOffset => Unit.FundamentalOffset / Prefix.Multiplier;
-        public abstract Unit Unit { get; }
+        public Unit Unit { get; private set; }
         public Prefix Prefix { get; }
 
-        public BaseComposition<IBaseUnit>? MaybeBaseUnitComposition { get; protected set; }
+        public NamedComposition<IUnit> UnitComposition { get; protected set; }
 
         public override string ToString()
         {
@@ -41,6 +41,9 @@ namespace ConvertAllTheThings.Core
 
             Prefix = prefix;
             s_prefixedUnits.Add(this);
+            Unit = unit;
+
+            UnitComposition = new(this);
         }
 
         public static PrefixedBaseUnit GetPrefixedUnit(BaseUnit unit, Prefix prefix)

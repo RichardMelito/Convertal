@@ -17,7 +17,7 @@ namespace ConvertAllTheThings.Core
 
         public Quantity Quantity => Quantity.Empty;
 
-        public BaseComposition<IBaseUnit>? MaybeBaseUnitComposition => BaseComposition<IBaseUnit>.Empty;
+        public NamedComposition<IUnit> UnitComposition => NamedComposition<IUnit>.Empty;
 
         public string? MaybeName => null;
 

@@ -14,7 +14,7 @@ namespace ConvertAllTheThings.Core
         public BaseUnit(string name, IBaseUnit otherUnit, decimal multiplier, decimal offset = 0)
             : base(name, otherUnit, multiplier, offset)
         {
-            MaybeBaseUnitComposition = new(this);
+
         }
 
         /// <summary>
@@ -26,9 +26,16 @@ namespace ConvertAllTheThings.Core
         internal BaseUnit(string name, BaseQuantity quantity, decimal fundamentalMultiplier)
             : base(name, quantity, fundamentalMultiplier)
         {
-            MaybeBaseUnitComposition = new(this);
+
         }
 
+
+        // for defining from a chain of operations
+        internal BaseUnit(string name, NamedComposition<IUnit> composition)
+            : base(name, composition)
+        {
+
+        }
 
         public override IOrderedEnumerable<IMaybeNamed> GetAllDependents(ref IEnumerable<IMaybeNamed> toIgnore)
         {

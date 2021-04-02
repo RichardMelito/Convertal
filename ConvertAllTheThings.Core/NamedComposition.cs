@@ -8,34 +8,37 @@ using ConvertAllTheThings.Core.Extensions;
 
 namespace ConvertAllTheThings.Core
 {
-    public class BaseComposition<T> : IEquatable<BaseComposition<T>>
-        where T : IBase, IComparable<T>, IEquatable<T>
+    public class NamedComposition<T> : IEquatable<NamedComposition<T>>
+        where T : IMaybeNamed, IComparable<T>, IEquatable<T>
     {
         /*  describes a collection of base quantities or base units from which 
          *  derived quantities or units are formed. 
          */
 
-        public static readonly BaseComposition<T> Empty;
+        public static readonly NamedComposition<T> Empty;
 
         public IReadOnlyDictionary<T, decimal> Composition { get; }
 
-        static BaseComposition()
+        static NamedComposition()
         {
-            Empty = new BaseComposition<T>(
+            Empty = new NamedComposition<T>(
                 new Dictionary<T, decimal>().AsReadOnly());
         }
 
-        BaseComposition(IReadOnlyDictionary<T, decimal> composition)
+        NamedComposition(IReadOnlyDictionary<T, decimal> composition)
         {
             Composition = composition;
         }
 
 
-        public BaseComposition(T baseObject)
+        public NamedComposition(T key)
         {
+            if (key.MaybeName is null)
+                throw new ApplicationException();
+
             Composition = new Dictionary<T, decimal>
                 {
-                    { baseObject, 1m }
+                    { key, 1m }
                 }.AsReadOnly();
         }
 
@@ -44,7 +47,7 @@ namespace ConvertAllTheThings.Core
             StringBuilder stringBuilder = new();
 
             var count = 0;
-            foreach (var (baseKey, power) in Composition)
+            foreach (var (key, power) in Composition)
             {
                 string powerString;
                 if (power == decimal.Truncate(power))
@@ -52,7 +55,7 @@ namespace ConvertAllTheThings.Core
                 else
                     powerString = power.ToString().TrimEnd('0');
 
-                stringBuilder.Append($"({baseKey.Name}^{powerString})");
+                stringBuilder.Append($"({key.MaybeName!}^{powerString})");
                 ++count;
                 if (count != (Composition.Count))
                     stringBuilder.Append('*');
@@ -61,8 +64,8 @@ namespace ConvertAllTheThings.Core
             return stringBuilder.ToString();
         }
 
-        internal static BaseComposition<T> CreateFromExistingBaseComposition<TExistingBase>(
-            BaseComposition<TExistingBase> existingBaseComposition,
+        internal static NamedComposition<T> CreateFromExistingBaseComposition<TExistingBase>(
+            NamedComposition<TExistingBase> existingBaseComposition,
             Func<TExistingBase, T> convertor)
 
             where TExistingBase : IBase, IComparable<TExistingBase>, IEquatable<TExistingBase>
@@ -77,45 +80,45 @@ namespace ConvertAllTheThings.Core
             return new(convertedComposition.AsReadOnly());
         }
 
-        public static BaseComposition<T> MultiplyOrDivide(
-            BaseComposition<T> lhs,
-            BaseComposition<T> rhs,
+        public static NamedComposition<T> MultiplyOrDivide(
+            NamedComposition<T> lhs,
+            NamedComposition<T> rhs,
             bool multiplication)
         {
             var multiplyFactor = multiplication ? 1.0m : -1.0m;
             SortedDictionary<T, decimal> resultingComposition = new();
             
-            var basesInBothSides = lhs.Composition.Keys.Intersect(rhs.Composition.Keys);
-            foreach (var bothSidesBase in basesInBothSides)
+            var keysInBothSides = lhs.Composition.Keys.Intersect(rhs.Composition.Keys);
+            foreach (var bothSidesKey in keysInBothSides)
             {
-                var resultingPower = lhs.Composition[bothSidesBase] + 
-                    (multiplyFactor * rhs.Composition[bothSidesBase]);
+                var resultingPower = lhs.Composition[bothSidesKey] + 
+                    (multiplyFactor * rhs.Composition[bothSidesKey]);
 
                 if (resultingPower != 0.0m)
-                    resultingComposition[bothSidesBase] = resultingPower;
+                    resultingComposition[bothSidesKey] = resultingPower;
             }
 
-            var basesInLhs = lhs.Composition.Keys.Except(basesInBothSides);
-            foreach (var lhsBase in basesInLhs)
-                resultingComposition[lhsBase] = lhs.Composition[lhsBase];
+            var keysInLhs = lhs.Composition.Keys.Except(keysInBothSides);
+            foreach (var lhsKey in keysInLhs)
+                resultingComposition[lhsKey] = lhs.Composition[lhsKey];
 
-            var basesInRhs = rhs.Composition.Keys.Except(basesInBothSides);
-            foreach (var rhsBase in basesInRhs)
-                resultingComposition[rhsBase] = rhs.Composition[rhsBase] * multiplyFactor;
+            var keysInRhs = rhs.Composition.Keys.Except(keysInBothSides);
+            foreach (var rhsKey in keysInRhs)
+                resultingComposition[rhsKey] = rhs.Composition[rhsKey] * multiplyFactor;
 
             if (resultingComposition.Count == 0)
                 return Empty;
 
-            return new BaseComposition<T>(resultingComposition.AsReadOnly());
+            return new NamedComposition<T>(resultingComposition.AsReadOnly());
         }
 
-        public static BaseComposition<T> operator *(BaseComposition<T> lhs, BaseComposition<T> rhs)
+        public static NamedComposition<T> operator *(NamedComposition<T> lhs, NamedComposition<T> rhs)
             => MultiplyOrDivide(lhs, rhs, true);
 
-        public static BaseComposition<T> operator /(BaseComposition<T> lhs, BaseComposition<T> rhs)
+        public static NamedComposition<T> operator /(NamedComposition<T> lhs, NamedComposition<T> rhs)
             => MultiplyOrDivide(lhs, rhs, false);
 
-        public BaseComposition<T> Pow(decimal power)
+        public NamedComposition<T> Pow(decimal power)
         {
             if (power == 0)
                 return Empty;
@@ -124,13 +127,13 @@ namespace ConvertAllTheThings.Core
                 return this;
 
             SortedDictionary<T, decimal> newDict = new();
-            foreach (var (baseObj, currentPower) in Composition)
-                newDict.Add(baseObj, currentPower * power);
+            foreach (var (key, currentPower) in Composition)
+                newDict.Add(key, currentPower * power);
 
-            return new BaseComposition<T>(newDict.AsReadOnly());
+            return new NamedComposition<T>(newDict.AsReadOnly());
         }
 
-        public bool Equals(BaseComposition<T>? other)
+        public bool Equals(NamedComposition<T>? other)
         {
             if (other is null)
                 return false;
@@ -146,8 +149,8 @@ namespace ConvertAllTheThings.Core
 
             foreach (var kvp in Composition)
             {
-                var (baseObj, power) = kvp;
-                if (other.Composition[baseObj] != power)
+                var (key, power) = kvp;
+                if (other.Composition[key] != power)
                     return false;
             }
 
@@ -159,10 +162,10 @@ namespace ConvertAllTheThings.Core
             if (obj is null)
                 return false;
 
-            return Equals(obj as BaseComposition<T>);
+            return Equals(obj as NamedComposition<T>);
         }
 
-        public static bool operator == (BaseComposition<T>? lhs, BaseComposition<T>? rhs)
+        public static bool operator == (NamedComposition<T>? lhs, NamedComposition<T>? rhs)
         {
             if (lhs is null)
                 return rhs is null;
@@ -170,7 +173,7 @@ namespace ConvertAllTheThings.Core
             return lhs.Equals(rhs);
         }
 
-        public static bool operator != (BaseComposition<T>? lhs, BaseComposition<T>? rhs)
+        public static bool operator != (NamedComposition<T>? lhs, NamedComposition<T>? rhs)
         {
             return !(lhs == rhs);
         }

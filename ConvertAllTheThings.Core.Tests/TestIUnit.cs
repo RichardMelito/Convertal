@@ -13,7 +13,29 @@ namespace ConvertAllTheThings.Core.Tests
     public class TestIUnit : BaseTestClass
     {
         [TestMethod]
-        public void TestConversions()
+        public void TestUnitCompositions()
+        {
+            var quantA = BaseQuantity.DefineNewBaseQuantity("quantA",
+                "a");
+
+            var a = (BaseUnit)quantA.FundamentalUnit;
+            var b = new BaseUnit("b", a, 2);
+            var prefix = new Prefix("prefix", 4);
+            var c = PrefixedUnit.GetPrefixedUnit(a, prefix);
+
+            var composition = 
+                a.UnitComposition * 
+                b.UnitComposition / 
+                c.UnitComposition;
+
+            var d = Unit.DefineFromComposition("d", composition);
+            Assert.AreSame(quantA, d.Quantity);
+            Assert.IsInstanceOfType(d, typeof(BaseUnit));
+            Assert.AreEqual(0.5m, d.FundamentalMultiplier);
+        }
+
+        [TestMethod]
+        public void TestConversionsAndDefinitions()
         {
             /*  A = fundamental
              *      A = 2*B + 40
@@ -111,9 +133,9 @@ namespace ConvertAllTheThings.Core.Tests
             }
 
             Prefix testPrefix = new("TestPrefix", 10m);
-            PrefixedBaseUnit pA = new(a, testPrefix);
-            PrefixedBaseUnit pB = new(b, testPrefix);
-            PrefixedBaseUnit pC = new(c, testPrefix);
+            var pA = PrefixedUnit.GetPrefixedUnit(a, testPrefix);
+            var pB = PrefixedUnit.GetPrefixedUnit(b, testPrefix);
+            var pC = PrefixedUnit.GetPrefixedUnit(c, testPrefix);
 
             Assert.AreEqual(10m, pA.FundamentalMultiplier); 
             Assert.AreEqual(0m, pA.FundamentalOffset);

@@ -7,7 +7,7 @@ using ConvertAllTheThings.Core.Extensions;
 
 namespace ConvertAllTheThings.Core
 {
-    public interface IUnit : IMaybeNamed, IEquatable<IUnit>
+    public interface IUnit : IMaybeNamed, IEquatable<IUnit>, IComparable<IUnit>
     {
         bool IsFundamental => Quantity.FundamentalUnit.Equals(this);
         decimal FundamentalMultiplier { get; }
@@ -19,7 +19,7 @@ namespace ConvertAllTheThings.Core
          */
 
         Quantity Quantity { get; }
-        BaseComposition<IBaseUnit>? MaybeBaseUnitComposition { get; }
+        NamedComposition<IUnit> UnitComposition { get; }
 
         static Term ConvertTo(IUnit toConvert, decimal magnitudeToConvert, IUnit resultingIUnit)
         {
@@ -82,6 +82,11 @@ namespace ConvertAllTheThings.Core
         IOrderedEnumerable<IMaybeNamed> IMaybeNamed.GetAllDependents(ref IEnumerable<IMaybeNamed> toIgnore)
         {
             return GetAllDependents(this, ref toIgnore);
+        }
+
+        int IComparable<IUnit>.CompareTo(IUnit? other)
+        {
+            return MaybeNamed.MaybeNameComparer.PerformCompare(this, other);
         }
     }
 }

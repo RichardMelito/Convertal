@@ -9,15 +9,20 @@ namespace ConvertAllTheThings.Core
     public class DerivedUnit : Unit, IDerivedUnit
     {
         /// <summary>
-        /// To be called only from <see cref="DerivedQuantity.DerivedQuantity(BaseComposition{BaseQuantity})"/>
+        /// To be called only from <see cref="DerivedQuantity.DerivedQuantity(NamedComposition{BaseQuantity})"/>
         /// </summary>
         /// <param name="quantity"></param>
         internal DerivedUnit(DerivedQuantity quantity)
-            : base(null, quantity, 1m)
+            : base(null, quantity, 1m, GetComposition(quantity))
         {
-            MaybeBaseUnitComposition = BaseComposition<IBaseUnit>.
+
+        }
+
+        private static NamedComposition<IUnit> GetComposition(DerivedQuantity quant)
+        {
+            return NamedComposition<IUnit>.
                 CreateFromExistingBaseComposition(
-                quantity.BaseQuantityComposition,
+                quant.BaseQuantityComposition,
                 baseQuantity => baseQuantity.FundamentalUnit);
         }
 
@@ -29,7 +34,7 @@ namespace ConvertAllTheThings.Core
         }
 
         // for defining from a chain of operations
-        public DerivedUnit(string name, BaseComposition<IBaseUnit> composition)
+        internal DerivedUnit(string name, NamedComposition<IUnit> composition)
             : base(name, composition)
         {
 

@@ -9,13 +9,12 @@ namespace ConvertAllTheThings.Core
 {
     public class PrefixedBaseUnit : PrefixedUnit, IBaseUnit
     {
-        public override BaseUnit Unit { get; }
+        public new BaseUnit Unit => (BaseUnit)base.Unit;
 
         internal PrefixedBaseUnit(BaseUnit unit, Prefix prefix)
             : base(unit, prefix)
         {
-            Unit = unit;
-            MaybeBaseUnitComposition = new(this);
+            
         }
 
         public IOrderedEnumerable<IMaybeNamed> GetAllDependents(ref IEnumerable<IMaybeNamed> toIgnore)

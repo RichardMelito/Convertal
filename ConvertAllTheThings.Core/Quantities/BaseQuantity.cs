@@ -13,12 +13,12 @@ namespace ConvertAllTheThings.Core
 
         public override IBaseUnit FundamentalUnit => _fundamentalUnit!;
 
-        public override BaseComposition<BaseQuantity> BaseQuantityComposition { get; }
+        public override NamedComposition<BaseQuantity> BaseQuantityComposition { get; }
 
         private BaseQuantity(string name)
             : base(name)
         {
-            BaseQuantityComposition = new BaseComposition<BaseQuantity>(this);
+            BaseQuantityComposition = new NamedComposition<BaseQuantity>(this);
             Init();
         }
 

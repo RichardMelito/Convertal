@@ -22,18 +22,18 @@ namespace ConvertAllTheThings.Core
          */
 
         private bool _disposed = false;
-        private static readonly Dictionary<BaseComposition<BaseQuantity>, Quantity> s_compositions_quantities = new();
+        private static readonly Dictionary<NamedComposition<BaseQuantity>, Quantity> s_compositions_quantities = new();
         private bool _initialized = false;
 
         public bool Disposed => _disposed;
 
-        public static IReadOnlyDictionary<BaseComposition<BaseQuantity>, Quantity> 
+        public static IReadOnlyDictionary<NamedComposition<BaseQuantity>, Quantity> 
             CompositionAndQuantitiesDictionary { get; } = s_compositions_quantities.AsReadOnly();
 
         public static EmptyQuantity Empty => EmptyQuantity.Empty;
 
         public abstract IUnit FundamentalUnit { get; }
-        public abstract BaseComposition<BaseQuantity> BaseQuantityComposition { get; }
+        public abstract NamedComposition<BaseQuantity> BaseQuantityComposition { get; }
 
         static Quantity()
         {
@@ -71,17 +71,19 @@ namespace ConvertAllTheThings.Core
         }
 
 
-        public static Quantity GetFromBaseComposition(BaseComposition<IBaseUnit> composition)
+        public static Quantity GetFromBaseComposition(NamedComposition<IUnit> composition)
         {
-            var quantityComposition = BaseComposition<BaseQuantity>.
-                CreateFromExistingBaseComposition(
-                composition,
-                baseUnit => baseUnit.BaseQuantity);
+            var resultingQuantComp = Empty.BaseQuantityComposition;
+            foreach (var (unit, power) in composition.Composition)
+            {
+                var quantComp = unit.Quantity.BaseQuantityComposition.Pow(power);
+                resultingQuantComp *= quantComp;
+            }
 
-            return GetFromBaseComposition(quantityComposition);
+            return GetFromBaseComposition(resultingQuantComp);
         }
 
-        public static Quantity GetFromBaseComposition(BaseComposition<BaseQuantity> composition)
+        public static Quantity GetFromBaseComposition(NamedComposition<BaseQuantity> composition)
         {
             if (s_compositions_quantities.TryGetValue(composition, out var res))
                 return res;
@@ -91,7 +93,7 @@ namespace ConvertAllTheThings.Core
 
         public static Quantity MultiplyOrDivide(Quantity lhs, Quantity rhs, bool multiplication)
         {
-            var resultingComposition = BaseComposition<BaseQuantity>.MultiplyOrDivide(
+            var resultingComposition = NamedComposition<BaseQuantity>.MultiplyOrDivide(
                 lhs.BaseQuantityComposition,
                 rhs.BaseQuantityComposition,
                 multiplication: multiplication);

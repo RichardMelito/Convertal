@@ -8,7 +8,7 @@ using ConvertAllTheThings.Core.Extensions;
 namespace ConvertAllTheThings.Core.Tests
 {
     [TestClass]
-    public class TestBaseComposition : BaseTestClass
+    public class TestNamedComposition : BaseTestClass
     {
         class SimBase : MaybeNamed, IBase, IEquatable<SimBase>
         {
@@ -38,9 +38,9 @@ namespace ConvertAllTheThings.Core.Tests
                 return Array.Empty<IMaybeNamed>().SortByTypeAndName();
             }
 
-            public BaseComposition<SimBase> MakeBaseComposition()
+            public NamedComposition<SimBase> MakeComposition()
             {
-                return new BaseComposition<SimBase>(this);
+                return new NamedComposition<SimBase>(this);
             }
 
             public bool Equals(SimBase? other)
@@ -63,7 +63,7 @@ namespace ConvertAllTheThings.Core.Tests
         public void TestConstruction()
         {
             SimBase simBase = new();
-            BaseComposition<SimBase> toTest = new(simBase);
+            NamedComposition<SimBase> toTest = new(simBase);
             Assert.AreEqual(1, toTest.Composition.Count);
             Assert.IsTrue(toTest.Composition.ContainsKey(simBase));
             Assert.AreEqual(1m, toTest.Composition[simBase]);
@@ -75,8 +75,8 @@ namespace ConvertAllTheThings.Core.Tests
             SimBase lhsBase = new();
             SimBase rhsBase = new();
 
-            var lhs = lhsBase.MakeBaseComposition();
-            var rhs = rhsBase.MakeBaseComposition();
+            var lhs = lhsBase.MakeComposition();
+            var rhs = rhsBase.MakeComposition();
 
             var product = lhs * rhs;
             Assert.AreEqual(2, product.Composition.Count);
@@ -94,7 +94,7 @@ namespace ConvertAllTheThings.Core.Tests
             Assert.AreEqual(2m, product.Composition[rhsBase]);
 
             SimBase thirdBase = new();
-            var thirdFactor = thirdBase.MakeBaseComposition();
+            var thirdFactor = thirdBase.MakeComposition();
             product *= thirdFactor;
             Assert.AreEqual(3, product.Composition.Count);
             Assert.AreEqual(4m, product.Composition[lhsBase]);
@@ -108,8 +108,8 @@ namespace ConvertAllTheThings.Core.Tests
             SimBase lhsBase = new();
             SimBase rhsBase = new();
 
-            var lhs = lhsBase.MakeBaseComposition();
-            var rhs = rhsBase.MakeBaseComposition();
+            var lhs = lhsBase.MakeComposition();
+            var rhs = rhsBase.MakeComposition();
 
             var quotient = lhs / rhs;
             Assert.AreEqual(2, quotient.Composition.Count);
@@ -130,7 +130,7 @@ namespace ConvertAllTheThings.Core.Tests
             Assert.AreEqual(-2m, quotient.Composition[rhsBase]);
 
             SimBase thirdBase = new();
-            var thirdFactor = thirdBase.MakeBaseComposition();
+            var thirdFactor = thirdBase.MakeComposition();
             quotient /= thirdFactor;
             Assert.AreEqual(3, quotient.Composition.Count);
             Assert.AreEqual(-1m, quotient.Composition[lhsBase]);
@@ -139,7 +139,7 @@ namespace ConvertAllTheThings.Core.Tests
 
             quotient /= quotient;
             Assert.AreEqual(0, quotient.Composition.Count);
-            Assert.AreSame(BaseComposition<SimBase>.Empty, quotient);
+            Assert.AreSame(NamedComposition<SimBase>.Empty, quotient);
         }
 
         [TestMethod]
@@ -148,8 +148,8 @@ namespace ConvertAllTheThings.Core.Tests
             SimBase lhsBase = new();
             SimBase rhsBase = new();
 
-            var lhs = lhsBase.MakeBaseComposition();
-            var rhs = rhsBase.MakeBaseComposition();
+            var lhs = lhsBase.MakeComposition();
+            var rhs = rhsBase.MakeComposition();
 
             var product = lhs * rhs * rhs * rhs / (lhs * lhs * lhs * rhs);
             Assert.AreEqual(2, product.Composition.Count);
@@ -160,7 +160,7 @@ namespace ConvertAllTheThings.Core.Tests
         [TestMethod]
         public void TestEmptyOperations()
         {
-            var empty = BaseComposition<SimBase>.Empty;
+            var empty = NamedComposition<SimBase>.Empty;
             var product = empty * empty;
             Assert.AreSame(empty, product);
 
@@ -168,7 +168,7 @@ namespace ConvertAllTheThings.Core.Tests
             Assert.AreSame(empty, quotient);
 
             SimBase notEmptyBase = new();
-            var notEmpty = notEmptyBase.MakeBaseComposition();
+            var notEmpty = notEmptyBase.MakeComposition();
 
             product = notEmpty * empty;
             Assert.AreEqual(notEmpty, product);
@@ -188,12 +188,12 @@ namespace ConvertAllTheThings.Core.Tests
             SimBase lhsBase = new();
             SimBase rhsBase = new();
 
-            var lhs = lhsBase.MakeBaseComposition();
-            var rhs = rhsBase.MakeBaseComposition();
+            var lhs = lhsBase.MakeComposition();
+            var rhs = rhsBase.MakeComposition();
 
             var sameResult1 = lhs * lhs / rhs;
             var sameResult2 = lhs / rhs * lhs;
-            var sameResult3 = (BaseComposition<SimBase>.Empty / rhs) * lhs * lhs;
+            var sameResult3 = (NamedComposition<SimBase>.Empty / rhs) * lhs * lhs;
             Assert.AreNotSame(sameResult1, sameResult2);
             Assert.AreNotSame(sameResult2, sameResult3);
             Assert.AreNotSame(sameResult1, sameResult3);
@@ -217,8 +217,8 @@ namespace ConvertAllTheThings.Core.Tests
             SimBase lhsBase = new();
             SimBase rhsBase = new();
 
-            var lhs = lhsBase.MakeBaseComposition();
-            var rhs = rhsBase.MakeBaseComposition();
+            var lhs = lhsBase.MakeComposition();
+            var rhs = rhsBase.MakeComposition();
 
             var product = lhs * lhs * lhs / rhs;
             var squared = product.Pow(2);
@@ -245,9 +245,9 @@ namespace ConvertAllTheThings.Core.Tests
             SimBase simBase2 = new("sim2");
             SimBase simBase3 = new("sim3");
 
-            var sim1 = simBase1.MakeBaseComposition();
-            var sim2 = simBase2.MakeBaseComposition();
-            var sim3 = simBase3.MakeBaseComposition();
+            var sim1 = simBase1.MakeComposition();
+            var sim2 = simBase2.MakeComposition();
+            var sim3 = simBase3.MakeComposition();
 
             var product = sim2 * sim1 * sim2 / sim3 / sim3;
             Assert.AreEqual(

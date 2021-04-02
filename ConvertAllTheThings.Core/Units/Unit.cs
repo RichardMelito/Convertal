@@ -18,7 +18,7 @@ namespace ConvertAllTheThings.Core
 
         public decimal FundamentalMultiplier { get; }
         public decimal FundamentalOffset { get; }
-        public BaseComposition<IBaseUnit>? MaybeBaseUnitComposition { get; protected set; } = null;
+        public NamedComposition<IUnit> UnitComposition { get; protected set; } 
 
         static Unit()
         {
@@ -29,12 +29,17 @@ namespace ConvertAllTheThings.Core
 
         // only to be called when defining fundamental units for new
         // quantities, and thus offset will always be 0
-        protected Unit(string? name, Quantity quantity, decimal fundamentalMultiplier)
+        protected Unit(
+            string? name, 
+            Quantity quantity, 
+            decimal fundamentalMultiplier, 
+            NamedComposition<IUnit>? composition = null)
             : base(name)
         {
             Quantity = quantity;
             FundamentalMultiplier = fundamentalMultiplier;
             FundamentalOffset = 0;
+            UnitComposition = composition ?? new(this);
         }
 
         protected Unit(string? name, IUnit otherUnit, decimal multiplier, decimal offset)
@@ -43,19 +48,36 @@ namespace ConvertAllTheThings.Core
             Quantity = otherUnit.Quantity;
             FundamentalMultiplier = otherUnit.FundamentalMultiplier * multiplier;
             FundamentalOffset = (otherUnit.FundamentalOffset / multiplier) + offset;
+            UnitComposition = new(this);
         }
 
-        protected Unit(string name, BaseComposition<IBaseUnit> composition)
+        protected Unit(string name, NamedComposition<IUnit> composition)
             : base(name)
         {
-            MaybeBaseUnitComposition = composition;
-            Quantity = Quantity.GetFromBaseComposition(MaybeBaseUnitComposition);
+            // TODO: notify user that offsets will be ignored
+            //var offsetQuery =
+            //    from baseUnit in composition.Composition.Keys
+            //    where baseUnit.FundamentalOffset != 0m
+            //    select baseUnit;
+
+            UnitComposition = composition;
+            Quantity = Quantity.GetFromBaseComposition(UnitComposition);
             FundamentalMultiplier = 1m;
-            foreach (var (unit, power) in MaybeBaseUnitComposition.Composition)
+            FundamentalOffset = 0;
+            foreach (var (unit, power) in UnitComposition.Composition)
             {
                 var multiplier = DecimalEx.Pow(unit.FundamentalMultiplier, power);
                 FundamentalMultiplier *= multiplier;
             }
+        }
+
+        public static Unit DefineFromComposition(string name, NamedComposition<IUnit> composition)
+        {
+            var quantity = Quantity.GetFromBaseComposition(composition);
+            if (quantity is BaseQuantity)
+                return new BaseUnit(name, composition);
+            else
+                return new DerivedUnit(name, composition);
         }
 
         public Term ConvertTo(decimal magnitudeOfThis, IUnit resultingIUnit)
@@ -87,7 +109,7 @@ namespace ConvertAllTheThings.Core
 
         public override string ToString()
         {
-            return MaybeName ?? MaybeBaseUnitComposition!.ToString();
+            return MaybeName ?? UnitComposition!.ToString();
         }
 
         public bool Equals(IUnit? other)
