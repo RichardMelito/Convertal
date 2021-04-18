@@ -12,8 +12,6 @@ namespace ConvertAllTheThings.Core
     {
         public static MeasurementSystem? Current { get; set; } = null;
 
-
-        private bool _disposed = false;
         private readonly Dictionary<Quantity, IUnit> _quantities_units = new();
 
         public IReadOnlyDictionary<Quantity, IUnit> Dictionary { get; } 
@@ -79,9 +77,6 @@ namespace ConvertAllTheThings.Core
         protected override void DisposeBody(bool disposeDependents)
         {
             // nothing should depend on a MeasurementSystem
-
-            if (_disposed)
-                return;
 
             if (Current == this)
                 Current = null;
