@@ -28,6 +28,16 @@ namespace ConvertAllTheThings.Core
 
         }
 
+        public override string ToString()
+        {
+            return "";
+        }
+
+        public string ToStringSymbol()
+        {
+            return "";
+        }
+
         public bool Equals(IUnit? other)
         {
             return base.Equals(other);

@@ -11,6 +11,8 @@ namespace ConvertAllTheThings.Core
         string? MaybeName { get; }
         string? MaybeSymbol { get; }
 
+        string ToStringSymbol();
+
         IOrderedEnumerable<IMaybeNamed> GetAllDependents(ref IEnumerable<IMaybeNamed> toIgnore);
 
         internal void DisposeThisAndDependents(bool disposeDependents);

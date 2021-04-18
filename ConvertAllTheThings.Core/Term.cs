@@ -23,6 +23,18 @@ namespace ConvertAllTheThings.Core
             return Magnitude + " " + Unit;
         }
 
+        public string ToStringSymbol()
+        {
+            return Magnitude + " " + Unit.ToStringSymbol();
+        }
+
+        public Term ConvertUnitToPreferredSystem(MeasurementSystem? input = null)
+        {
+            var system = input ?? MeasurementSystem.Current;
+            var resultingUnit = system?.GetUnit(Quantity) ?? Quantity.FundamentalUnit;
+            return ConvertUnitTo(resultingUnit);
+        }
+        
         public Term ConvertUnitToFundamental()
         {
             return Unit.ConvertToFundamental(Magnitude);

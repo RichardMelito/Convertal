@@ -311,7 +311,7 @@ namespace ConvertAllTheThings.Core
             }
         }
 
-        protected virtual void Dispose(bool disposing, bool disposeDependents = true)
+        protected void Dispose(bool disposing, bool disposeDependents = true)
         {
             if (disposing)
                 ((IMaybeNamed)this).DisposeThisAndDependents(disposeDependents);
