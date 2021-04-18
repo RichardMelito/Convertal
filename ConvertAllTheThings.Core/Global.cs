@@ -14,6 +14,7 @@ namespace ConvertAllTheThings.Core
             EmptyQuantity.InitializeClass();
             Unit.InitializeClass();
             Prefix.InitializeClass();
+            MeasurementSystem.InitializeClass();
         }
     }
 }

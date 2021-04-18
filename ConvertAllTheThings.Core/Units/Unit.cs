@@ -132,6 +132,10 @@ namespace ConvertAllTheThings.Core
                     $" fundamental unit {this} without first disposing of " +
                     $"quantity {Quantity}.");
 
+            var allSystems = GetAllMaybeNameds<MeasurementSystem>().Cast<MeasurementSystem>();
+            foreach (var system in allSystems)
+                system.RemoveUnit(this);
+
             _disposed = true;
             base.DisposeBody(disposeDependents);
         }

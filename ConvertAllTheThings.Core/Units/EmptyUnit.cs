@@ -57,6 +57,7 @@ namespace ConvertAllTheThings.Core
 
         public IOrderedEnumerable<IMaybeNamed> GetAllDependents(ref IEnumerable<IMaybeNamed> toIgnore)
         {
+            toIgnore = toIgnore.UnionAppend(this);
             return Array.Empty<IMaybeNamed>().SortByTypeAndName();
         }
     }

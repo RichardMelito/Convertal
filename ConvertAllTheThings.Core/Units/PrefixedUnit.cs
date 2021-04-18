@@ -158,6 +158,11 @@ namespace ConvertAllTheThings.Core
                         dependent.DisposeThisAndDependents(false);
                 }
 
+
+                var allSystems = MaybeNamed.GetAllMaybeNameds<MeasurementSystem>().Cast<MeasurementSystem>();
+                foreach (var system in allSystems)
+                    system.RemoveUnit(this);
+
                 // TODO: free unmanaged resources (unmanaged objects) and override finalizer
                 // TODO: set large fields to null
                 _disposedValue = true;

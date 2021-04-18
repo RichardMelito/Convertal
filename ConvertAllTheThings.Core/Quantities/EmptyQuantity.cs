@@ -33,6 +33,7 @@ namespace ConvertAllTheThings.Core
 
         public override IOrderedEnumerable<IMaybeNamed> GetAllDependents(ref IEnumerable<IMaybeNamed> toIgnore)
         {
+            toIgnore = toIgnore.UnionAppend(this);
             return Array.Empty<IMaybeNamed>().SortByTypeAndName();
         }
 

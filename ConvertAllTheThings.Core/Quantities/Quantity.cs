@@ -140,6 +140,10 @@ namespace ConvertAllTheThings.Core
                     $"Could not remove Quantity {MaybeName ?? "{null}"} with composition " +
                     $"{BaseQuantityComposition} from static dictionary.");
 
+            var allSystems = GetAllMaybeNameds<MeasurementSystem>().Cast<MeasurementSystem>();
+            foreach (var system in allSystems)
+                system.RemoveQuantity(this);
+
             _disposed = true;
             base.DisposeBody(disposeDependents);
         }
