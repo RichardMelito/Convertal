@@ -40,6 +40,8 @@ namespace ConvertAllTheThings.Core
         private bool _disposedValue;
 
         public string? MaybeName { get; private set; } = null;
+
+        public string? MaybeSymbol { get; private set; } = null;
         
         protected MaybeNamed(string? name)
         {
@@ -64,9 +66,23 @@ namespace ConvertAllTheThings.Core
                 s_types_nameds[GetTypeWithinDictionary()].Add(this);
         }
 
+        public void ChangeSymbol(string symbol)
+        {
+            if (MaybeName is null)
+                throw new InvalidOperationException("Must assign a name before assigning a symbol.");
+
+            ThrowIfNameNotValid(symbol, GetTypeWithinDictionary(), true);
+            MaybeSymbol = symbol;
+        }
+
         public override string ToString()
         {
             return MaybeName ?? base.ToString()!;
+        }
+
+        public string ToStringSymbol()
+        {
+            return MaybeSymbol ?? ToString();
         }
 
         public int CompareTo(MaybeNamed? other)
@@ -108,13 +124,13 @@ namespace ConvertAllTheThings.Core
                 maybeNamed.Dispose();
         }
 
-        public static void ThrowIfNameNotValid<T>(string name)
+        public static void ThrowIfNameNotValid<T>(string name, bool isSymbol = false)
             where T : MaybeNamed
         {
-            ThrowIfNameNotValid(name, GetTypeWithinDictionary(typeof(T)));
+            ThrowIfNameNotValid(name, GetTypeWithinDictionary(typeof(T)), isSymbol);
         }
 
-        private static void ThrowIfNameNotValid(string name, Type type)
+        private static void ThrowIfNameNotValid(string name, Type type, bool isSymbol = false)
         {
             if (string.IsNullOrWhiteSpace(name))
                 throw new ArgumentException("MaybeName must not be empty.");
@@ -125,19 +141,19 @@ namespace ConvertAllTheThings.Core
             if (!name.All(char.IsLetterOrDigit))
                 throw new ArgumentException("MaybeName must be composed of alphanumeric characters.");
 
-            if (NameAlreadyRegistered(name, type))
+            if (NameAlreadyRegistered(name, type, isSymbol))
             {
                 throw new InvalidOperationException($"There is already a {type.Name} " +
                     $"named {name}.");
             }
         }
 
-        private static bool NameIsValid(string name, Type type)
+        private static bool NameIsValid(string name, Type type, bool isSymbol)
         {
             // TODO
             try
             {
-                ThrowIfNameNotValid(name, type);
+                ThrowIfNameNotValid(name, type, isSymbol);
                 return true;
             }
             catch (Exception)
@@ -167,38 +183,59 @@ namespace ConvertAllTheThings.Core
             return GetTypeWithinDictionary(GetType());
         }
 
-        private static bool NameAlreadyRegistered(string name, Type type)
+        private static bool NameAlreadyRegistered(string name, Type type, bool isSymbol = false)
         {
             type = GetTypeWithinDictionary(type);
 
-            var matches = from named in s_types_nameds[type]
-                          where named.MaybeName == name 
+            IEnumerable<MaybeNamed> matches;
+            if (isSymbol)
+            {
+                matches = from named in s_types_nameds[type]
+                          where named.MaybeSymbol == name
                           select named;
+            }
+            else
+            {
+                matches = from named in s_types_nameds[type]
+                          where named.MaybeName == name
+                          select named;
+            }
 
             return matches.Any();
         }
 
-        public static bool NameIsValid<T>(string name)
+        public static bool NameIsValid<T>(string name, bool isSymbol = false)
             where T : MaybeNamed
         {
-            return NameIsValid(name, GetTypeWithinDictionary(typeof(T)));
+            return NameIsValid(name, GetTypeWithinDictionary(typeof(T)), isSymbol);
         }
 
-        public static bool NameAlreadyRegistered<T>(string name)
+        public static bool NameAlreadyRegistered<T>(string name, bool isSymbol = false)
             where T : MaybeNamed
         {
-            return NameAlreadyRegistered(name, GetTypeWithinDictionary(typeof(T)));
+            return NameAlreadyRegistered(name, GetTypeWithinDictionary(typeof(T)), isSymbol);
         }
 
         public static bool TryGetFromName<T>(
             string name,
-            out T? namedObject)
+            out T? namedObject,
+            bool isSymbol = false)
             where T : MaybeNamed
         {
             var nameds = s_types_nameds[GetTypeWithinDictionary(typeof(T))];
-            var matches = (from named in nameds
-                           where named.MaybeName == name 
+            MaybeNamed[] matches;
+            if (isSymbol)
+            {
+                matches = (from named in nameds
+                           where named.MaybeSymbol == name
                            select named).ToArray();
+            }
+            else
+            {
+                matches = (from named in nameds
+                           where named.MaybeName == name
+                           select named).ToArray();
+            }
 
             if (matches.Length == 1)
             {
@@ -216,14 +253,14 @@ namespace ConvertAllTheThings.Core
             }
         }
 
-        public static T GetFromName<T>(string name)
+        public static T GetFromName<T>(string name, bool isSymbol = false)
             where T : MaybeNamed
         {
-            if (TryGetFromName<T>(name, out var res))
+            if (TryGetFromName<T>(name, out var res, isSymbol))
                 return res!;
 
             throw new InvalidOperationException($"No instances of " +
-                $"{typeof(T).Name} with name {name}.");
+                $"{typeof(T).Name} with {(isSymbol ? "symbol" : "name")} {name}.");
         }
 
         protected static void AddTypeToDictionary<T>()

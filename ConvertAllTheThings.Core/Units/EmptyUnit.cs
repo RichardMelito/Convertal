@@ -21,6 +21,8 @@ namespace ConvertAllTheThings.Core
 
         public string? MaybeName => null;
 
+        public string? MaybeSymbol => null;
+
         private EmptyUnit()
         {
 

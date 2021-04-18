@@ -16,6 +16,17 @@ namespace ConvertAllTheThings.Core
 
         public string? MaybeName => Prefix.MaybeName! + "_" + Unit.MaybeName!;
 
+        public string? MaybeSymbol
+        {
+            get
+            {
+                if (Prefix.MaybeSymbol is null || Unit.MaybeSymbol is null)
+                    return null;
+
+                return Prefix.MaybeSymbol + "_" + Unit.MaybeSymbol;
+            }
+        }
+
         public decimal FundamentalMultiplier => Unit.FundamentalMultiplier * Prefix.Multiplier;
         public decimal FundamentalOffset => Unit.FundamentalOffset / Prefix.Multiplier;
         public Unit Unit { get; private set; }
@@ -26,6 +37,11 @@ namespace ConvertAllTheThings.Core
         public override string ToString()
         {
             return MaybeName!;
+        }
+
+        public string ToStringSymbol()
+        {
+            return Prefix.ToStringSymbol() + "_" + Unit.ToStringSymbol();
         }
 
         private static readonly List<PrefixedUnit> s_prefixedUnits = new();

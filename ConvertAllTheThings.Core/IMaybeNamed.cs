@@ -9,6 +9,8 @@ namespace ConvertAllTheThings.Core
     public interface IMaybeNamed : IDisposable
     {
         string? MaybeName { get; }
+        string? MaybeSymbol { get; }
+
         IOrderedEnumerable<IMaybeNamed> GetAllDependents(ref IEnumerable<IMaybeNamed> toIgnore);
 
         internal void DisposeThisAndDependents(bool disposeDependents);
