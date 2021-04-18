@@ -11,8 +11,13 @@ namespace ConvertAllTheThings.Core
     {
 
         // for defining from an existng IBaseUnit
-        public BaseUnit(string name, IBaseUnit otherUnit, decimal multiplier, decimal offset = 0)
-            : base(name, otherUnit, multiplier, offset)
+        public BaseUnit(
+            string name, 
+            IBaseUnit otherUnit, 
+            decimal multiplier, 
+            decimal offset = 0,
+            string? symbol = null)
+            : base(name, otherUnit, multiplier, offset, symbol)
         {
 
         }
@@ -23,8 +28,8 @@ namespace ConvertAllTheThings.Core
         /// <param name="name"></param>
         /// <param name="quantity"></param>
         /// <param name="fundamentalMultiplier"></param>
-        internal BaseUnit(string name, BaseQuantity quantity, decimal fundamentalMultiplier)
-            : base(name, quantity, fundamentalMultiplier)
+        internal BaseUnit(string name, BaseQuantity quantity, decimal fundamentalMultiplier, string? symbol)
+            : base(name, quantity, fundamentalMultiplier, symbol: symbol)
         {
 
         }

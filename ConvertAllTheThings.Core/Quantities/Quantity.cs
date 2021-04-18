@@ -41,9 +41,8 @@ namespace ConvertAllTheThings.Core
         }
         internal static void InitializeClass() { }
 
-        protected Quantity(
-            string? name)
-            : base(name)
+        protected Quantity(string? name, string? symbol)
+            : base(name, symbol)
         {
             
         }

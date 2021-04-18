@@ -43,7 +43,7 @@ namespace ConvertAllTheThings.Core
 
         public string? MaybeSymbol { get; private set; } = null;
         
-        protected MaybeNamed(string? name)
+        protected MaybeNamed(string? name, string? symbol = null)
         {
             if (name is null)
                 return;
@@ -52,6 +52,9 @@ namespace ConvertAllTheThings.Core
 
             MaybeName = name;
             s_types_nameds[GetTypeWithinDictionary()].Add(this);
+
+            if (symbol is not null)
+                ChangeSymbol(symbol);
         }
 
         public abstract IOrderedEnumerable<IMaybeNamed> GetAllDependents(ref IEnumerable<IMaybeNamed> toIgnore);

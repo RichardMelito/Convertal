@@ -15,8 +15,8 @@ namespace ConvertAllTheThings.Core
 
         public override NamedComposition<BaseQuantity> BaseQuantityComposition { get; }
 
-        private BaseQuantity(string name)
-            : base(name)
+        private BaseQuantity(string name, string? symbol)
+            : base(name, symbol)
         {
             BaseQuantityComposition = new NamedComposition<BaseQuantity>(this);
             Init();
@@ -25,24 +25,26 @@ namespace ConvertAllTheThings.Core
         public static BaseQuantity DefineNewBaseQuantity(
             string quantityName,
             string fundamentalUnitName,
-            Prefix? unitPrefix = null)
+            Prefix? unitPrefix = null,
+            string? quantitySymbol = null,
+            string? unitSymbol = null)
         {
             // TODO
             ThrowIfNameNotValid<Unit>(fundamentalUnitName);
             ThrowIfNameNotValid<Quantity>(quantityName);
 
 
-            BaseQuantity quantity = new(quantityName);
+            BaseQuantity quantity = new(quantityName, quantitySymbol);
 
             if (unitPrefix is null)
             {
-                BaseUnit unit = new(fundamentalUnitName, quantity, 1m);
+                BaseUnit unit = new(fundamentalUnitName, quantity, 1m, unitSymbol);
                 quantity._fundamentalUnit = unit;
             }
             else
             {
                 var fundamentalMultiplier = 1m / unitPrefix.Multiplier;
-                BaseUnit unit = new(fundamentalUnitName, quantity, fundamentalMultiplier);
+                BaseUnit unit = new(fundamentalUnitName, quantity, fundamentalMultiplier, unitSymbol);
                 quantity._fundamentalUnit = new PrefixedBaseUnit(unit, unitPrefix);
             }
 

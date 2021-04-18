@@ -27,8 +27,13 @@ namespace ConvertAllTheThings.Core
         }
 
         // for defining from an existing IDerivedUnit
-        public DerivedUnit(string name, IDerivedUnit otherUnit, decimal multiplier, decimal offset = 0)
-            : base(name, otherUnit, multiplier, offset)
+        public DerivedUnit(
+            string name, 
+            IDerivedUnit otherUnit, 
+            decimal multiplier, 
+            decimal offset = 0,
+            string? symbol = null)
+            : base(name, otherUnit, multiplier, offset, symbol: symbol)
         {
 
         }

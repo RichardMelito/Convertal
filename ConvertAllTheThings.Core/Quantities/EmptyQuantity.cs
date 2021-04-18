@@ -26,7 +26,7 @@ namespace ConvertAllTheThings.Core
         }
 
         private EmptyQuantity()
-            : base(null)
+            : base(null, null)
         {
             Init();
         }

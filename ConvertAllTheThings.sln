@@ -5,7 +5,9 @@ VisualStudioVersion = 16.0.31005.135
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ConvertAllTheThings.Core", "ConvertAllTheThings.Core\ConvertAllTheThings.Core.csproj", "{8FAB4710-4E72-4DC4-9849-1CB1FB1ADB20}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ConvertAllTheThings.Core.Tests", "ConvertAllTheThings.Core.Tests\ConvertAllTheThings.Core.Tests.csproj", "{5BCD979F-3985-4FC7-B727-60ABCA78B01D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ConvertAllTheThings.Core.Tests", "ConvertAllTheThings.Core.Tests\ConvertAllTheThings.Core.Tests.csproj", "{5BCD979F-3985-4FC7-B727-60ABCA78B01D}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ConvertAllTheThings.Defaults", "ConvertAllTheThings.Defaults\ConvertAllTheThings.Defaults.csproj", "{8C0C43B5-D2A5-46A9-A479-4B60A183643B}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -21,6 +23,10 @@ Global
 		{5BCD979F-3985-4FC7-B727-60ABCA78B01D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5BCD979F-3985-4FC7-B727-60ABCA78B01D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{5BCD979F-3985-4FC7-B727-60ABCA78B01D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8C0C43B5-D2A5-46A9-A479-4B60A183643B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8C0C43B5-D2A5-46A9-A479-4B60A183643B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8C0C43B5-D2A5-46A9-A479-4B60A183643B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8C0C43B5-D2A5-46A9-A479-4B60A183643B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

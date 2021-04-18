@@ -17,7 +17,7 @@ namespace ConvertAllTheThings.Core
         /// </summary>
         /// <param name="composition"></param>
         internal DerivedQuantity(NamedComposition<BaseQuantity> composition)
-            : base(null)
+            : base(null, null)
         {
             BaseQuantityComposition = composition;
             FundamentalUnit = new DerivedUnit(this);

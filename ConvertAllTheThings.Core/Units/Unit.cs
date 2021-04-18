@@ -33,8 +33,9 @@ namespace ConvertAllTheThings.Core
             string? name, 
             Quantity quantity, 
             decimal fundamentalMultiplier, 
-            NamedComposition<IUnit>? composition = null)
-            : base(name)
+            NamedComposition<IUnit>? composition = null,
+            string? symbol = null)
+            : base(name, symbol)
         {
             Quantity = quantity;
             FundamentalMultiplier = fundamentalMultiplier;
@@ -42,8 +43,13 @@ namespace ConvertAllTheThings.Core
             UnitComposition = composition ?? new(this);
         }
 
-        protected Unit(string? name, IUnit otherUnit, decimal multiplier, decimal offset)
-            : base(name)
+        protected Unit(
+            string? name, 
+            IUnit otherUnit, 
+            decimal multiplier, 
+            decimal offset, 
+            string? symbol)
+            : base(name, symbol)
         {
             Quantity = otherUnit.Quantity;
             FundamentalMultiplier = otherUnit.FundamentalMultiplier * multiplier;
@@ -51,6 +57,7 @@ namespace ConvertAllTheThings.Core
             UnitComposition = new(this);
         }
 
+        // for defining from a chain of operations
         protected Unit(string name, NamedComposition<IUnit> composition)
             : base(name)
         {
