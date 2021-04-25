@@ -17,7 +17,7 @@ namespace ConvertAllTheThings.Defaults
         public static readonly DerivedQuantity Acceleration;
         public static readonly DerivedQuantity Force;
         public static readonly DerivedQuantity Pressure;
-        public static readonly DerivedQuantity Energy;
+        public static readonly DerivedQuantity EnergyAndTorque; // the same until vector stuff is implemented
         public static readonly DerivedQuantity Power;
         //public static readonly DerivedQuantity Torque;
         public static readonly DerivedQuantity AngularVelocity;
@@ -63,8 +63,8 @@ namespace ConvertAllTheThings.Defaults
             Acceleration = (DerivedQuantity)(Speed / Time);
             Force = (DerivedQuantity)(Mass * Acceleration);
             Pressure = (DerivedQuantity)(Force / Area);
-            Energy = (DerivedQuantity)(Force * Length);
-            Power = (DerivedQuantity)(Energy / Time);
+            EnergyAndTorque = (DerivedQuantity)(Force * Length);
+            Power = (DerivedQuantity)(EnergyAndTorque / Time);
             //Torque = (DerivedQuantity)(Force * Length);
             AngularVelocity = (DerivedQuantity)(Angle / Time);
             AngularAcceleration = (DerivedQuantity)(AngularVelocity / Time);
@@ -72,7 +72,7 @@ namespace ConvertAllTheThings.Defaults
             Density = (DerivedQuantity)(Mass / Volume);
             SurfaceDensity = (DerivedQuantity)(Mass / Area);
             ElectricCharge = (DerivedQuantity)(ElectricCurrent * Time);
-            Voltage = (DerivedQuantity)(Energy / ElectricCharge);
+            Voltage = (DerivedQuantity)(EnergyAndTorque / ElectricCharge);
             ElectricCapacitance = (DerivedQuantity)(ElectricCharge / Voltage);
             ElectricResistance = (DerivedQuantity)(Voltage / ElectricCurrent);
             ElectricConductance = (DerivedQuantity)(ElectricResistance.Pow(-1m));
@@ -88,9 +88,9 @@ namespace ConvertAllTheThings.Defaults
             DynamicViscosity = (DerivedQuantity)(Pressure * Time);
             KinematicViscosity = (DerivedQuantity)(DynamicViscosity / Density);
             PowerFlux = (DerivedQuantity)(Power / Area);
-            HeatCapacity = (DerivedQuantity)(Energy / Temperature);
+            HeatCapacity = (DerivedQuantity)(EnergyAndTorque / Temperature);
             SpecificHeatCapacity = (DerivedQuantity)(HeatCapacity / Mass);
-            SpecificEnergy = (DerivedQuantity)(Energy / Mass);
+            SpecificEnergy = (DerivedQuantity)(EnergyAndTorque / Mass);
             ThermalConductivity = (DerivedQuantity)(Power / (Length * Temperature));
             //EnergyDensity = (DerivedQuantity)(Energy / Volume);
             ElectricFieldStrength = (DerivedQuantity)(Voltage / Length);
@@ -113,7 +113,7 @@ namespace ConvertAllTheThings.Defaults
             Acceleration.ChangeSymbol("a");
             Force.ChangeSymbol("F");
             Pressure.ChangeSymbol("p");
-            Energy.ChangeSymbol("E");
+            EnergyAndTorque.ChangeSymbol("E");
             Power.ChangeSymbol("P");
             //Torque.ChangeSymbol("τ");
             AngularVelocity.ChangeSymbol("ω");
