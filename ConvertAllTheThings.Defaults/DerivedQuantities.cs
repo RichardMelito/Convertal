@@ -19,7 +19,7 @@ namespace ConvertAllTheThings.Defaults
         public static readonly DerivedQuantity Pressure;
         public static readonly DerivedQuantity Energy;
         public static readonly DerivedQuantity Power;
-        public static readonly DerivedQuantity Torque;
+        //public static readonly DerivedQuantity Torque;
         public static readonly DerivedQuantity AngularVelocity;
         public static readonly DerivedQuantity AngularAcceleration;
         public static readonly DerivedQuantity WaveNumber;
@@ -46,7 +46,7 @@ namespace ConvertAllTheThings.Defaults
         public static readonly DerivedQuantity SpecificHeatCapacity;
         public static readonly DerivedQuantity SpecificEnergy;
         public static readonly DerivedQuantity ThermalConductivity;
-        public static readonly DerivedQuantity EnergyDensity;
+        //public static readonly DerivedQuantity EnergyDensity;
         public static readonly DerivedQuantity ElectricFieldStrength;
         public static readonly DerivedQuantity ElectricChargeDensity;
         public static readonly DerivedQuantity SurfaceChargeDensity;
@@ -65,7 +65,7 @@ namespace ConvertAllTheThings.Defaults
             Pressure = (DerivedQuantity)(Force / Area);
             Energy = (DerivedQuantity)(Force * Length);
             Power = (DerivedQuantity)(Energy / Time);
-            Torque = (DerivedQuantity)(Force * Length);
+            //Torque = (DerivedQuantity)(Force * Length);
             AngularVelocity = (DerivedQuantity)(Angle / Time);
             AngularAcceleration = (DerivedQuantity)(AngularVelocity / Time);
             WaveNumber = (DerivedQuantity)(Length.Pow(-1m));
@@ -92,7 +92,7 @@ namespace ConvertAllTheThings.Defaults
             SpecificHeatCapacity = (DerivedQuantity)(HeatCapacity / Mass);
             SpecificEnergy = (DerivedQuantity)(Energy / Mass);
             ThermalConductivity = (DerivedQuantity)(Power / (Length * Temperature));
-            EnergyDensity = (DerivedQuantity)(Energy / Volume);
+            //EnergyDensity = (DerivedQuantity)(Energy / Volume);
             ElectricFieldStrength = (DerivedQuantity)(Voltage / Length);
             ElectricChargeDensity = (DerivedQuantity)(ElectricCharge / Volume);
             SurfaceChargeDensity = (DerivedQuantity)(ElectricCharge / Area);
@@ -115,7 +115,7 @@ namespace ConvertAllTheThings.Defaults
             Pressure.ChangeSymbol("p");
             Energy.ChangeSymbol("E");
             Power.ChangeSymbol("P");
-            Torque.ChangeSymbol("τ");
+            //Torque.ChangeSymbol("τ");
             AngularVelocity.ChangeSymbol("ω");
             AngularAcceleration.ChangeSymbol("α");
             WaveNumber.ChangeSymbol("σ");

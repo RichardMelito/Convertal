@@ -1,5 +1,6 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using ConvertAllTheThings.Defaults;
+using ConvertAllTheThings.Core;
 
 namespace ConvertAllTheThings.Defaults.Tests
 {
@@ -9,8 +10,13 @@ namespace ConvertAllTheThings.Defaults.Tests
         [TestMethod]
         public void TestMethod1()
         {
-            ConvertAllTheThings.Core.Global.InitializeAssembly();
-            var x = DerivedQuantities.Acceleration;
+            Global.InitializeAssembly();
+
+            foreach (var field in typeof(DerivedQuantities).GetFields())
+            {
+                var quantity = (DerivedQuantity)field.GetValue(field.Name)!;
+                Assert.AreEqual(field.Name, quantity.MaybeName);
+            }
         }
     }
 }
