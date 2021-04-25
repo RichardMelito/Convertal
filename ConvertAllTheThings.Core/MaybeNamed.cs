@@ -78,6 +78,12 @@ namespace ConvertAllTheThings.Core
             MaybeSymbol = symbol;
         }
 
+        public void ChangeNameAndSymbol(string newName, string symbol)
+        {
+            ChangeName(newName);
+            ChangeSymbol(symbol);
+        }
+
         public override string ToString()
         {
             return MaybeName ?? base.ToString()!;
