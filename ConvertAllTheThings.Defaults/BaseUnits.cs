@@ -17,6 +17,8 @@ namespace ConvertAllTheThings.Defaults
         public static readonly BaseUnit Ampere = (BaseUnit)ElectricCurrent.FundamentalUnit;
         public static readonly BaseUnit Bit = (BaseUnit)Information.FundamentalUnit;
         public static readonly BaseUnit Meter = (BaseUnit)Length.FundamentalUnit;
+        public static readonly PrefixedBaseUnit Kilogram = (PrefixedBaseUnit)Mass.FundamentalUnit;
+        public static readonly BaseUnit Gram = Kilogram.Unit;
         public static readonly BaseUnit Kelvin = (BaseUnit)Temperature.FundamentalUnit;
         public static readonly BaseUnit Second = (BaseUnit)Time.FundamentalUnit;
         public static readonly BaseUnit Candela = (BaseUnit)LuminousIntensity.FundamentalUnit;
@@ -75,6 +77,41 @@ namespace ConvertAllTheThings.Defaults
         public static readonly BaseUnit AstronomicalUnit = new(nameof(AstronomicalUnit), Meter, 1.495978e11m);
         public static readonly BaseUnit Parsec = new(nameof(Parsec), AstronomicalUnit, 206265m);
         public static readonly BaseUnit LightYear = new(nameof(LightYear), Parsec, 0.306601m);
+        #endregion
+
+        #region Mass
+        public static readonly BaseUnit Carat = new(nameof(Carat), Gram, 0.2m);
+        public static readonly BaseUnit PoundMass = new(nameof(PoundMass), Kilogram, 0.4536m);
+        public static readonly BaseUnit Ounce = new(nameof(Ounce), PoundMass, 1m / 16m);
+        public static readonly BaseUnit Dram = new(nameof(Dram), Ounce, 1m / 16m);
+        public static readonly BaseUnit Stone = new(nameof(Stone), PoundMass, 14m);
+        public static readonly BaseUnit Slug = new(nameof(Slug), PoundMass, 32.174m);
+        public static readonly BaseUnit ShortTon = new(nameof(ShortTon), PoundMass, 2000m);
+        public static readonly BaseUnit LongTon = new(nameof(LongTon), PoundMass, 2240m);
+        public static readonly BaseUnit Tonne = new(nameof(Tonne), Kilogram, 1000m);
+        public static readonly BaseUnit AtomicMass = new(nameof(AtomicMass), Kilogram, 1.66054e-27m);
+        public static readonly BaseUnit Scruple = new(nameof(Scruple), Ounce, 1m / 24m);
+        #endregion
+
+        #region Temperature
+        public static readonly BaseUnit Celsius = new(nameof(Celsius), Kelvin, 1m, 273.15m);
+        public static readonly BaseUnit Rankine = new(nameof(Rankine), Kelvin, 4m / 9m);
+        public static readonly BaseUnit Fahrenheit = new(nameof(Fahrenheit), Rankine, 1m, 459.67m);
+        #endregion
+
+        #region Time
+        public static readonly BaseUnit Minute = new(nameof(Minute), Second, 60m);
+        public static readonly BaseUnit Hour = new(nameof(Hour), Minute, 60m);
+        public static readonly BaseUnit Day = new(nameof(Day), Hour, 24m);
+        public static readonly BaseUnit Week = new(nameof(Week), Day, 7m);
+        public static readonly BaseUnit Month = new(nameof(Month), Minute, 4330m);
+        public static readonly BaseUnit Year = new(nameof(Year), Month, 12m);
+        #endregion
+
+        #region LuminousIntensity
+        public static readonly BaseUnit CandlePower = new(nameof(CandlePower), Candela, 0.981m);
+        public static readonly BaseUnit Hefnerkerze = new(nameof(Hefnerkerze), Candela, 0.90337m);
+        public static readonly BaseUnit Voille = new(nameof(Voille), Candela, 20.17m);
         #endregion
 
         static BaseUnits()
