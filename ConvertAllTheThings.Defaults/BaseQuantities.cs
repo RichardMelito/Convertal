@@ -18,16 +18,16 @@ namespace ConvertAllTheThings.Defaults
 
         static BaseQuantities()
         {
-            Angle = DefineNewBaseQuantity(nameof(Angle), "radian", unitSymbol: "rad");
-            SolidAngle = DefineNewBaseQuantity(nameof(SolidAngle), "steradian", unitSymbol: "sr");
+            Angle = DefineNewBaseQuantity(nameof(Angle), "Radian", unitSymbol: "rad");
+            SolidAngle = DefineNewBaseQuantity(nameof(SolidAngle), "Steradian", unitSymbol: "sr");
             // TODO improve name system to allow spaces or underscores
-            ElectricCurrent = DefineNewBaseQuantity(nameof(ElectricCurrent), "ampere", quantitySymbol: "I", unitSymbol: "A");
-            Information = DefineNewBaseQuantity(nameof(Information), "bit", unitSymbol: "b");
-            Length = DefineNewBaseQuantity(nameof(Length), "meter", quantitySymbol: "l", unitSymbol: "m");
-            Mass = DefineNewBaseQuantity(nameof(Mass), "gram", unitPrefix: Prefixes.Kilo, quantitySymbol: "M", unitSymbol: "g");
-            Temperature = DefineNewBaseQuantity(nameof(Temperature), "kelvin", quantitySymbol: "Θ", unitSymbol: "K");
-            Time = DefineNewBaseQuantity(nameof(Time), "second", quantitySymbol: "T", unitSymbol: "s");
-            LuminousIntensity = DefineNewBaseQuantity(nameof(LuminousIntensity), "candela", quantitySymbol: "J", unitSymbol: "cd");
+            ElectricCurrent = DefineNewBaseQuantity(nameof(ElectricCurrent), "Ampere", quantitySymbol: "I", unitSymbol: "A");
+            Information = DefineNewBaseQuantity(nameof(Information), "Bit", unitSymbol: "b");
+            Length = DefineNewBaseQuantity(nameof(Length), "Meter", quantitySymbol: "l", unitSymbol: "m");
+            Mass = DefineNewBaseQuantity(nameof(Mass), "Gram", unitPrefix: Prefixes.Kilo, quantitySymbol: "M", unitSymbol: "g");
+            Temperature = DefineNewBaseQuantity(nameof(Temperature), "Kelvin", quantitySymbol: "Θ", unitSymbol: "K");
+            Time = DefineNewBaseQuantity(nameof(Time), "Second", quantitySymbol: "T", unitSymbol: "s");
+            LuminousIntensity = DefineNewBaseQuantity(nameof(LuminousIntensity), "Candela", quantitySymbol: "J", unitSymbol: "cd");
         }
     }
 }

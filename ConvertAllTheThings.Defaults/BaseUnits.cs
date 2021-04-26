@@ -116,7 +116,31 @@ namespace ConvertAllTheThings.Defaults
 
         static BaseUnits()
         {
+            #region Angle
+            //Degree.ChangeSymbol("°");
+            Gradian.ChangeSymbol("grad");
+            ArcMinute.ChangeSymbol("arcmin");
+            ArcSecond.ChangeSymbol("arcs");
+            Revolution.ChangeSymbol("rev");
+            #endregion
 
+            #region ElectricCurrent
+            Abampere.ChangeSymbol("abA");
+            #endregion
+
+            #region Length
+            Inch.ChangeSymbol("in");
+            Foot.ChangeSymbol("ft");
+            Yard.ChangeSymbol("yd");
+            NauticalMile.ChangeSymbol("nmi");
+            Furlong.ChangeSymbol("fur");
+            Hand.ChangeSymbol("hh");
+            LightYear.ChangeSymbol("ly");
+            Parsec.ChangeSymbol("pc");
+            Pixel.ChangeSymbol("px");
+            //Angstrom.ChangeSymbol("Å");
+            AstronomicalUnit.ChangeSymbol("AU");
+            #endregion
         }
     }
 }
