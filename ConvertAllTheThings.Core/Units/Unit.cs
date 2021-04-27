@@ -78,6 +78,25 @@ namespace ConvertAllTheThings.Core
             }
         }
 
+        public static NamedComposition<IUnit> Multiply(params IUnit[] units)
+        {
+            return MultiplyOrDivide(true, units);
+        }
+
+        public static NamedComposition<IUnit> Divide(params IUnit[] units)
+        {
+            return MultiplyOrDivide(false, units);
+        }
+
+        public static NamedComposition<IUnit> MultiplyOrDivide(bool multiplication, params IUnit[] units)
+        {
+            var res = units[0].UnitComposition;
+            for (int i = 1; i < units.Length; ++i)
+                res = NamedComposition<IUnit>.MultiplyOrDivide(res, units[i].UnitComposition, multiplication);
+
+            return res;
+        }
+
         public static Unit DefineFromComposition(string name, NamedComposition<IUnit> composition)
         {
             var quantity = Quantity.GetFromBaseComposition(composition);

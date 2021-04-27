@@ -44,5 +44,18 @@ namespace ConvertAllTheThings.Defaults.Tests
                 Assert.AreEqual(field.Name, unit.MaybeName);
             }
         }
+
+        [TestMethod]
+        public void TestDerivedUnits()
+        {
+            foreach (var field in typeof(DerivedUnits).GetFields())
+            {
+                var unit = field.GetValue(field.Name) as DerivedUnit;
+                if (unit is null)
+                    continue;
+
+                Assert.AreEqual(field.Name, unit.MaybeName);
+            }
+        }
     }
 }
