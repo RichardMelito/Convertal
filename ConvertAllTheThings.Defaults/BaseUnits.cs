@@ -77,6 +77,7 @@ namespace ConvertAllTheThings.Defaults
         public static readonly BaseUnit AstronomicalUnit = new(nameof(AstronomicalUnit), Meter, 1.495978e11m);
         public static readonly BaseUnit Parsec = new(nameof(Parsec), AstronomicalUnit, 206265m);
         public static readonly BaseUnit LightYear = new(nameof(LightYear), Parsec, 0.306601m);
+        public static readonly BaseUnit Mil = new(nameof(Mil), Inch, 0.001m);
         #endregion
 
         #region Mass

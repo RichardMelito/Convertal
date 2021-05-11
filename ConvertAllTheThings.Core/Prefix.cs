@@ -39,5 +39,29 @@ namespace ConvertAllTheThings.Core
         {
             Multiplier = multiplier;
         }
+
+        public PrefixedBaseUnit this[BaseUnit unit]
+        {
+            get
+            {
+                return PrefixedUnit.GetPrefixedUnit(unit, this);
+            }
+        }
+
+        public PrefixedDerivedUnit this[DerivedUnit unit]
+        {
+            get
+            {
+                return PrefixedUnit.GetPrefixedUnit(unit, this);
+            }
+        }
+
+        public PrefixedUnit this[Unit unit]
+        {
+            get
+            {
+                return PrefixedUnit.GetPrefixedUnit(unit, this);
+            }
+        }
     }
 }

@@ -8,6 +8,7 @@ using static ConvertAllTheThings.Core.Unit;
 using static DecimalMath.DecimalEx;
 using static ConvertAllTheThings.Defaults.DerivedQuantities;
 using static ConvertAllTheThings.Defaults.BaseUnits;
+using static ConvertAllTheThings.Defaults.Prefixes;
 
 namespace ConvertAllTheThings.Defaults
 {
@@ -58,16 +59,47 @@ namespace ConvertAllTheThings.Defaults
         #endregion
 
         #region Area
+        public static readonly DerivedUnit Are;
+        public static readonly DerivedUnit Acre;
+        public static readonly DerivedUnit Arpent;
+        public static readonly DerivedUnit Barn;
+        public static readonly DerivedUnit CircularInch;
+        public static readonly DerivedUnit SquareFoot;
+        public static readonly DerivedUnit SquareInch;
         public static readonly DerivedUnit SquareMile;
         public static readonly DerivedUnit SquareYard;
+        public static readonly DerivedUnit SquareRod;
+        public static readonly DerivedUnit SquareMil;
+        public static readonly DerivedUnit SquareKiloMeter;
+        public static readonly DerivedUnit Kanal;
+        public static readonly DerivedUnit Rood;
+        public static readonly DerivedUnit Township;
+        public static readonly DerivedUnit Yardland;
         #endregion
 
         static DerivedUnits()
         {
             #region Area
-            SquareMile = (DerivedUnit)DefineFromComposition(nameof(SquareMile), Mile.UnitComposition.Pow(2m));
-            SquareYard = (DerivedUnit)DefineFromComposition(nameof(SquareYard), Multiply(Yard, Yard));
+            SquareFoot = Make(nameof(SquareFoot), Foot, 2m);
+            SquareInch = Make(nameof(SquareInch), Inch, 2m);
+            SquareMile = Make(nameof(SquareMile), Mile, 2m);
+            SquareYard = Make(nameof(SquareYard), Yard, 2m);
+            SquareRod = Make(nameof(SquareRod), Rod, 2m);
+            SquareMil = Make(nameof(SquareMil), Mil, 2m);
+            SquareKiloMeter = Make(nameof(SquareKiloMeter), Kilo[Meter], 2m);
+
+            Are = new(nameof(Are), SquareMeter, 100m);
+            Acre = new(nameof(Acre), SquareMile, 1m / 640m);
+            Arpent = new(nameof(Arpent), SquareFoot, 36800m);
+            Barn = new(nameof(Barn), SquareMeter, 1e-28m);
+            CircularInch = new(nameof(CircularInch), SquareMil, PiQuarter);
+            Kanal = new(nameof(Kanal), SquareYard, 650m);
+            Rood = new(nameof(Rood), SquareRod, 40m);
+            Township = new(nameof(Township), SquareMile, 36m);
+            Yardland = new(nameof(Yardland), Acre, 30m);
             #endregion
+
+
 
             foreach (var field in typeof(DerivedUnits).GetFields())
             {
@@ -77,6 +109,18 @@ namespace ConvertAllTheThings.Defaults
 
                 unit.ChangeName(field.Name);
             }
+        }
+
+
+
+        private static DerivedUnit Make(string name, NamedComposition<IUnit> composition)
+        {
+            return (DerivedUnit)DefineFromComposition(name, composition);
+        }
+
+        private static DerivedUnit Make(string name, IUnit unit, decimal power)
+        {
+            return (DerivedUnit)DefineFromComposition(name, unit.UnitComposition.Pow(power));
         }
     }
 }
