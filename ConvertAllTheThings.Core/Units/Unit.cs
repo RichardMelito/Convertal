@@ -18,7 +18,8 @@ namespace ConvertAllTheThings.Core
 
         public decimal FundamentalMultiplier { get; }
         public decimal FundamentalOffset { get; }
-        public NamedComposition<IUnit> UnitComposition { get; protected set; } 
+        public NamedComposition<IUnit> UnitComposition { get; protected set; }
+        public NamedComposition<IUnit> UC => UnitComposition;   // just shorthand
 
         static Unit()
         {

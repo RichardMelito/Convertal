@@ -77,6 +77,37 @@ namespace ConvertAllTheThings.Defaults
         public static readonly DerivedUnit Yardland;
         #endregion
 
+        #region Volume
+        public static readonly DerivedUnit AcreFoot;
+        public static readonly DerivedUnit AcreInch;
+        public static readonly DerivedUnit AmericanStandardBarrel;
+        public static readonly DerivedUnit BarrelOfOil;
+        public static readonly DerivedUnit BoardFoot;
+        public static readonly DerivedUnit Bushel;
+        public static readonly DerivedUnit Butt;
+        public static readonly DerivedUnit Cord;
+        public static readonly DerivedUnit CubicCentimeter;
+        public static readonly DerivedUnit CubicDecimeter;
+        public static readonly DerivedUnit Liter;
+        public static readonly DerivedUnit CubicFoot;
+        public static readonly DerivedUnit CubicInch;
+        public static readonly DerivedUnit CubicMile;
+        public static readonly DerivedUnit CubicYard;
+        public static readonly DerivedUnit Cup;
+        public static readonly DerivedUnit Dram;
+        public static readonly DerivedUnit FluidOunce;
+        public static readonly DerivedUnit Gallon;
+        public static readonly DerivedUnit Gill;
+        public static readonly DerivedUnit Hogshead;
+        public static readonly DerivedUnit Jigger;
+        public static readonly DerivedUnit Minim;
+        public static readonly DerivedUnit Peck;
+        public static readonly DerivedUnit Pint;
+        public static readonly DerivedUnit Quart;
+        public static readonly DerivedUnit Tablespoon;
+        public static readonly DerivedUnit Teaspoon;
+        #endregion
+
         static DerivedUnits()
         {
             #region Area
@@ -99,7 +130,21 @@ namespace ConvertAllTheThings.Defaults
             Yardland = new(nameof(Yardland), Acre, 30m);
             #endregion
 
+            #region Volume
+            Liter = new(nameof(Liter), CubicMeter, 1e-3m);
 
+            AcreFoot = Make(nameof(AcreFoot), Acre.UC * Foot.UC);
+            AcreInch = Make(nameof(AcreInch), Acre.UC * Inch.UC);
+            AmericanStandardBarrel = new(nameof(AmericanStandardBarrel), Liter, 200m);
+            BoardFoot = Make(nameof(BoardFoot), Foot.UC * Foot.UC * Inch.UC);
+            //Bushel = new(nameof(Bushel), Gallon, 8m);
+            //Butt = new(nameof(Butt), Hogshead, 2m);
+            //Cup = new(nameof(Cup), FluidOunce, 8m);
+            //Cord = new(nameof(Cord), CubicFoot, 128m);
+            CubicCentimeter = Make(nameof(CubicCentimeter), Centi[Meter], 3m);
+            CubicDecimeter = Make(nameof(CubicDecimeter), Deci[Meter], 3m);
+            //BarrelOfOil = new(nameof(BarrelOfOil), Gallon, 42m);
+            #endregion
 
             foreach (var field in typeof(DerivedUnits).GetFields())
             {
