@@ -146,6 +146,7 @@ namespace ConvertAllTheThings.Defaults
             //BarrelOfOil = new(nameof(BarrelOfOil), Gallon, 42m);
             #endregion
 
+            return;
             foreach (var field in typeof(DerivedUnits).GetFields())
             {
                 var unit = (DerivedUnit)field.GetValue(field.Name)!;

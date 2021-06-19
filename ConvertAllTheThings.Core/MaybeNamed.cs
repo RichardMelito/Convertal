@@ -118,7 +118,7 @@ namespace ConvertAllTheThings.Core
         #region static methods
         public static IEnumerable<MaybeNamed> GetAllMaybeNameds<T>()
         {
-            return s_types_nameds[GetTypeWithinDictionary(typeof(T))];
+            return s_types_nameds[GetTypeWithinDictionary(typeof(T))!];
         }
 
         // for resetting after unit tests
@@ -136,7 +136,7 @@ namespace ConvertAllTheThings.Core
         public static void ThrowIfNameNotValid<T>(string name, bool isSymbol = false)
             where T : MaybeNamed
         {
-            ThrowIfNameNotValid(name, GetTypeWithinDictionary(typeof(T)), isSymbol);
+            ThrowIfNameNotValid(name, GetTypeWithinDictionary(typeof(T))!, isSymbol);
         }
 
         private static void ThrowIfNameNotValid(string name, Type type, bool isSymbol = false)
@@ -171,15 +171,19 @@ namespace ConvertAllTheThings.Core
             }
         }
 
-        public static Type GetTypeWithinDictionary(Type type)
+        // TODO patching over everything with !'s
+        public static Type? GetTypeWithinDictionary(Type type)
         {
             var originalType = type;
 
             while (!s_types_nameds.ContainsKey(type))
             {
                 if (type.BaseType is null)
-                    throw new ArgumentException($"Neither type {originalType.Name} " +
-                        $"nor any of its base types are within the name lookup dictionary.");
+                    return null;
+
+                //if (type.BaseType is null)
+                //    throw new ArgumentException($"Neither type {originalType.Name} " +
+                //        $"nor any of its base types are within the name lookup dictionary.");
 
                 type = type.BaseType;
             }
@@ -189,12 +193,12 @@ namespace ConvertAllTheThings.Core
 
         public Type GetTypeWithinDictionary()
         {
-            return GetTypeWithinDictionary(GetType());
+            return GetTypeWithinDictionary(GetType())!;
         }
 
         private static bool NameAlreadyRegistered(string name, Type type, bool isSymbol = false)
         {
-            type = GetTypeWithinDictionary(type);
+            type = GetTypeWithinDictionary(type)!;
 
             IEnumerable<MaybeNamed> matches;
             if (isSymbol)
@@ -216,22 +220,29 @@ namespace ConvertAllTheThings.Core
         public static bool NameIsValid<T>(string name, bool isSymbol = false)
             where T : MaybeNamed
         {
-            return NameIsValid(name, GetTypeWithinDictionary(typeof(T)), isSymbol);
+            return NameIsValid(name, GetTypeWithinDictionary(typeof(T))!, isSymbol);
         }
 
         public static bool NameAlreadyRegistered<T>(string name, bool isSymbol = false)
             where T : MaybeNamed
         {
-            return NameAlreadyRegistered(name, GetTypeWithinDictionary(typeof(T)), isSymbol);
+            return NameAlreadyRegistered(name, GetTypeWithinDictionary(typeof(T))!, isSymbol);
         }
 
-        public static bool TryGetFromName<T>(
+        public static bool TryGetFromName(
             string name,
-            out T? namedObject,
+            Type type,
+            out MaybeNamed? namedObject,
             bool isSymbol = false)
-            where T : MaybeNamed
         {
-            var nameds = s_types_nameds[GetTypeWithinDictionary(typeof(T))];
+            var typeWithinDictionary = GetTypeWithinDictionary(type);
+            if (typeWithinDictionary is null)
+            {
+                namedObject = null;
+                return false;
+            }
+
+            var nameds = s_types_nameds[typeWithinDictionary];
             MaybeNamed[] matches;
             if (isSymbol)
             {
@@ -248,7 +259,7 @@ namespace ConvertAllTheThings.Core
 
             if (matches.Length == 1)
             {
-                namedObject = (T)matches.First();
+                namedObject = matches.First();
                 return true;
             }
             else if (matches.Length == 0)
@@ -260,6 +271,17 @@ namespace ConvertAllTheThings.Core
             {
                 throw new ApplicationException();
             }
+        }
+
+        public static bool TryGetFromName<T>(
+            string name,
+            out T? namedObject,
+            bool isSymbol = false)
+            where T : MaybeNamed
+        {
+            TryGetFromName(name, typeof(T), out var named, isSymbol);
+            namedObject = named as T;
+            return namedObject is not null;
         }
 
         public static T GetFromName<T>(string name, bool isSymbol = false)

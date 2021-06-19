@@ -1,6 +1,9 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using ConvertAllTheThings.Defaults;
 using ConvertAllTheThings.Core;
+using System.IO;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 
 namespace ConvertAllTheThings.Defaults.Tests
 {
@@ -56,6 +59,29 @@ namespace ConvertAllTheThings.Defaults.Tests
 
                 Assert.AreEqual(field.Name, unit.MaybeName);
             }
+        }
+
+        static readonly JsonSerializerOptions JsonSettings = new()
+        {
+            WriteIndented = true,
+            ReferenceHandler = ReferenceHandler.Preserve
+        };
+
+        [TestMethod]
+        public void TestSerialization()
+        {
+            var fileName = "test.json";
+            var jsonString = JsonSerializer.Serialize(DerivedUnits.Hertz, JsonSettings);
+            File.WriteAllText(fileName, jsonString);
+        }
+
+        [TestMethod]
+        public void TestDeserialization()
+        {
+            //var fileName = "test.json";
+            //var jsonString = File.ReadAllText(fileName);
+            //var hertz = JsonConvert.DeserializeObject<DerivedUnit>(jsonString,
+            //    JsonSettings);
         }
     }
 }

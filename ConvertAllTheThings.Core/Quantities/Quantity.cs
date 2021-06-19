@@ -5,9 +5,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using ConvertAllTheThings.Core.Extensions;
+using System.Text.Json.Serialization;
 
 namespace ConvertAllTheThings.Core
 {
+    //[JsonConverter(typeof(JsonConverters.QuantityConverter))]
     public abstract class Quantity : MaybeNamed
     {
         /*  There will never be multiple quantities for something in the same 

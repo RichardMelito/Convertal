@@ -59,5 +59,10 @@ namespace ConvertAllTheThings.Core.Extensions
             if (set.Contains(toCheck))
                 throw new ApplicationException();
         }
+
+        public static T ForceCast<T>(this object obj)
+        {
+            return (T)obj;
+        }
     }
 }
