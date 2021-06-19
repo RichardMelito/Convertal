@@ -12,7 +12,7 @@ using System.Text.Json.Serialization;
 
 namespace ConvertAllTheThings.Core.JsonConverters
 {
-	public class CustomDictionaryJsonConverter<TKey, TValue> : JsonConverter<IDictionary<TKey, TValue>> 
+	public class MaybeNamedDictionaryJsonConverter<TKey, TValue> : JsonConverter<IDictionary<TKey, TValue>> 
 		where TKey : IMaybeNamed
 	{
 		public override bool CanConvert(Type typeToConvert)

@@ -4,6 +4,7 @@ using ConvertAllTheThings.Core;
 using System.IO;
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using ConvertAllTheThings.Core.JsonConverters;
 
 namespace ConvertAllTheThings.Defaults.Tests
 {
@@ -13,6 +14,27 @@ namespace ConvertAllTheThings.Defaults.Tests
         static TestAll()
         {
             Global.InitializeAssembly();
+            JsonSettings.Converters.Add(new MaybeNamedDictionaryJsonConverter<Quantity, decimal>());
+            JsonSettings.Converters.Add(new MaybeNamedDictionaryJsonConverter<BaseQuantity, decimal>());
+            JsonSettings.Converters.Add(new MaybeNamedDictionaryJsonConverter<DerivedQuantity, decimal>());
+
+            JsonSettings.Converters.Add(new MaybeNamedDictionaryJsonConverter<Unit, decimal>());
+            JsonSettings.Converters.Add(new MaybeNamedDictionaryJsonConverter<BaseUnit, decimal>());
+            JsonSettings.Converters.Add(new MaybeNamedDictionaryJsonConverter<DerivedUnit, decimal>());
+
+            JsonSettings.Converters.Add(new MaybeNamedDictionaryJsonConverter<IBaseUnit, decimal>());
+            JsonSettings.Converters.Add(new MaybeNamedDictionaryJsonConverter<IDerivedUnit, decimal>());
+            JsonSettings.Converters.Add(new MaybeNamedDictionaryJsonConverter<IUnit, decimal>());
+
+            JsonSettings.Converters.Add(new MaybeNamedDictionaryJsonConverter<PrefixedBaseUnit, decimal>());
+            JsonSettings.Converters.Add(new MaybeNamedDictionaryJsonConverter<PrefixedDerivedUnit, decimal>());
+            JsonSettings.Converters.Add(new MaybeNamedDictionaryJsonConverter<PrefixedUnit, decimal>());
+
+            JsonSettings.Converters.Add(new MaybeNamedDictionaryJsonConverter<IMaybeNamed, decimal>());
+            JsonSettings.Converters.Add(new MaybeNamedDictionaryJsonConverter<Prefix, decimal>());
+            JsonSettings.Converters.Add(new MaybeNamedDictionaryJsonConverter<MeasurementSystem, decimal>());
+
+            JsonSettings.Converters.Add(new MaybeNamedConverter());
         }
 
         [TestMethod]
@@ -71,7 +93,7 @@ namespace ConvertAllTheThings.Defaults.Tests
         public void TestSerialization()
         {
             var fileName = "test.json";
-            var jsonString = JsonSerializer.Serialize(DerivedUnits.Hertz, JsonSettings);
+            var jsonString = JsonSerializer.Serialize(BaseQuantities.Mass, JsonSettings);
             File.WriteAllText(fileName, jsonString);
         }
 
