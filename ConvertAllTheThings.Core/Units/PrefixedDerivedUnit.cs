@@ -10,8 +10,8 @@ namespace ConvertAllTheThings.Core
     {
         public new DerivedUnit Unit => (DerivedUnit)base.Unit;
 
-        internal PrefixedDerivedUnit(DerivedUnit unit, Prefix prefix) 
-            : base(unit, prefix)
+        internal PrefixedDerivedUnit(Database database, DerivedUnit unit, Prefix prefix) 
+            : base(database, unit, prefix)
         {
             
         }

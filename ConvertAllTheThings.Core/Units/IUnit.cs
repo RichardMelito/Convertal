@@ -67,7 +67,7 @@ namespace ConvertAllTheThings.Core
             toIgnore = toIgnore.UnionAppend(unit);
 
             var dependentQuants =
-                from quant in Quantity.CompositionAndQuantitiesDictionary.Values
+                from quant in unit.Quantity.Database.CompositionAndQuantitiesDictionary.Values
                 where quant.FundamentalUnit == unit
                 select quant;
 

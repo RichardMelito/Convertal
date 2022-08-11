@@ -11,8 +11,8 @@ namespace ConvertAllTheThings.Core
     {
         public new BaseUnit Unit => (BaseUnit)base.Unit;
 
-        internal PrefixedBaseUnit(BaseUnit unit, Prefix prefix)
-            : base(unit, prefix)
+        internal PrefixedBaseUnit(Database database, BaseUnit unit, Prefix prefix)
+            : base(database, unit, prefix)
         {
             
         }
@@ -21,7 +21,7 @@ namespace ConvertAllTheThings.Core
         {
             var res = IUnit.GetAllDependents(this, ref toIgnore).AsEnumerable();
 
-            var unitsComposedOfThis = IBaseUnit.GetAllIDerivedUnitsComposedOf(this);
+            var unitsComposedOfThis = Database.GetAllIDerivedUnitsComposedOf(this);
             res = res.Union(unitsComposedOfThis);
             foreach (var unit in unitsComposedOfThis.Except(toIgnore))
                 res = res.Union(unit.GetAllDependents(ref toIgnore));

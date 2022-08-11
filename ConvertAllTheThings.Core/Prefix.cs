@@ -9,10 +9,6 @@ namespace ConvertAllTheThings.Core
 {
     public class Prefix : MaybeNamed, INamed
     {
-        static Prefix()
-        {
-            AddTypeToDictionary<Prefix>();
-        }
         internal static void InitializeClass() { }
 
         public override IOrderedEnumerable<IMaybeNamed> GetAllDependents(ref IEnumerable<IMaybeNamed> toIgnore)
@@ -34,8 +30,8 @@ namespace ConvertAllTheThings.Core
 
         public decimal Multiplier { get; }
 
-        public Prefix(string name, decimal multiplier, string? symbol = null)
-            : base (name, symbol)
+        internal Prefix(Database database, string name, decimal multiplier, string? symbol = null)
+            : base (database, name, symbol)
         {
             Multiplier = multiplier;
         }

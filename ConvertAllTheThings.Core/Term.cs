@@ -80,7 +80,7 @@ namespace ConvertAllTheThings.Core
             else
                 resMagnitude = fundLhs.Magnitude / fundRhs.Magnitude;
 
-            var resQuantity = Quantity.MultiplyOrDivide(
+            var resQuantity = lhs.Quantity.MultiplyOrDivide(
                 lhs.Quantity,
                 rhs.Quantity,
                 multiplication: multiplication);

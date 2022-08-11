@@ -9,46 +9,17 @@ namespace ConvertAllTheThings.Core
 {
     public class BaseQuantity : Quantity, IBase, IEquatable<BaseQuantity>
     {
-        private IBaseUnit? _fundamentalUnit = null;
+        internal IBaseUnit? InnerFundamentalUnit { get; set; } = null;
 
-        public override IBaseUnit FundamentalUnit => _fundamentalUnit!;
+        public override IBaseUnit FundamentalUnit => InnerFundamentalUnit!;
 
         public override NamedComposition<BaseQuantity> BaseQuantityComposition { get; }
 
-        private BaseQuantity(string name, string? symbol)
-            : base(name, symbol)
+        internal BaseQuantity(Database database, string name, string? symbol)
+            : base(database, name, symbol)
         {
             BaseQuantityComposition = new NamedComposition<BaseQuantity>(this);
             Init();
-        }
-
-        public static BaseQuantity DefineNewBaseQuantity(
-            string quantityName,
-            string fundamentalUnitName,
-            Prefix? unitPrefix = null,
-            string? quantitySymbol = null,
-            string? unitSymbol = null)
-        {
-            // TODO
-            ThrowIfNameNotValid<Unit>(fundamentalUnitName);
-            ThrowIfNameNotValid<Quantity>(quantityName);
-
-
-            BaseQuantity quantity = new(quantityName, quantitySymbol);
-
-            if (unitPrefix is null)
-            {
-                BaseUnit unit = new(fundamentalUnitName, quantity, 1m, unitSymbol);
-                quantity._fundamentalUnit = unit;
-            }
-            else
-            {
-                var fundamentalMultiplier = 1m / unitPrefix.Multiplier;
-                BaseUnit unit = new(fundamentalUnitName, quantity, fundamentalMultiplier, unitSymbol);
-                quantity._fundamentalUnit = new PrefixedBaseUnit(unit, unitPrefix);
-            }
-
-            return quantity;
         }
 
         public override int GetHashCode()
@@ -70,7 +41,7 @@ namespace ConvertAllTheThings.Core
         {
             var res = base.GetAllDependents(ref toIgnore).AsEnumerable();
 
-            var quantsComposedOfThis = from comp_quant in CompositionAndQuantitiesDictionary
+            var quantsComposedOfThis = from comp_quant in Database.CompositionAndQuantitiesDictionary
                                        where comp_quant.Value is DerivedQuantity &&
                                        comp_quant.Key.Composition.ContainsKey(this)
                                        select comp_quant.Value;

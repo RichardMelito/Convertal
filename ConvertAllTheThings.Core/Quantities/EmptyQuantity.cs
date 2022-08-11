@@ -25,8 +25,9 @@ namespace ConvertAllTheThings.Core
 
         }
 
-        private EmptyQuantity()
-            : base(null, null)
+        internal EmptyQuantity()
+            : base(null // TODO move the actual maybenamed CRUD stuff to Database and they won't need references to a database
+                  , null, null)
         {
             Init();
         }

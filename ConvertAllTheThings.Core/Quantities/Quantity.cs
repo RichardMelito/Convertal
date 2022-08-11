@@ -24,27 +24,18 @@ namespace ConvertAllTheThings.Core
          */
 
         private bool _disposed = false;
-        private static readonly Dictionary<NamedComposition<BaseQuantity>, Quantity> s_compositions_quantities = new();
         private bool _initialized = false;
 
         public bool Disposed => _disposed;
-
-        public static IReadOnlyDictionary<NamedComposition<BaseQuantity>, Quantity> 
-            CompositionAndQuantitiesDictionary { get; } = s_compositions_quantities.AsReadOnly();
 
         public static EmptyQuantity Empty => EmptyQuantity.Empty;
 
         public abstract IUnit FundamentalUnit { get; }
         public abstract NamedComposition<BaseQuantity> BaseQuantityComposition { get; }
-
-        static Quantity()
-        {
-            AddTypeToDictionary<Quantity>();
-        }
         internal static void InitializeClass() { }
 
-        protected Quantity(string? name, string? symbol)
-            : base(name, symbol)
+        protected Quantity(Database database, string? name, string? symbol)
+            : base(database, name, symbol)
         {
             
         }
@@ -59,64 +50,43 @@ namespace ConvertAllTheThings.Core
             if (_initialized)
                 throw new ApplicationException($"Quantity {MaybeName ?? "{null}"} is already initialized.");
 
-            if (s_compositions_quantities.ContainsValue(this))
+            if (Database.QuantitiesByComposition.ContainsValue(this))
                 throw new ApplicationException($"Quantity {MaybeName ?? "{null}"} is already within the dictionary.");
 
-            s_compositions_quantities.Add(BaseQuantityComposition, this);
+            Database.QuantitiesByComposition.Add(BaseQuantityComposition, this);
             _initialized = true;
         }
 
         public Quantity Pow(decimal power)
         {
-            return GetFromBaseComposition(BaseQuantityComposition.Pow(power));
+            return Database.GetFromBaseComposition(BaseQuantityComposition.Pow(power));
         }
 
-
-        public static Quantity GetFromBaseComposition(NamedComposition<IUnit> composition)
-        {
-            var resultingQuantComp = Empty.BaseQuantityComposition;
-            foreach (var (unit, power) in composition.Composition)
-            {
-                var quantComp = unit.Quantity.BaseQuantityComposition.Pow(power);
-                resultingQuantComp *= quantComp;
-            }
-
-            return GetFromBaseComposition(resultingQuantComp);
-        }
-
-        public static Quantity GetFromBaseComposition(NamedComposition<BaseQuantity> composition)
-        {
-            if (s_compositions_quantities.TryGetValue(composition, out var res))
-                return res;
-
-            return new DerivedQuantity(composition);
-        }
-
-        public static Quantity MultiplyOrDivide(Quantity lhs, Quantity rhs, bool multiplication)
+        public Quantity MultiplyOrDivide(Quantity lhs, Quantity rhs, bool multiplication)
         {
             var resultingComposition = NamedComposition<BaseQuantity>.MultiplyOrDivide(
                 lhs.BaseQuantityComposition,
                 rhs.BaseQuantityComposition,
                 multiplication: multiplication);
 
-            return GetFromBaseComposition(resultingComposition);
+            return Database.GetFromBaseComposition(resultingComposition);
         }
 
         public static Quantity operator* (Quantity lhs, Quantity rhs)
         {
-            return MultiplyOrDivide(lhs, rhs, multiplication: true);
+            return lhs.MultiplyOrDivide(lhs, rhs, multiplication: true);
         }
 
         public static Quantity operator/ (Quantity lhs, Quantity rhs)
         {
-            return MultiplyOrDivide(lhs, rhs, multiplication: false);
+            return lhs.MultiplyOrDivide(lhs, rhs, multiplication: false);
         }
 
         public override IOrderedEnumerable<IMaybeNamed> GetAllDependents(ref IEnumerable<IMaybeNamed> toIgnore)
         {
             toIgnore = toIgnore.UnionAppend(this);
 
-            var allUnits = GetAllMaybeNameds<Unit>().Cast<Unit>();
+            var allUnits = Database.GetAllMaybeNameds<Unit>().Cast<Unit>();
             var unitsWithThisQuantity = from unit in allUnits
                                         where unit.Quantity == this
                                         select unit;
@@ -136,12 +106,12 @@ namespace ConvertAllTheThings.Core
             if (_disposed)
                 return;
 
-            if (!s_compositions_quantities.Remove(BaseQuantityComposition))
+            if (!Database.QuantitiesByComposition.Remove(BaseQuantityComposition))
                 throw new ApplicationException(
                     $"Could not remove Quantity {MaybeName ?? "{null}"} with composition " +
                     $"{BaseQuantityComposition} from static dictionary.");
 
-            var allSystems = GetAllMaybeNameds<MeasurementSystem>().Cast<MeasurementSystem>();
+            var allSystems = Database.GetAllMaybeNameds<MeasurementSystem>().Cast<MeasurementSystem>();
             foreach (var system in allSystems)
                 system.RemoveQuantity(this);
 

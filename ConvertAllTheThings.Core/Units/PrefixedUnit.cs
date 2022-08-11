@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 using ConvertAllTheThings.Core.Extensions;
 
@@ -48,8 +49,13 @@ namespace ConvertAllTheThings.Core
         public static readonly ReadOnlyCollection<PrefixedUnit> 
             PrefixedUnits = s_prefixedUnits.AsReadOnly();
 
-        protected PrefixedUnit(Unit unit, Prefix prefix)
+        [JsonIgnore]
+        internal Database Database { get; }
+
+        protected PrefixedUnit(Database database, Unit unit, Prefix prefix)
         {
+            Database = database;
+
             if (unit.MaybeName is null)
                 throw new ArgumentNullException(
                     nameof(unit), 
@@ -84,10 +90,10 @@ namespace ConvertAllTheThings.Core
             {
                 case 0:
                     if (unit is BaseUnit baseUnit)
-                        return new PrefixedBaseUnit(baseUnit, prefix);
+                        return new PrefixedBaseUnit(unit.Database, baseUnit, prefix);
 
                     else if (unit is DerivedUnit derivedUnit)
-                        return new PrefixedDerivedUnit(derivedUnit, prefix);
+                        return new PrefixedDerivedUnit(unit.Database, derivedUnit, prefix);
 
                     else
                         throw new NotImplementedException();
@@ -159,7 +165,7 @@ namespace ConvertAllTheThings.Core
                 }
 
 
-                var allSystems = MaybeNamed.GetAllMaybeNameds<MeasurementSystem>().Cast<MeasurementSystem>();
+                var allSystems = Database.GetAllMaybeNameds<MeasurementSystem>().Cast<MeasurementSystem>();
                 foreach (var system in allSystems)
                     system.RemoveUnit(this);
 

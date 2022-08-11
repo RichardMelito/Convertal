@@ -16,15 +16,10 @@ namespace ConvertAllTheThings.Core
 
         public IReadOnlyDictionary<Quantity, IUnit> Dictionary { get; } 
 
-        static MeasurementSystem()
-        {
-            AddTypeToDictionary<MeasurementSystem>();
-        }
-
         internal static void InitializeClass() { }
 
-        public MeasurementSystem(string name)
-            : base(name)
+        internal MeasurementSystem(Database database, string name)
+            : base(database, name)
         {
             Dictionary = _quantities_units.AsReadOnly();
         }

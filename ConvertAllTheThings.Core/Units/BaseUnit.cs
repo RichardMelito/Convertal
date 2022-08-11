@@ -12,12 +12,13 @@ namespace ConvertAllTheThings.Core
 
         // for defining from an existng IBaseUnit
         public BaseUnit(
+            Database database,
             string name, 
             IBaseUnit otherUnit, 
             decimal multiplier, 
             decimal offset = 0,
             string? symbol = null)
-            : base(name, otherUnit, multiplier, offset, symbol)
+            : base(database, name, otherUnit, multiplier, offset, symbol)
         {
 
         }
@@ -28,16 +29,16 @@ namespace ConvertAllTheThings.Core
         /// <param name="name"></param>
         /// <param name="quantity"></param>
         /// <param name="fundamentalMultiplier"></param>
-        internal BaseUnit(string name, BaseQuantity quantity, decimal fundamentalMultiplier, string? symbol)
-            : base(name, quantity, fundamentalMultiplier, symbol: symbol)
+        internal BaseUnit(Database database, string name, BaseQuantity quantity, decimal fundamentalMultiplier, string? symbol)
+            : base(database, name, quantity, fundamentalMultiplier, symbol: symbol)
         {
 
         }
 
 
         // for defining from a chain of operations
-        internal BaseUnit(string name, NamedComposition<IUnit> composition)
-            : base(name, composition)
+        internal BaseUnit(Database database, string name, NamedComposition<IUnit> composition)
+            : base(database, name, composition)
         {
 
         }
@@ -46,7 +47,7 @@ namespace ConvertAllTheThings.Core
         {
             var res = base.GetAllDependents(ref toIgnore).AsEnumerable();
 
-            var unitsComposedOfThis = IBaseUnit.GetAllIDerivedUnitsComposedOf(this).Cast<IMaybeNamed>();
+            var unitsComposedOfThis = Database.GetAllIDerivedUnitsComposedOf(this).Cast<IMaybeNamed>();
             res = res.Union(unitsComposedOfThis);
 
             foreach (var unit in unitsComposedOfThis.Except(toIgnore))

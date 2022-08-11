@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using ConvertAllTheThings.Core.Extensions;
+using System.Text.Json.Serialization;
 
 namespace ConvertAllTheThings.Core
 {
@@ -36,22 +37,25 @@ namespace ConvertAllTheThings.Core
 
         public static readonly MaybeNameComparer DefaultComparer = new();
 
-        private static readonly Dictionary<Type, List<MaybeNamed>> s_types_nameds = new();
         private bool _disposedValue;
+
+        [JsonIgnore]
+        internal Database Database { get; }
 
         public string? MaybeName { get; private set; } = null;
 
         public string? MaybeSymbol { get; private set; } = null;
         
-        protected MaybeNamed(string? name, string? symbol = null)
+        protected MaybeNamed(Database database, string? name, string? symbol = null)
         {
+            Database = database;
             if (name is null)
                 return;
 
-            ThrowIfNameNotValid(name, GetTypeWithinDictionary());
+            Database.ThrowIfNameNotValid(name, GetTypeWithinDictionary());
 
             MaybeName = name;
-            s_types_nameds[GetTypeWithinDictionary()].Add(this);
+            Database.MaybeNamedsByType[GetTypeWithinDictionary()].Add(this);
 
             if (symbol is not null)
                 ChangeSymbol(symbol);
@@ -61,12 +65,12 @@ namespace ConvertAllTheThings.Core
 
         public void ChangeName(string newName)
         {
-            ThrowIfNameNotValid(newName, GetTypeWithinDictionary());
+            Database.ThrowIfNameNotValid(newName, GetTypeWithinDictionary());
 
             var needToAddToDictionary = MaybeName is null;
             MaybeName = newName;
             if (needToAddToDictionary)
-                s_types_nameds[GetTypeWithinDictionary()].Add(this);
+                Database.MaybeNamedsByType[GetTypeWithinDictionary()].Add(this);
         }
 
         public void ChangeSymbol(string symbol)
@@ -74,7 +78,7 @@ namespace ConvertAllTheThings.Core
             if (MaybeName is null)
                 throw new InvalidOperationException("Must assign a name before assigning a symbol.");
 
-            ThrowIfNameNotValid(symbol, GetTypeWithinDictionary(), true);
+            Database.ThrowIfNameNotValid(symbol, GetTypeWithinDictionary(), true);
             MaybeSymbol = symbol;
         }
 
@@ -116,188 +120,30 @@ namespace ConvertAllTheThings.Core
 
 
         #region static methods
-        public static IEnumerable<MaybeNamed> GetAllMaybeNameds<T>()
-        {
-            return s_types_nameds[GetTypeWithinDictionary(typeof(T))!];
-        }
+        
 
-        // for resetting after unit tests
-        internal static void ClearAll()
-        {
-            var flattenedDictionary = from list in s_types_nameds.Values
-                                      from maybeNamed in list
-                                      select maybeNamed;
+        //// for resetting after unit tests
+        //internal static void ClearAll()
+        //{
+        //    var flattenedDictionary = from list in Database.MaybeNamedsByType.Values
+        //                              from maybeNamed in list
+        //                              select maybeNamed;
 
-            var sortedFlattenedDictionary = flattenedDictionary.SortByTypeAndName().ToArray();
-            foreach (var maybeNamed in sortedFlattenedDictionary)
-                maybeNamed.Dispose();
-        }
-
-        public static void ThrowIfNameNotValid<T>(string name, bool isSymbol = false)
-            where T : MaybeNamed
-        {
-            ThrowIfNameNotValid(name, GetTypeWithinDictionary(typeof(T))!, isSymbol);
-        }
-
-        private static void ThrowIfNameNotValid(string name, Type type, bool isSymbol = false)
-        {
-            if (string.IsNullOrWhiteSpace(name))
-                throw new ArgumentException("MaybeName must not be empty.");
-
-            if (decimal.TryParse(name, out _))
-                throw new ArgumentException("MaybeName must not be a number.");
-
-            if (!name.All(char.IsLetterOrDigit))
-                throw new ArgumentException("MaybeName must be composed of alphanumeric characters.");
-
-            if (NameAlreadyRegistered(name, type, isSymbol))
-            {
-                throw new InvalidOperationException($"There is already a {type.Name} " +
-                    $"named {name}.");
-            }
-        }
-
-        private static bool NameIsValid(string name, Type type, bool isSymbol)
-        {
-            // TODO
-            try
-            {
-                ThrowIfNameNotValid(name, type, isSymbol);
-                return true;
-            }
-            catch (Exception)
-            {
-                return false;
-            }
-        }
-
-        // TODO patching over everything with !'s
-        public static Type? GetTypeWithinDictionary(Type type)
-        {
-            var originalType = type;
-
-            while (!s_types_nameds.ContainsKey(type))
-            {
-                if (type.BaseType is null)
-                    return null;
-
-                //if (type.BaseType is null)
-                //    throw new ArgumentException($"Neither type {originalType.Name} " +
-                //        $"nor any of its base types are within the name lookup dictionary.");
-
-                type = type.BaseType;
-            }
-
-            return type;
-        }
+        //    var sortedFlattenedDictionary = flattenedDictionary.SortByTypeAndName().ToArray();
+        //    foreach (var maybeNamed in sortedFlattenedDictionary)
+        //        maybeNamed.Dispose();
+        //}
 
         public Type GetTypeWithinDictionary()
         {
-            return GetTypeWithinDictionary(GetType())!;
+            return Database.GetTypeWithinDictionary(GetType())!;
         }
 
-        private static bool NameAlreadyRegistered(string name, Type type, bool isSymbol = false)
-        {
-            type = GetTypeWithinDictionary(type)!;
 
-            IEnumerable<MaybeNamed> matches;
-            if (isSymbol)
-            {
-                matches = from named in s_types_nameds[type]
-                          where named.MaybeSymbol == name
-                          select named;
-            }
-            else
-            {
-                matches = from named in s_types_nameds[type]
-                          where named.MaybeName == name
-                          select named;
-            }
-
-            return matches.Any();
-        }
-
-        public static bool NameIsValid<T>(string name, bool isSymbol = false)
+        public bool NameAlreadyRegistered<T>(string name, bool isSymbol = false)
             where T : MaybeNamed
         {
-            return NameIsValid(name, GetTypeWithinDictionary(typeof(T))!, isSymbol);
-        }
-
-        public static bool NameAlreadyRegistered<T>(string name, bool isSymbol = false)
-            where T : MaybeNamed
-        {
-            return NameAlreadyRegistered(name, GetTypeWithinDictionary(typeof(T))!, isSymbol);
-        }
-
-        public static bool TryGetFromName(
-            string name,
-            Type type,
-            out MaybeNamed? namedObject,
-            bool isSymbol = false)
-        {
-            var typeWithinDictionary = GetTypeWithinDictionary(type);
-            if (typeWithinDictionary is null)
-            {
-                namedObject = null;
-                return false;
-            }
-
-            var nameds = s_types_nameds[typeWithinDictionary];
-            MaybeNamed[] matches;
-            if (isSymbol)
-            {
-                matches = (from named in nameds
-                           where named.MaybeSymbol == name
-                           select named).ToArray();
-            }
-            else
-            {
-                matches = (from named in nameds
-                           where named.MaybeName == name
-                           select named).ToArray();
-            }
-
-            if (matches.Length == 1)
-            {
-                namedObject = matches.First();
-                return true;
-            }
-            else if (matches.Length == 0)
-            {
-                namedObject = null;
-                return false;
-            }
-            else
-            {
-                throw new ApplicationException();
-            }
-        }
-
-        public static bool TryGetFromName<T>(
-            string name,
-            out T? namedObject,
-            bool isSymbol = false)
-            where T : MaybeNamed
-        {
-            TryGetFromName(name, typeof(T), out var named, isSymbol);
-            namedObject = named as T;
-            return namedObject is not null;
-        }
-
-        public static T GetFromName<T>(string name, bool isSymbol = false)
-            where T : MaybeNamed
-        {
-            if (TryGetFromName<T>(name, out var res, isSymbol))
-                return res!;
-
-            throw new InvalidOperationException($"No instances of " +
-                $"{typeof(T).Name} with {(isSymbol ? "symbol" : "name")} {name}.");
-        }
-
-        protected static void AddTypeToDictionary<T>()
-            where T : MaybeNamed
-        {
-            s_types_nameds.Add(typeof(T), new List<MaybeNamed>());
+            return Database.NameAlreadyRegistered(name, Database.GetTypeWithinDictionary(typeof(T))!, isSymbol);
         }
 
         public static bool operator ==(MaybeNamed? lhs, MaybeNamed? rhs)
@@ -326,7 +172,7 @@ namespace ConvertAllTheThings.Core
             if (!_disposedValue)
             {
                 // TODO: dispose managed state (managed objects)
-                s_types_nameds[GetTypeWithinDictionary()].Remove(this);
+                Database.MaybeNamedsByType[GetTypeWithinDictionary()].Remove(this);
 
                 if (disposeDependents)
                 {
