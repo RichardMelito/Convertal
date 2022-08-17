@@ -9,25 +9,12 @@ namespace ConvertAllTheThings.Core
 {
     public sealed class EmptyQuantity : Quantity
     {
-        public override EmptyUnit FundamentalUnit => EmptyUnit.Empty;
+        public override EmptyUnit FundamentalUnit => Database.EmptyUnit;
 
         public override NamedComposition<BaseQuantity> BaseQuantityComposition => NamedComposition<BaseQuantity>.Empty;
 
-        public static new readonly EmptyQuantity Empty = new();
-
-        static EmptyQuantity()
-        {
-
-        }
-
-        internal static new void InitializeClass()
-        {
-
-        }
-
-        internal EmptyQuantity()
-            : base(null // TODO move the actual maybenamed CRUD stuff to Database and they won't need references to a database
-                  , null, null)
+        internal EmptyQuantity(Database database)
+            : base(database, null, null)
         {
             Init();
         }
@@ -40,7 +27,7 @@ namespace ConvertAllTheThings.Core
 
         protected override void DisposeBody(bool disposeDependents)
         {
-            // The EmptyQuantity cannot be disposed
+            // The Database.EmptyQuantity cannot be disposed
             return;
         }
     }

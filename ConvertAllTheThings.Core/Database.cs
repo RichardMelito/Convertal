@@ -22,6 +22,9 @@ namespace ConvertAllTheThings.Core
         internal Dictionary<Type, List<MaybeNamed>> MaybeNamedsByType { get; } = new();
         internal Dictionary<NamedComposition<BaseQuantity>, Quantity> QuantitiesByComposition { get; } = new();
 
+        public EmptyQuantity EmptyQuantity { get; }
+        public EmptyUnit EmptyUnit { get; }
+
         public IReadOnlyDictionary<NamedComposition<BaseQuantity>, Quantity> CompositionAndQuantitiesDictionary { get; }
 
         /*  Move name lookup/storage stuff from MaybeNamed into here
@@ -36,6 +39,8 @@ namespace ConvertAllTheThings.Core
             AddTypeToDictionary<Unit>();
 
             CompositionAndQuantitiesDictionary = QuantitiesByComposition.AsReadOnly();
+            EmptyQuantity = new(this);
+            EmptyUnit = new(this);
         }
 
         public IEnumerable<MaybeNamed> GetAllMaybeNameds<T>()
@@ -62,10 +67,16 @@ namespace ConvertAllTheThings.Core
             return type;
         }
 
-        protected void AddTypeToDictionary<T>()
+        internal void AddTypeToDictionary<T>()
             where T : MaybeNamed
         {
-            MaybeNamedsByType.Add(typeof(T), new List<MaybeNamed>());
+            AddTypeToDictionary(typeof(T));
+        }
+
+        internal void AddTypeToDictionary(Type type)
+        {
+            if (!MaybeNamedsByType.ContainsKey(type))
+                MaybeNamedsByType.Add(type, new List<MaybeNamed>());
         }
 
         public T? FromString<T>(string str)
@@ -215,6 +226,12 @@ namespace ConvertAllTheThings.Core
             }
         }
 
+        public bool NameAlreadyRegistered<T>(string name, bool isSymbol = false)
+            where T : MaybeNamed
+        {
+            return NameAlreadyRegistered(name, GetTypeWithinDictionary(typeof(T))!, isSymbol);
+        }
+
         public bool NameAlreadyRegistered(string name, Type type, bool isSymbol = false)
         {
             type = GetTypeWithinDictionary(type)!;
@@ -291,7 +308,7 @@ namespace ConvertAllTheThings.Core
 
         public Quantity GetFromBaseComposition(NamedComposition<IUnit> composition)
         {
-            var resultingQuantComp = Quantity.Empty.BaseQuantityComposition;
+            var resultingQuantComp = EmptyQuantity.BaseQuantityComposition;
             foreach (var (unit, power) in composition.Composition)
             {
                 var quantComp = unit.Quantity.BaseQuantityComposition.Pow(power);

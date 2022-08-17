@@ -28,17 +28,16 @@ namespace ConvertAllTheThings.Core
 
         public bool Disposed => _disposed;
 
-        public static EmptyQuantity Empty => EmptyQuantity.Empty;
-
         public abstract IUnit FundamentalUnit { get; }
         public abstract NamedComposition<BaseQuantity> BaseQuantityComposition { get; }
-        internal static void InitializeClass() { }
 
         protected Quantity(Database database, string? name, string? symbol)
             : base(database, name, symbol)
         {
             
         }
+
+        protected override Type GetDatabaseType() => typeof(Quantity);
 
         public override string ToString()
         {

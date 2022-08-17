@@ -52,6 +52,8 @@ namespace ConvertAllTheThings.Core
             if (name is null)
                 return;
 
+            database.AddTypeToDictionary(GetDatabaseType());
+
             Database.ThrowIfNameNotValid(name, GetTypeWithinDictionary());
 
             MaybeName = name;
@@ -60,6 +62,8 @@ namespace ConvertAllTheThings.Core
             if (symbol is not null)
                 ChangeSymbol(symbol);
         }
+
+        protected virtual Type GetDatabaseType() => GetType();
 
         public abstract IOrderedEnumerable<IMaybeNamed> GetAllDependents(ref IEnumerable<IMaybeNamed> toIgnore);
 
@@ -137,13 +141,6 @@ namespace ConvertAllTheThings.Core
         public Type GetTypeWithinDictionary()
         {
             return Database.GetTypeWithinDictionary(GetType())!;
-        }
-
-
-        public bool NameAlreadyRegistered<T>(string name, bool isSymbol = false)
-            where T : MaybeNamed
-        {
-            return Database.NameAlreadyRegistered(name, Database.GetTypeWithinDictionary(typeof(T))!, isSymbol);
         }
 
         public static bool operator ==(MaybeNamed? lhs, MaybeNamed? rhs)

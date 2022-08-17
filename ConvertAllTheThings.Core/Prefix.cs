@@ -9,8 +9,6 @@ namespace ConvertAllTheThings.Core
 {
     public class Prefix : MaybeNamed, INamed
     {
-        internal static void InitializeClass() { }
-
         public override IOrderedEnumerable<IMaybeNamed> GetAllDependents(ref IEnumerable<IMaybeNamed> toIgnore)
         {
             toIgnore = toIgnore.UnionAppend(this);

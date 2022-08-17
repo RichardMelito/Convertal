@@ -65,7 +65,7 @@ namespace ConvertAllTheThings.Core
         public static Term operator /(decimal divisor, Term term)
         {
             var resMagnitude = divisor / term.ConvertUnitToFundamental().Magnitude;
-            var resQuantity = Quantity.Empty / term.Quantity;
+            var resQuantity = term.Quantity.Database.EmptyQuantity / term.Quantity;
             return new(resMagnitude, resQuantity.FundamentalUnit);
         }
 

@@ -10,12 +10,10 @@ namespace ConvertAllTheThings.Core
     // should maybe inherit from Unit?
     public sealed class EmptyUnit : IUnit
     {
-        public static readonly EmptyUnit Empty = new();
-
         public decimal FundamentalMultiplier => 1m;
         public decimal FundamentalOffset => 0;
 
-        public Quantity Quantity => Quantity.Empty;
+        public Quantity Quantity { get; }
 
         public NamedComposition<IUnit> UnitComposition => NamedComposition<IUnit>.Empty;
 
@@ -23,9 +21,9 @@ namespace ConvertAllTheThings.Core
 
         public string? MaybeSymbol => null;
 
-        private EmptyUnit()
+        internal EmptyUnit(Database database)
         {
-
+            Quantity = database.EmptyQuantity;
         }
 
         public override string ToString()

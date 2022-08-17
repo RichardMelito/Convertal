@@ -1,4 +1,4 @@
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Xunit;
 using System;
 using System.Collections.Generic;
 using ConvertAllTheThings.Core;
@@ -8,20 +8,13 @@ using ConvertAllTheThings.Core.Extensions;
 
 namespace ConvertAllTheThings.Core.Tests
 {
-    [TestClass]
     public class TestMaybeNamed : BaseTestClass
     {
         class TestNamedClass : MaybeNamed
         {
-            static TestNamedClass()
+            public TestNamedClass(Database database, string name)
+                : base(database, name)
             {
-                AddTypeToDictionary<TestNamedClass>();
-            }
-
-            public TestNamedClass(string name)
-                : base(name)
-            {
-
             }
 
             public override IOrderedEnumerable<IMaybeNamed> GetAllDependents(ref IEnumerable<IMaybeNamed> toIgnore)
@@ -32,15 +25,9 @@ namespace ConvertAllTheThings.Core.Tests
 
         class OtherTestNamedClass : MaybeNamed
         {
-            static OtherTestNamedClass()
+            public OtherTestNamedClass(Database database, string name)
+                : base(database, name)
             {
-                AddTypeToDictionary<OtherTestNamedClass>();
-            }
-
-            public OtherTestNamedClass(string name)
-                : base(name)
-            {
-
             }
 
             public override IOrderedEnumerable<IMaybeNamed> GetAllDependents(ref IEnumerable<IMaybeNamed> toIgnore)
@@ -56,114 +43,114 @@ namespace ConvertAllTheThings.Core.Tests
 
         public TestMaybeNamed()
         {
-            new TestNamedClass("name1");
-            new TestNamedClass("name2");
-            new TestNamedClass("uniqueName");
+            _ = new TestNamedClass(Database, "name1");
+            _ = new TestNamedClass(Database, "name2");
+            _ = new TestNamedClass(Database, "uniqueName");
 
-            new OtherTestNamedClass("name1");
+            _ = new OtherTestNamedClass(Database, "name1");
         }
 
-        [TestMethod]
+        [Fact]
         public void TestTryGetFromName()
         {
-            Assert.IsTrue(TryGetFromName<TestNamedClass>(
+            Assert.True(Database.TryGetFromName<TestNamedClass>(
                 "uniqueName",
                 out var uniqueName1));
 
-            Assert.IsTrue(TryGetFromName<TestNamedClass>(
+            Assert.True(Database.TryGetFromName<TestNamedClass>(
                 "uniqueName",
                 out var uniqueName2));
-            Assert.AreSame(uniqueName1, uniqueName2);
+            Assert.Same(uniqueName1, uniqueName2);
 
-            Assert.IsTrue(TryGetFromName<TestNamedClass>(
+            Assert.True(Database.TryGetFromName<TestNamedClass>(
                 "name1",
                 out var name1));
 
-            Assert.IsTrue(TryGetFromName<OtherTestNamedClass>(
+            Assert.True(Database.TryGetFromName<OtherTestNamedClass>(
                 "name1",
                 out var otherName1));
-            Assert.AreNotSame(name1, otherName1);
+            Assert.NotSame(name1, otherName1);
 
-            Assert.IsFalse(TryGetFromName<TestNamedClass>(
+            Assert.False(Database.TryGetFromName<TestNamedClass>(
                 "DNE",
                 out var namedObj));
-            Assert.IsNull(namedObj);
+            Assert.Null(namedObj);
         }
 
-        [TestMethod]
+        [Fact]
         public void TestGetFromName()
         {
-            var uniqueName1 = GetFromName<TestNamedClass>("uniqueName");
-            var uniqueName2 = GetFromName<TestNamedClass>("uniqueName");
-            Assert.AreSame(uniqueName1, uniqueName2);
+            var uniqueName1 = Database.GetFromName<TestNamedClass>("uniqueName");
+            var uniqueName2 = Database.GetFromName<TestNamedClass>("uniqueName");
+            Assert.Same(uniqueName1, uniqueName2);
 
-            var name1 = GetFromName<TestNamedClass>("name1");
-            var otherName1 = GetFromName<OtherTestNamedClass>("name1");
-            Assert.AreNotSame(name1, otherName1);
+            var name1 = Database.GetFromName<TestNamedClass>("name1");
+            var otherName1 = Database.GetFromName<OtherTestNamedClass>("name1");
+            Assert.NotSame(name1, otherName1);
 
-            Assert.ThrowsException<InvalidOperationException>(
-                () => GetFromName<TestNamedClass>("DNE"));
+            Assert.Throws<InvalidOperationException>(
+                () => Database.GetFromName<TestNamedClass>("DNE"));
         }
 
-        [TestMethod]
+        [Fact]
         public void TestNameAlreadyRegistered()
         {
-            Assert.IsTrue(NameAlreadyRegistered<TestNamedClass>("name1"));
-            Assert.IsTrue(NameAlreadyRegistered<OtherTestNamedClass>("name1"));
-            Assert.IsTrue(NameAlreadyRegistered<TestNamedClass>("name2"));
-            Assert.IsFalse(NameAlreadyRegistered<OtherTestNamedClass>("name2"));
-            Assert.IsFalse(NameAlreadyRegistered<TestNamedClass>("DNE"));
+            Assert.True(Database.NameAlreadyRegistered<TestNamedClass>("name1"));
+            Assert.True(Database.NameAlreadyRegistered<OtherTestNamedClass>("name1"));
+            Assert.True(Database.NameAlreadyRegistered<TestNamedClass>("name2"));
+            Assert.False(Database.NameAlreadyRegistered<OtherTestNamedClass>("name2"));
+            Assert.False(Database.NameAlreadyRegistered<TestNamedClass>("DNE"));
         }
 
-        [TestMethod]
+        [Fact]
         public void TestNameIsValid()
         {
-            Assert.IsFalse(NameIsValid<TestNamedClass>("name1"));
-            Assert.IsTrue(NameIsValid<TestNamedClass>("DNE"));
+            Assert.False(Database.NameIsValid<TestNamedClass>("name1"));
+            Assert.True(Database.NameIsValid<TestNamedClass>("DNE"));
         }
 
-        [TestMethod]
+        [Fact]
         public void TestChangeName()
         {
-            TestNamedClass toTest = new("name3");
+            TestNamedClass toTest = new(Database, "name3");
             
             toTest.ChangeName("newName");
-            Assert.AreEqual("newName", toTest.MaybeName);
+            Assert.Equal("newName", toTest.MaybeName);
 
-            Assert.ThrowsException<InvalidOperationException>(
+            Assert.Throws<InvalidOperationException>(
                 () => toTest.ChangeName("name2"));
         }
 
-        [TestMethod]
+        [Fact]
         public void TestDispose()
         {
-            using (TestNamedClass toTest = new("name3"))
+            using (TestNamedClass toTest = new(Database, "name3"))
             {
-                Assert.IsTrue(TryGetFromName<TestNamedClass>(
+                Assert.True(Database.TryGetFromName<TestNamedClass>(
                     "name3",
                     out var same));
 
-                Assert.AreSame(toTest, same);
+                Assert.Same(toTest, same);
             }
 
-            Assert.IsFalse(TryGetFromName<TestNamedClass>(
+            Assert.False(Database.TryGetFromName<TestNamedClass>(
                 "name3",
                 out var shouldBeNull));
 
-            Assert.IsNull(shouldBeNull);
+            Assert.Null(shouldBeNull);
         }
 
-        [TestMethod]
+        [Fact]
         public void TestConstruction()
         {
-            Assert.ThrowsException<ArgumentException>(
-                () => new TestNamedClass(""));
+            Assert.Throws<ArgumentException>(
+                () => new TestNamedClass(Database, ""));
 
-            Assert.ThrowsException<ArgumentException>(
-                () => new TestNamedClass("\t"));
+            Assert.Throws<ArgumentException>(
+                () => new TestNamedClass(Database, "\t"));
 
-            Assert.ThrowsException<InvalidOperationException>(
-                () => new TestNamedClass("name1"));
+            Assert.Throws<InvalidOperationException>(
+                () => new TestNamedClass(Database, "name1"));
         }
     }
 }

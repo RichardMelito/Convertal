@@ -16,8 +16,6 @@ namespace ConvertAllTheThings.Core
 
         public IReadOnlyDictionary<Quantity, IUnit> Dictionary { get; } 
 
-        internal static void InitializeClass() { }
-
         internal MeasurementSystem(Database database, string name)
             : base(database, name)
         {

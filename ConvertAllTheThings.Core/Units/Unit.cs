@@ -12,16 +12,12 @@ namespace ConvertAllTheThings.Core
     {
         private bool _disposed = false;
 
-        public static EmptyUnit Empty => EmptyUnit.Empty;
-
         public Quantity Quantity { get; }
 
         public decimal FundamentalMultiplier { get; }
         public decimal FundamentalOffset { get; }
         public NamedComposition<IUnit> UnitComposition { get; protected set; }
         public NamedComposition<IUnit> UC => UnitComposition;   // just shorthand
-
-        internal static void InitializeClass() { }
 
         // only to be called when defining fundamental units for new
         // quantities, and thus offset will always be 0
@@ -54,6 +50,8 @@ namespace ConvertAllTheThings.Core
             FundamentalOffset = (otherUnit.FundamentalOffset / multiplier) + offset;
             UnitComposition = new(this);
         }
+
+        protected override Type GetDatabaseType() => typeof(Unit);
 
         // for defining from a chain of operations
         protected Unit(Database database, string name, NamedComposition<IUnit> composition)

@@ -1,4 +1,4 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using Xunit;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,7 +12,7 @@ namespace ConvertAllTheThings.Core.Tests
         public static void AssertAreEqual(decimal lhs, decimal rhs, decimal delta = 0m)
         {
             var diff = Math.Abs(lhs - rhs);
-            Assert.IsTrue(diff < delta);
+            Assert.True(diff < delta);
         }
     }
 }
