@@ -5,6 +5,8 @@ using System.Text;
 using System.Threading.Tasks;
 using DecimalMath;
 using ConvertAllTheThings.Core.Extensions;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 
 namespace ConvertAllTheThings.Core
 {
@@ -12,12 +14,15 @@ namespace ConvertAllTheThings.Core
     {
         private bool _disposed = false;
 
+        [JsonConverter(typeof(JsonConverters.ToStringConverter))]
         public Quantity Quantity { get; }
 
         public decimal FundamentalMultiplier { get; }
         public decimal FundamentalOffset { get; }
         public NamedComposition<IUnit> UnitComposition { get; protected set; }
-        public NamedComposition<IUnit> UC => UnitComposition;   // just shorthand
+
+        [JsonIgnore]
+        public NamedComposition<IUnit> UC => UnitComposition;   // just shorthand. TODO delete this
 
         // only to be called when defining fundamental units for new
         // quantities, and thus offset will always be 0
@@ -108,7 +113,7 @@ namespace ConvertAllTheThings.Core
             var res = IUnit.GetAllDependents(this, ref toIgnore).AsEnumerable();
 
             var prefixedUnitsWithThis =
-                from prefixedUnit in PrefixedUnit.PrefixedUnits
+                from prefixedUnit in Database.PrefixedUnits
                 where prefixedUnit.Unit == this
                 select prefixedUnit;
 
@@ -145,7 +150,7 @@ namespace ConvertAllTheThings.Core
                     $" fundamental unit {this} without first disposing of " +
                     $"quantity {Quantity}.");
 
-            var allSystems = Database.GetAllMaybeNameds<MeasurementSystem>().Cast<MeasurementSystem>();
+            var allSystems = Database.GetAllMaybeNameds<MeasurementSystem>();
             foreach (var system in allSystems)
                 system.RemoveUnit(this);
 

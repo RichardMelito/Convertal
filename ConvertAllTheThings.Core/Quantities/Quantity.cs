@@ -9,7 +9,7 @@ using System.Text.Json.Serialization;
 
 namespace ConvertAllTheThings.Core
 {
-    //[JsonConverter(typeof(JsonConverters.QuantityConverter))]
+    [JsonConverter(typeof(JsonConverters.QuantityConverter))]
     public abstract class Quantity : MaybeNamed
     {
         /*  There will never be multiple quantities for something in the same 
@@ -26,9 +26,13 @@ namespace ConvertAllTheThings.Core
         private bool _disposed = false;
         private bool _initialized = false;
 
+        [JsonIgnore]
         public bool Disposed => _disposed;
 
+        [JsonConverter(typeof(JsonConverters.ToStringConverter))]
         public abstract IUnit FundamentalUnit { get; }
+
+        [JsonIgnore]
         public abstract NamedComposition<BaseQuantity> BaseQuantityComposition { get; }
 
         protected Quantity(Database database, string? name, string? symbol)
@@ -85,7 +89,7 @@ namespace ConvertAllTheThings.Core
         {
             toIgnore = toIgnore.UnionAppend(this);
 
-            var allUnits = Database.GetAllMaybeNameds<Unit>().Cast<Unit>();
+            var allUnits = Database.GetAllMaybeNameds<Unit>();
             var unitsWithThisQuantity = from unit in allUnits
                                         where unit.Quantity == this
                                         select unit;
@@ -110,7 +114,7 @@ namespace ConvertAllTheThings.Core
                     $"Could not remove Quantity {MaybeName ?? "{null}"} with composition " +
                     $"{BaseQuantityComposition} from static dictionary.");
 
-            var allSystems = Database.GetAllMaybeNameds<MeasurementSystem>().Cast<MeasurementSystem>();
+            var allSystems = Database.GetAllMaybeNameds<MeasurementSystem>();
             foreach (var system in allSystems)
                 system.RemoveQuantity(this);
 

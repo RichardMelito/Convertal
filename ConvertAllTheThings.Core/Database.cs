@@ -4,28 +4,51 @@ using System.Linq;
 using System.Text;
 using ConvertAllTheThings.Core.Extensions;
 using System.Threading.Tasks;
+using System.Text.Json;
+using System.Text.Json.Serialization;
+using System.Collections.ObjectModel;
 
 namespace ConvertAllTheThings.Core
 {
+    //[JsonConverter(typeof(JsonConverters.DatabaseConverter))]
     public class Database
     {
-        // serialization lists
-        private readonly List<BaseQuantity> _baseQuantities = new();
-        private readonly List<BaseQuantity> _derivedQuantities = new();
-        private readonly List<BaseUnit> _baseUnits = new();
-        private readonly List<DerivedUnit> _derivedUnits = new();
-        private readonly List<Prefix> _prefixes = new();
-        private readonly List<PrefixedBaseUnit> _prefixedBaseUnits = new();
-        private readonly List<PrefixedDerivedUnit> _prefixedDerivedUnits = new();
-        private readonly List<MeasurementSystem> _measurementSystems = new();
+        //// serialization lists
+        //// These are kind of redundant with MaybeNamedsByType but I'll deal with that later
+        //private readonly List<BaseQuantity> _baseQuantities = new();
+        //private readonly List<DerivedQuantity> _derivedQuantities = new();
+        //private readonly List<BaseUnit> _baseUnits = new();
+        //private readonly List<DerivedUnit> _derivedUnits = new();
+        //private readonly List<Prefix> _prefixes = new();
+        //private readonly List<PrefixedBaseUnit> _prefixedBaseUnits = new();
+        //private readonly List<PrefixedDerivedUnit> _prefixedDerivedUnits = new();
+        //private readonly List<MeasurementSystem> _measurementSystems = new();
+
+        private readonly List<PrefixedUnit> _prefixedUnits = new();
+
+        public IEnumerable<Prefix> Prefixes => GetAllMaybeNameds<Prefix>();
+        public IEnumerable<BaseQuantity> BaseQuantitys => GetAllMaybeNameds<BaseQuantity>();
+        public IEnumerable<DerivedQuantity> DerivedQuantitys => GetAllMaybeNameds<DerivedQuantity>();
+        public IEnumerable<BaseUnit> BaseUnits => GetAllMaybeNameds<BaseUnit>();
+        public IEnumerable<PrefixedBaseUnit> PrefixedBaseUnits => _prefixedUnits.Where(x => x is PrefixedBaseUnit).Cast<PrefixedBaseUnit>();
+        public IEnumerable<DerivedUnit> DerivedUnits => GetAllMaybeNameds<DerivedUnit>();
+        public IEnumerable<PrefixedDerivedUnit> PrefixedDerivedUnits => _prefixedUnits.Where(x => x is PrefixedDerivedUnit).Cast<PrefixedDerivedUnit>();
+        public IEnumerable<MeasurementSystem> MeasurementSystems => GetAllMaybeNameds<MeasurementSystem>();
 
         internal Dictionary<Type, List<MaybeNamed>> MaybeNamedsByType { get; } = new();
         internal Dictionary<NamedComposition<BaseQuantity>, Quantity> QuantitiesByComposition { get; } = new();
 
+        [JsonIgnore]
         public EmptyQuantity EmptyQuantity { get; }
+
+        [JsonIgnore]
         public EmptyUnit EmptyUnit { get; }
 
+        [JsonIgnore]
         public IReadOnlyDictionary<NamedComposition<BaseQuantity>, Quantity> CompositionAndQuantitiesDictionary { get; }
+
+        [JsonIgnore]
+        public ReadOnlyCollection<PrefixedUnit> PrefixedUnits { get; }
 
         /*  Move name lookup/storage stuff from MaybeNamed into here
          *  CRUD for named objects occurs here
@@ -41,11 +64,62 @@ namespace ConvertAllTheThings.Core
             CompositionAndQuantitiesDictionary = QuantitiesByComposition.AsReadOnly();
             EmptyQuantity = new(this);
             EmptyUnit = new(this);
+            PrefixedUnits = _prefixedUnits.AsReadOnly();
         }
 
-        public IEnumerable<MaybeNamed> GetAllMaybeNameds<T>()
+        internal void AddToPrefixedUnitsList(PrefixedUnit toAdd) => _prefixedUnits.Add(toAdd);
+        internal bool RemoveFromPrefixedUnitsList(PrefixedUnit toRemove) => _prefixedUnits.Remove(toRemove);
+
+
+        public PrefixedBaseUnit GetPrefixedUnit(BaseUnit unit, Prefix prefix)
         {
-            return MaybeNamedsByType[GetTypeWithinDictionary(typeof(T))!];
+            return (PrefixedBaseUnit)GetPrefixedUnit((Unit)unit, prefix);
+        }
+
+        public PrefixedDerivedUnit GetPrefixedUnit(DerivedUnit unit, Prefix prefix)
+        {
+            return (PrefixedDerivedUnit)GetPrefixedUnit((Unit)unit, prefix);
+        }
+
+        public PrefixedUnit GetPrefixedUnit(Unit unit, Prefix prefix)
+        {
+            var existingPrefixedUnit =
+                from prefixedUnit in PrefixedUnits
+                where prefixedUnit.Unit == unit &&
+                prefixedUnit.Prefix == prefix
+                select prefixedUnit;
+
+            switch (existingPrefixedUnit.Count())
+            {
+                case 0:
+                    if (unit is BaseUnit baseUnit)
+                        return new PrefixedBaseUnit(unit.Database, baseUnit, prefix);
+
+                    else if (unit is DerivedUnit derivedUnit)
+                        return new PrefixedDerivedUnit(unit.Database, derivedUnit, prefix);
+
+                    else
+                        throw new NotImplementedException();
+
+                case 1:
+                    return existingPrefixedUnit.First();
+
+                default:
+                    throw new ApplicationException(existingPrefixedUnit.Count().ToString());
+            }
+        }
+
+        public IEnumerable<T> GetAllMaybeNameds<T>()
+            where T : MaybeNamed
+        {
+            var typeofT = typeof(T);
+            var typeWithinDictionary = GetTypeWithinDictionary(typeofT)!;
+            if (typeofT == typeWithinDictionary)
+                return MaybeNamedsByType[typeWithinDictionary].Cast<T>();
+
+            return MaybeNamedsByType[typeWithinDictionary]
+                .Where(x => x is T)
+                .Cast<T>();
         }
 
         public Type? GetTypeWithinDictionary(Type type)
@@ -100,7 +174,7 @@ namespace ConvertAllTheThings.Core
 
                 var prefix = GetFromName<Prefix>(split[0]);
                 var unit = GetFromName<Unit>(split[1]);
-                return PrefixedUnit.GetPrefixedUnit(unit, prefix).ForceCast<T>();
+                return GetPrefixedUnit(unit, prefix).ForceCast<T>();
             }
 
             throw new ArgumentException(str);
@@ -260,10 +334,8 @@ namespace ConvertAllTheThings.Core
             string? quantitySymbol = null,
             string? unitSymbol = null)
         {
-            // TODO
             ThrowIfNameNotValid<Unit>(fundamentalUnitName);
             ThrowIfNameNotValid<Quantity>(quantityName);
-
 
             BaseQuantity quantity = new(this, quantityName, quantitySymbol);
 
@@ -284,7 +356,7 @@ namespace ConvertAllTheThings.Core
 
         public IEnumerable<IDerivedUnit> GetAllIDerivedUnitsComposedOf(IBaseUnit baseUnit)
         {
-            var allUnits = GetAllMaybeNameds<Unit>().Cast<Unit>();
+            var allUnits = GetAllMaybeNameds<Unit>();
 
             IEnumerable<IDerivedUnit> unitsComposedOfGiven =
                 from unit in allUnits
@@ -294,7 +366,7 @@ namespace ConvertAllTheThings.Core
                 select (DerivedUnit)unit;
 
             IEnumerable<IDerivedUnit> prefixedUnitsComposedOfGiven =
-                from prefixedUnit in PrefixedUnit.PrefixedUnits
+                from prefixedUnit in PrefixedUnits
                 where prefixedUnit is PrefixedDerivedUnit &&
                 prefixedUnit.UnitComposition is not null &&
                 prefixedUnit.UnitComposition.Composition.ContainsKey(baseUnit)

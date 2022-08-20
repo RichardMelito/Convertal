@@ -4,15 +4,19 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using ConvertAllTheThings.Core.Extensions;
+using System.Text.Json.Serialization;
 
 namespace ConvertAllTheThings.Core
 {
+    [JsonConverter(typeof(JsonConverters.BaseQuantityConverter))]
     public class BaseQuantity : Quantity, IBase, IEquatable<BaseQuantity>
     {
         internal IBaseUnit? InnerFundamentalUnit { get; set; } = null;
 
+        
         public override IBaseUnit FundamentalUnit => InnerFundamentalUnit!;
 
+        [JsonIgnore]
         public override NamedComposition<BaseQuantity> BaseQuantityComposition { get; }
 
         internal BaseQuantity(Database database, string name, string? symbol)

@@ -10,6 +10,7 @@ namespace ConvertAllTheThings.Core
 {
     public class MeasurementSystem : MaybeNamed, INamed
     {
+        // TODO
         public static MeasurementSystem? Current { get; set; } = null;
 
         private readonly Dictionary<Quantity, IUnit> _quantities_units = new();

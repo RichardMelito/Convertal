@@ -49,10 +49,11 @@ namespace ConvertAllTheThings.Core
         protected MaybeNamed(Database database, string? name, string? symbol = null)
         {
             Database = database;
+            Database.AddTypeToDictionary(GetDatabaseType());
+            //Database.AddToSerializationList(this);
+
             if (name is null)
                 return;
-
-            database.AddTypeToDictionary(GetDatabaseType());
 
             Database.ThrowIfNameNotValid(name, GetTypeWithinDictionary());
 
@@ -170,6 +171,7 @@ namespace ConvertAllTheThings.Core
             {
                 // TODO: dispose managed state (managed objects)
                 Database.MaybeNamedsByType[GetTypeWithinDictionary()].Remove(this);
+                //Database.RemoveFromSerializationList(this);
 
                 if (disposeDependents)
                 {

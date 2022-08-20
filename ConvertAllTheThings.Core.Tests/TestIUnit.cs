@@ -20,7 +20,7 @@ namespace ConvertAllTheThings.Core.Tests
             var a = (BaseUnit)quantA.FundamentalUnit;
             var b = new BaseUnit(Database, "b", a, 2);
             var prefix = new Prefix(Database, "prefix", 4);
-            var c = PrefixedUnit.GetPrefixedUnit(a, prefix);
+            var c = Database.GetPrefixedUnit(a, prefix);
 
             var composition = 
                 a.UnitComposition * 
@@ -132,9 +132,9 @@ namespace ConvertAllTheThings.Core.Tests
             }
 
             Prefix testPrefix = new(Database, "TestPrefix", 10m);
-            var pA = PrefixedUnit.GetPrefixedUnit(a, testPrefix);
-            var pB = PrefixedUnit.GetPrefixedUnit(b, testPrefix);
-            var pC = PrefixedUnit.GetPrefixedUnit(c, testPrefix);
+            var pA = Database.GetPrefixedUnit(a, testPrefix);
+            var pB = Database.GetPrefixedUnit(b, testPrefix);
+            var pC = Database.GetPrefixedUnit(c, testPrefix);
 
             Assert.Equal(10m, pA.FundamentalMultiplier); 
             Assert.Equal(0m, pA.FundamentalOffset);

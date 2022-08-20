@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 using ConvertAllTheThings.Core.Extensions;
 
@@ -9,6 +10,7 @@ namespace ConvertAllTheThings.Core
 {
     public class PrefixedBaseUnit : PrefixedUnit, IBaseUnit
     {
+        [JsonConverter(typeof(JsonConverters.ToStringConverter))]
         public new BaseUnit Unit => (BaseUnit)base.Unit;
 
         internal PrefixedBaseUnit(Database database, BaseUnit unit, Prefix prefix)

@@ -14,7 +14,7 @@ namespace ConvertAllTheThings.Core
             toIgnore = toIgnore.UnionAppend(this);
 
             var prefixedUnitsWithThis =
-                from prefixedUnit in PrefixedUnit.PrefixedUnits
+                from prefixedUnit in Database.PrefixedUnits
                 where prefixedUnit.Prefix == this
                 select prefixedUnit;
 
@@ -38,7 +38,7 @@ namespace ConvertAllTheThings.Core
         {
             get
             {
-                return PrefixedUnit.GetPrefixedUnit(unit, this);
+                return Database.GetPrefixedUnit(unit, this);
             }
         }
 
@@ -46,7 +46,7 @@ namespace ConvertAllTheThings.Core
         {
             get
             {
-                return PrefixedUnit.GetPrefixedUnit(unit, this);
+                return Database.GetPrefixedUnit(unit, this);
             }
         }
 
@@ -54,7 +54,7 @@ namespace ConvertAllTheThings.Core
         {
             get
             {
-                return PrefixedUnit.GetPrefixedUnit(unit, this);
+                return Database.GetPrefixedUnit(unit, this);
             }
         }
     }

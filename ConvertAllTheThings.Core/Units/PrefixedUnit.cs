@@ -3,9 +3,10 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
-using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 using ConvertAllTheThings.Core.Extensions;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 
 namespace ConvertAllTheThings.Core
 {
@@ -13,6 +14,7 @@ namespace ConvertAllTheThings.Core
     {
         private bool _disposedValue;
 
+        [JsonIgnore]
         public Quantity Quantity => Unit.Quantity;
 
         public string? MaybeName => Prefix.MaybeName! + "_" + Unit.MaybeName!;
@@ -30,10 +32,15 @@ namespace ConvertAllTheThings.Core
 
         public decimal FundamentalMultiplier => Unit.FundamentalMultiplier * Prefix.Multiplier;
         public decimal FundamentalOffset => Unit.FundamentalOffset / Prefix.Multiplier;
-        public Unit Unit { get; private set; }
-        public Prefix Prefix { get; }
 
-        public NamedComposition<IUnit> UnitComposition { get; protected set; }
+        [JsonConverter(typeof(JsonConverters.ToStringConverter))]
+        public Unit Unit { get; private set; }
+        
+        [JsonConverter(typeof(JsonConverters.ToStringConverter))]
+        public Prefix Prefix { get; }
+        
+        [JsonIgnore]
+        public NamedComposition<IUnit> UnitComposition { get; private set; }
 
         public override string ToString()
         {
@@ -44,10 +51,6 @@ namespace ConvertAllTheThings.Core
         {
             return Prefix.ToStringSymbol() + "_" + Unit.ToStringSymbol();
         }
-
-        private static readonly List<PrefixedUnit> s_prefixedUnits = new();
-        public static readonly ReadOnlyCollection<PrefixedUnit> 
-            PrefixedUnits = s_prefixedUnits.AsReadOnly();
 
         [JsonIgnore]
         internal Database Database { get; }
@@ -62,48 +65,10 @@ namespace ConvertAllTheThings.Core
                     "Unit in PrefixedUnit must have a name.");
 
             Prefix = prefix;
-            s_prefixedUnits.Add(this);
+            Database.AddToPrefixedUnitsList(this);
             Unit = unit;
 
             UnitComposition = new(this);
-        }
-
-        public static PrefixedBaseUnit GetPrefixedUnit(BaseUnit unit, Prefix prefix)
-        {
-            return (PrefixedBaseUnit)GetPrefixedUnit((Unit)unit, prefix);
-        }
-
-        public static PrefixedDerivedUnit GetPrefixedUnit(DerivedUnit unit, Prefix prefix)
-        {
-            return (PrefixedDerivedUnit)GetPrefixedUnit((Unit)unit, prefix);
-        }
-
-        public static PrefixedUnit GetPrefixedUnit(Unit unit, Prefix prefix)
-        {
-            var existingPrefixedUnit =
-                from prefixedUnit in PrefixedUnits
-                where prefixedUnit.Unit == unit &&
-                prefixedUnit.Prefix == prefix
-                select prefixedUnit;
-
-            switch (existingPrefixedUnit.Count())
-            {
-                case 0:
-                    if (unit is BaseUnit baseUnit)
-                        return new PrefixedBaseUnit(unit.Database, baseUnit, prefix);
-
-                    else if (unit is DerivedUnit derivedUnit)
-                        return new PrefixedDerivedUnit(unit.Database, derivedUnit, prefix);
-
-                    else
-                        throw new NotImplementedException();
-
-                case 1:
-                    return existingPrefixedUnit.First();
-
-                default:
-                    throw new ApplicationException(existingPrefixedUnit.Count().ToString());
-            }
         }
 
 
@@ -152,7 +117,7 @@ namespace ConvertAllTheThings.Core
                         $"quantity {Quantity}.");
 
                 // TODO: dispose managed state (managed objects)
-                if (!s_prefixedUnits.Remove(this))
+                if (!Database.RemoveFromPrefixedUnitsList(this))
                     throw new ApplicationException($"Could not remove {this} from " +
                         $"the PrefixedUnit dictionary.");
 
@@ -165,7 +130,7 @@ namespace ConvertAllTheThings.Core
                 }
 
 
-                var allSystems = Database.GetAllMaybeNameds<MeasurementSystem>().Cast<MeasurementSystem>();
+                var allSystems = Database.GetAllMaybeNameds<MeasurementSystem>();
                 foreach (var system in allSystems)
                     system.RemoveUnit(this);
 
