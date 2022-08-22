@@ -6,8 +6,44 @@ using System.Threading.Tasks;
 
 namespace ConvertAllTheThings.Core.Tests
 {
-    public class TestDatabase
+    public class TestDatabase : BaseTestClass
     {
+        public readonly Prefix Milli;
+        public readonly Prefix Kilo;
 
+        public readonly BaseQuantity Length;
+        public readonly BaseQuantity Time;
+        public readonly BaseQuantity Mass;
+
+        public readonly BaseUnit Meter;
+        public readonly BaseUnit Second;
+        public readonly BaseUnit Hour;
+
+        public readonly PrefixedBaseUnit KiloGram;
+
+        public readonly DerivedQuantity Velocity;
+        public readonly DerivedQuantity Acceleration;
+        public readonly DerivedQuantity Force;
+
+        public readonly DerivedUnit Newton;
+        public readonly DerivedUnit PoundForce;
+
+        public TestDatabase()
+        {
+            Milli = Database.DefinePrefix("milli", 1e-3m, "m");
+            Kilo = Database.DefinePrefix("kilo", 1e3m, "k");
+
+            Length = Database.DefineBaseQuantity(nameof(Length), "Meter", quantitySymbol: "l", unitSymbol: "m");
+            Time = Database.DefineBaseQuantity(nameof(Time), "Second", quantitySymbol: "T", unitSymbol: "s");
+            Mass = Database.DefineBaseQuantity(nameof(Mass), "Gram", unitPrefix: Kilo, quantitySymbol: "M", unitSymbol: "g");
+
+            Meter = (BaseUnit)Length.FundamentalUnit;
+            Second = (BaseUnit)Time.FundamentalUnit;
+            KiloGram = (PrefixedBaseUnit)Mass.FundamentalUnit;
+
+            Hour = Database.DefineBaseUnit(nameof(Hour), Second, 3600m, symbol: "h");
+
+
+        }
     }
 }

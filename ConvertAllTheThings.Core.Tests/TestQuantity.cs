@@ -18,11 +18,11 @@ namespace ConvertAllTheThings.Core.Tests
         {
             _testPrefix = new(Database, "TestPrefix", 2);
 
-            _baseQuantity1 = Database.DefineNewBaseQuantity(
+            _baseQuantity1 = Database.DefineBaseQuantity(
                 "Base1",
                 "Fu1");
 
-            _baseQuantity2 = Database.DefineNewBaseQuantity(
+            _baseQuantity2 = Database.DefineBaseQuantity(
                 "Base2",
                 "Fu2",
                 _testPrefix);

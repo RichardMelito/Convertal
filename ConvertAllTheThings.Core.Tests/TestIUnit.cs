@@ -14,7 +14,7 @@ namespace ConvertAllTheThings.Core.Tests
         [Fact]
         public void TestUnitCompositions()
         {
-            var quantA = Database.DefineNewBaseQuantity("quantA",
+            var quantA = Database.DefineBaseQuantity("quantA",
                 "a");
 
             var a = (BaseUnit)quantA.FundamentalUnit;
@@ -49,7 +49,7 @@ namespace ConvertAllTheThings.Core.Tests
              *      C.offset = 45
              */
 
-            var quant = Database.DefineNewBaseQuantity(
+            var quant = Database.DefineBaseQuantity(
                 "quantity", "a");
 
             var a = (BaseUnit)quant.FundamentalUnit;

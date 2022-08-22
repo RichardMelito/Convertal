@@ -11,7 +11,7 @@ namespace ConvertAllTheThings.Core
     {
 
         // for defining from an existng IBaseUnit
-        public BaseUnit(
+        internal BaseUnit(
             Database database,
             string name, 
             IBaseUnit otherUnit, 

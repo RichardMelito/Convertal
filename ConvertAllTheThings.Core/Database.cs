@@ -70,6 +70,7 @@ namespace ConvertAllTheThings.Core
         internal void AddToPrefixedUnitsList(PrefixedUnit toAdd) => _prefixedUnits.Add(toAdd);
         internal bool RemoveFromPrefixedUnitsList(PrefixedUnit toRemove) => _prefixedUnits.Remove(toRemove);
 
+        public Prefix DefinePrefix(string name, decimal multiplier, string? symbol = null) => new Prefix(this, name, multiplier, symbol);
 
         public PrefixedBaseUnit GetPrefixedUnit(BaseUnit unit, Prefix prefix)
         {
@@ -327,7 +328,18 @@ namespace ConvertAllTheThings.Core
             return matches.Any();
         }
 
-        public BaseQuantity DefineNewBaseQuantity(
+        public BaseUnit DefineBaseUnit(
+            string name,
+            IBaseUnit otherUnit,
+            decimal multiplier,
+            decimal offset = 0,
+            string? symbol = null) => new(this, name, otherUnit, multiplier, offset, symbol);
+
+        public DerivedQuantity DefineDerivedQuantity(
+            Func<Quantity> quantityOperation,
+            )
+
+        public BaseQuantity DefineBaseQuantity(
             string quantityName,
             string fundamentalUnitName,
             Prefix? unitPrefix = null,
