@@ -18,6 +18,7 @@ namespace ConvertAllTheThings.Core.Tests
         public readonly BaseUnit Meter;
         public readonly BaseUnit Second;
         public readonly BaseUnit Hour;
+        public readonly BaseUnit Foot;
 
         public readonly PrefixedBaseUnit KiloGram;
 
@@ -27,6 +28,9 @@ namespace ConvertAllTheThings.Core.Tests
 
         public readonly DerivedUnit Newton;
         public readonly DerivedUnit PoundForce;
+
+        public readonly Unit FeetPerSecond;
+        public readonly Unit PoundMass;
 
         public TestDatabase()
         {
@@ -40,10 +44,18 @@ namespace ConvertAllTheThings.Core.Tests
             Meter = (BaseUnit)Length.FundamentalUnit;
             Second = (BaseUnit)Time.FundamentalUnit;
             KiloGram = (PrefixedBaseUnit)Mass.FundamentalUnit;
+            Foot = Database.DefineBaseUnit(nameof(Foot), Meter, 0.3048m);
 
             Hour = Database.DefineBaseUnit(nameof(Hour), Second, 3600m, symbol: "h");
 
+            Velocity = Database.DefineDerivedQuantity(() => Length / Time, nameof(Velocity), "v");
+            Acceleration = Database.DefineDerivedQuantity(() => Velocity / Time, nameof(Acceleration), "a");
+            Force = Database.DefineDerivedQuantity(() => Mass * Acceleration, nameof(Force), "F");
 
+            Newton = Force.FundamentalUnit.CastAndChangeNameAndSymbol<DerivedUnit>(nameof(Newton), "N");
+            PoundForce = Database.DefineDerivedUnit(nameof(PoundForce), Newton, 4.4482216282509m, symbol: "lbf");
+
+            Foot
         }
     }
 }

@@ -87,10 +87,11 @@ namespace ConvertAllTheThings.Core
             MaybeSymbol = symbol;
         }
 
-        public void ChangeNameAndSymbol(string newName, string symbol)
+        public void ChangeNameAndSymbol(string newName, string? symbol = null)
         {
             ChangeName(newName);
-            ChangeSymbol(symbol);
+            if (symbol is not null)
+                ChangeSymbol(symbol);
         }
 
         public override string ToString()

@@ -17,5 +17,13 @@ namespace ConvertAllTheThings.Core
         IOrderedEnumerable<IMaybeNamed> GetAllDependents(ref IEnumerable<IMaybeNamed> toIgnore);
 
         internal void DisposeThisAndDependents(bool disposeDependents);
+
+        public T CastAndChangeNameAndSymbol<T>(string name, string? symbol)
+            where T : MaybeNamed
+        {
+            var res = (T)this;
+            res.ChangeNameAndSymbol(name, symbol);
+            return res;
+        }
     }
 }

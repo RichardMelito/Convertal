@@ -335,9 +335,32 @@ namespace ConvertAllTheThings.Core
             decimal offset = 0,
             string? symbol = null) => new(this, name, otherUnit, multiplier, offset, symbol);
 
+        public DerivedUnit DefineDerivedUnit(
+            string name,
+            IDerivedUnit otherUnit,
+            decimal multiplier,
+            decimal offset = 0,
+            string? symbol = null)
+            => new(this, name, otherUnit, multiplier, offset, symbol);
+
         public DerivedQuantity DefineDerivedQuantity(
             Func<Quantity> quantityOperation,
-            )
+            string quantityName,
+            string? quantitySymbol = null)
+        {
+            var resultingQuantity = quantityOperation();
+            var res = resultingQuantity as DerivedQuantity;
+            if (res is null)
+            {
+                resultingQuantity.Dispose();
+
+                // TODO elaborate and maybe do some magic to write out the operation inputs.
+                throw new InvalidOperationException("The given quantity operation did not return a derived quantity.");
+            }
+
+            res.ChangeNameAndSymbol(quantityName, quantitySymbol);
+            return res;
+        }
 
         public BaseQuantity DefineBaseQuantity(
             string quantityName,

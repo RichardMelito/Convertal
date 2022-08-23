@@ -27,7 +27,7 @@ namespace ConvertAllTheThings.Core
         }
 
         // for defining from an existing IDerivedUnit
-        public DerivedUnit(
+        internal DerivedUnit(
             Database database,
             string name, 
             IDerivedUnit otherUnit, 
