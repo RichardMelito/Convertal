@@ -2,7 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.Json;
 using System.Threading.Tasks;
+using Xunit;
 
 namespace ConvertAllTheThings.Core.Tests
 {
@@ -30,7 +32,6 @@ namespace ConvertAllTheThings.Core.Tests
         public readonly DerivedUnit PoundForce;
 
         public readonly Unit FeetPerSecond;
-        public readonly Unit PoundMass;
 
         public TestDatabase()
         {
@@ -55,7 +56,18 @@ namespace ConvertAllTheThings.Core.Tests
             Newton = Force.FundamentalUnit.CastAndChangeNameAndSymbol<DerivedUnit>(nameof(Newton), "N");
             PoundForce = Database.DefineDerivedUnit(nameof(PoundForce), Newton, 4.4482216282509m, symbol: "lbf");
 
-            Foot
+            FeetPerSecond = Database.DefineFromComposition(nameof(FeetPerSecond), Foot.UC / Second.UC);
+        }
+
+        [Fact]
+        public void TestSerialization()
+        {
+            JsonSerializerOptions jsonSerializerOptions = new()
+            {
+                WriteIndented = true,
+            };
+            var x = JsonSerializer.Serialize(Database, jsonSerializerOptions);
+            File.WriteAllText("database.json", x);
         }
     }
 }

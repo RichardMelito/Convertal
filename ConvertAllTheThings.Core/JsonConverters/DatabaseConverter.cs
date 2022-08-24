@@ -17,8 +17,8 @@ namespace ConvertAllTheThings.Core.JsonConverters
 
         public override void Write(Utf8JsonWriter writer, Database value, JsonSerializerOptions options)
         {
-            JsonSerializer.Serialize(writer, value, options);
-            return;
+            //JsonSerializer.Serialize(writer, value, options);
+            //return;
             
             // Just need MaybeNamedsByType. That plus constructors are everything we need.
             writer.WriteStartObject();
@@ -33,10 +33,10 @@ namespace ConvertAllTheThings.Core.JsonConverters
             writer.WritePropertyName(nameof(Database.BaseQuantitys));
             JsonSerializer.Serialize(writer, value.BaseQuantitys, options);
 
-            writer.WritePropertyName(nameof(Database.DerivedQuantitys));
-            JsonSerializer.Serialize(writer, value.DerivedQuantitys, options);
+            //writer.WritePropertyName(nameof(Database.DerivedQuantitys));
+            //JsonSerializer.Serialize(writer, value.DerivedQuantitys, options);
 
-            
+
 
             writer.WriteEndObject();
         }

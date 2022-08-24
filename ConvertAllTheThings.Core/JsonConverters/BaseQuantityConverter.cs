@@ -17,7 +17,7 @@ namespace ConvertAllTheThings.Core.JsonConverters
 
         public override void Write(Utf8JsonWriter writer, BaseQuantity value, JsonSerializerOptions options)
         {
-            JsonSerializer.Serialize(writer, value, options);
+            JsonSerializer.Serialize<Quantity>(writer, value, options);
         }
 
         public override void WriteAsPropertyName(Utf8JsonWriter writer, BaseQuantity value, JsonSerializerOptions options)

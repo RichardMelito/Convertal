@@ -10,7 +10,7 @@ using System.Collections.ObjectModel;
 
 namespace ConvertAllTheThings.Core
 {
-    //[JsonConverter(typeof(JsonConverters.DatabaseConverter))]
+    [JsonConverter(typeof(JsonConverters.DatabaseConverter))]
     public class Database
     {
         //// serialization lists
