@@ -64,7 +64,7 @@ namespace ConvertAllTheThings.Core
         {
             // TODO: notify user that offsets will be ignored
             //var offsetQuery =
-            //    from baseUnit in composition.Composition.Keys
+            //    from baseUnit in composition.Keys
             //    where baseUnit.FundamentalOffset != 0m
             //    select baseUnit;
 
@@ -72,7 +72,7 @@ namespace ConvertAllTheThings.Core
             Quantity = Database.GetFromBaseComposition(UnitComposition);
             FundamentalMultiplier = 1m;
             FundamentalOffset = 0;
-            foreach (var (unit, power) in UnitComposition.Composition)
+            foreach (var (unit, power) in UnitComposition)
             {
                 var multiplier = DecimalEx.Pow(unit.FundamentalMultiplier, power);
                 FundamentalMultiplier *= multiplier;

@@ -13,7 +13,7 @@ namespace ConvertAllTheThings.Core
     {
         internal IBaseUnit? InnerFundamentalUnit { get; set; } = null;
 
-        [JsonIgnore] // TODO
+        [JsonIgnore]
         public override IBaseUnit FundamentalUnit => InnerFundamentalUnit!;
 
         [JsonIgnore]
@@ -47,7 +47,7 @@ namespace ConvertAllTheThings.Core
 
             var quantsComposedOfThis = from comp_quant in Database.CompositionAndQuantitiesDictionary
                                        where comp_quant.Value is DerivedQuantity &&
-                                       comp_quant.Key.Composition.ContainsKey(this)
+                                       comp_quant.Key.ContainsKey(this)
                                        select comp_quant.Value;
 
             res = res.Union(quantsComposedOfThis);

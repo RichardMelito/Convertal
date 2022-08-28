@@ -33,8 +33,8 @@ namespace ConvertAllTheThings.Core.JsonConverters
             writer.WritePropertyName(nameof(Database.BaseQuantitys));
             JsonSerializer.Serialize(writer, value.BaseQuantitys, options);
 
-            //writer.WritePropertyName(nameof(Database.DerivedQuantitys));
-            //JsonSerializer.Serialize(writer, value.DerivedQuantitys, options);
+            writer.WritePropertyName(nameof(Database.DerivedQuantitys));
+            JsonSerializer.Serialize(writer, value.DerivedQuantitys, options);
 
 
 

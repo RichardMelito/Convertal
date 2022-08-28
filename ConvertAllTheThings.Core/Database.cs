@@ -397,14 +397,14 @@ namespace ConvertAllTheThings.Core
                 from unit in allUnits
                 where unit is DerivedUnit &&
                 unit.UnitComposition is not null &&
-                unit.UnitComposition.Composition.ContainsKey(baseUnit)
+                unit.UnitComposition.ContainsKey(baseUnit)
                 select (DerivedUnit)unit;
 
             IEnumerable<IDerivedUnit> prefixedUnitsComposedOfGiven =
                 from prefixedUnit in PrefixedUnits
                 where prefixedUnit is PrefixedDerivedUnit &&
                 prefixedUnit.UnitComposition is not null &&
-                prefixedUnit.UnitComposition.Composition.ContainsKey(baseUnit)
+                prefixedUnit.UnitComposition.ContainsKey(baseUnit)
                 select (PrefixedDerivedUnit)prefixedUnit;
 
             return unitsComposedOfGiven.Union(prefixedUnitsComposedOfGiven);
@@ -416,7 +416,7 @@ namespace ConvertAllTheThings.Core
         public Quantity GetFromBaseComposition(NamedComposition<IUnit> composition)
         {
             var resultingQuantComp = EmptyQuantity.BaseQuantityComposition;
-            foreach (var (unit, power) in composition.Composition)
+            foreach (var (unit, power) in composition)
             {
                 var quantComp = unit.Quantity.BaseQuantityComposition.Pow(power);
                 resultingQuantComp *= quantComp;

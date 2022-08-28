@@ -9,7 +9,7 @@ using System.Text.Json.Serialization;
 
 namespace ConvertAllTheThings.Core
 {
-    [JsonConverter(typeof(JsonConverters.QuantityConverter))]
+    //[JsonConverter(typeof(JsonConverters.QuantityConverter))]
     public abstract class Quantity : MaybeNamed
     {
         /*  There will never be multiple quantities for something in the same 
@@ -30,7 +30,6 @@ namespace ConvertAllTheThings.Core
         public bool Disposed => _disposed;
 
         [JsonConverter(typeof(JsonConverters.ToStringConverter))]
-        //[JsonIgnore] // TODO
         public abstract IUnit FundamentalUnit { get; }
 
         [JsonIgnore]

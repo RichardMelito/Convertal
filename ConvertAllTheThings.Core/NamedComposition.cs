@@ -7,11 +7,18 @@ using System.Threading.Tasks;
 using ConvertAllTheThings.Core.Extensions;
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using System.Diagnostics.CodeAnalysis;
+using System.Collections;
 
 namespace ConvertAllTheThings.Core
 {
+    public abstract class NamedComposition
+    {
+        public abstract IReadOnlyDictionary<string, decimal> Composition { get; }
+    }
+
     [JsonConverter(typeof(JsonConverters.NamedCompositionConverter))]
-    public class NamedComposition<T> : IEquatable<NamedComposition<T>>
+    public class NamedComposition<T> : NamedComposition, IReadOnlyDictionary<T, decimal>, IEquatable<NamedComposition<T>>
         where T : IMaybeNamed
     {
         /*  describes a collection of base quantities or base units from which 
@@ -20,7 +27,15 @@ namespace ConvertAllTheThings.Core
 
         public static readonly NamedComposition<T> Empty;
 
-        public IReadOnlyDictionary<T, decimal> Composition { get; }
+        private readonly IReadOnlyDictionary<T, decimal> _innerDictionary;
+
+        public IEnumerable<T> Keys => _innerDictionary.Keys;
+
+        public IEnumerable<decimal> Values => _innerDictionary.Values;
+
+        public int Count => _innerDictionary.Count;
+
+        public decimal this[T key] => _innerDictionary[key];
 
         static NamedComposition()
         {
@@ -30,7 +45,7 @@ namespace ConvertAllTheThings.Core
 
         NamedComposition(IReadOnlyDictionary<T, decimal> composition)
         {
-            Composition = composition;
+            _innerDictionary = composition;
         }
 
 
@@ -39,7 +54,7 @@ namespace ConvertAllTheThings.Core
             if (key.Name is null)
                 throw new ApplicationException();
 
-            Composition = new Dictionary<T, decimal>
+            _innerDictionary = new Dictionary<T, decimal>
                 {
                     { key, 1m }
                 }.AsReadOnly();
@@ -50,7 +65,7 @@ namespace ConvertAllTheThings.Core
             StringBuilder stringBuilder = new();
 
             var count = 0;
-            foreach (var (key, power) in Composition)
+            foreach (var (key, power) in this)
             {
                 string powerString;
                 if (power == decimal.Truncate(power))
@@ -60,7 +75,7 @@ namespace ConvertAllTheThings.Core
 
                 stringBuilder.Append($"({key.Name!}^{powerString})");
                 ++count;
-                if (count != (Composition.Count))
+                if (count != (this.Count))
                     stringBuilder.Append('*');
             }
 
@@ -74,7 +89,7 @@ namespace ConvertAllTheThings.Core
             where TExistingBase : IBase, IComparable<TExistingBase>, IEquatable<TExistingBase>
         {
             SortedDictionary<T, decimal> convertedComposition = new();
-            foreach (var (existingBase, power) in existingBaseComposition.Composition)
+            foreach (var (existingBase, power) in existingBaseComposition)
             {
                 var convertedBase = convertor(existingBase);
                 convertedComposition.Add(convertedBase, power);
@@ -91,23 +106,23 @@ namespace ConvertAllTheThings.Core
             var multiplyFactor = multiplication ? 1.0m : -1.0m;
             SortedDictionary<T, decimal> resultingComposition = new();
             
-            var keysInBothSides = lhs.Composition.Keys.Intersect(rhs.Composition.Keys);
+            var keysInBothSides = lhs.Keys.Intersect(rhs.Keys);
             foreach (var bothSidesKey in keysInBothSides)
             {
-                var resultingPower = lhs.Composition[bothSidesKey] + 
-                    (multiplyFactor * rhs.Composition[bothSidesKey]);
+                var resultingPower = lhs[bothSidesKey] + 
+                    (multiplyFactor * rhs[bothSidesKey]);
 
                 if (resultingPower != 0.0m)
                     resultingComposition[bothSidesKey] = resultingPower;
             }
 
-            var keysInLhs = lhs.Composition.Keys.Except(keysInBothSides);
+            var keysInLhs = lhs.Keys.Except(keysInBothSides);
             foreach (var lhsKey in keysInLhs)
-                resultingComposition[lhsKey] = lhs.Composition[lhsKey];
+                resultingComposition[lhsKey] = lhs[lhsKey];
 
-            var keysInRhs = rhs.Composition.Keys.Except(keysInBothSides);
+            var keysInRhs = rhs.Keys.Except(keysInBothSides);
             foreach (var rhsKey in keysInRhs)
-                resultingComposition[rhsKey] = rhs.Composition[rhsKey] * multiplyFactor;
+                resultingComposition[rhsKey] = rhs[rhsKey] * multiplyFactor;
 
             if (resultingComposition.Count == 0)
                 return Empty;
@@ -130,7 +145,7 @@ namespace ConvertAllTheThings.Core
                 return this;
 
             SortedDictionary<T, decimal> newDict = new();
-            foreach (var (key, currentPower) in Composition)
+            foreach (var (key, currentPower) in this)
                 newDict.Add(key, currentPower * power);
 
             return new NamedComposition<T>(newDict.AsReadOnly());
@@ -141,19 +156,19 @@ namespace ConvertAllTheThings.Core
             if (other is null)
                 return false;
 
-            if (Composition.Count != other.Composition.Count)
+            if (this.Count != other.Count)
                 return false;
 
             // check if any keys in this that are not in other
             // don't need to do the reverse since we already know there 
             // are the same number of keys in each
-            if (Composition.Keys.Except(other.Composition.Keys).Any())
+            if (this.Keys.Except(other.Keys).Any())
                 return false;
 
-            foreach (var kvp in Composition)
+            foreach (var kvp in this)
             {
                 var (key, power) = kvp;
-                if (other.Composition[key] != power)
+                if (other[key] != power)
                     return false;
             }
 
@@ -184,13 +199,33 @@ namespace ConvertAllTheThings.Core
         public override int GetHashCode()
         {
             HashCode hashCode = new();
-            foreach (var kvp in Composition)
+            foreach (var kvp in this)
             {
                 hashCode.Add(kvp.Key);
                 hashCode.Add(kvp.Value);
             }
 
             return hashCode.ToHashCode();
+        }
+
+        public bool ContainsKey(T key)
+        {
+            return _innerDictionary.ContainsKey(key);
+        }
+
+        public bool TryGetValue(T key, [MaybeNullWhen(false)] out decimal value)
+        {
+            return _innerDictionary.TryGetValue(key, out value);
+        }
+
+        public IEnumerator<KeyValuePair<T, decimal>> GetEnumerator()
+        {
+            return _innerDictionary.GetEnumerator();
+        }
+
+        IEnumerator IEnumerable.GetEnumerator()
+        {
+            return ((IEnumerable)_innerDictionary).GetEnumerator();
         }
     }
 }

@@ -42,8 +42,10 @@ namespace ConvertAllTheThings.Core
         [JsonIgnore]
         internal Database Database { get; }
 
+        [JsonPropertyOrder(0)]
         public string? Name { get; private set; } = null;
 
+        [JsonPropertyOrder(1)]
         public string? Symbol { get; private set; } = null;
         
         protected MaybeNamed(Database database, string? name, string? symbol = null)

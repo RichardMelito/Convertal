@@ -9,7 +9,7 @@ using System.Text.Json.Serialization;
 
 namespace ConvertAllTheThings.Core
 {
-    [JsonConverter(typeof(JsonConverters.ConverterForIUnit))]
+    //[JsonConverter(typeof(JsonConverters.ConverterForIUnit))]
     public interface IUnit : IMaybeNamed, IEquatable<IUnit>, IComparable<IUnit>
     {
         bool IsFundamental => Quantity.FundamentalUnit.Equals(this);

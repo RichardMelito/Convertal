@@ -58,9 +58,9 @@ namespace ConvertAllTheThings.Core.Tests
         {
             SimBase simBase = new(Database);
             NamedComposition<SimBase> toTest = new(simBase);
-            Assert.Equal(1, toTest.Composition.Count);
-            Assert.True(toTest.Composition.ContainsKey(simBase));
-            Assert.Equal(1m, toTest.Composition[simBase]);
+            Assert.Equal(1, toTest.Count);
+            Assert.True(toTest.ContainsKey(simBase));
+            Assert.Equal(1m, toTest[simBase]);
         }
 
         [Fact]
@@ -73,27 +73,27 @@ namespace ConvertAllTheThings.Core.Tests
             var rhs = rhsBase.MakeComposition();
 
             var product = lhs * rhs;
-            Assert.Equal(2, product.Composition.Count);
-            Assert.Equal(1m, product.Composition[lhsBase]);
-            Assert.Equal(1m, product.Composition[rhsBase]);
+            Assert.Equal(2, product.Count);
+            Assert.Equal(1m, product[lhsBase]);
+            Assert.Equal(1m, product[rhsBase]);
 
             product *= lhs;
-            Assert.Equal(2, product.Composition.Count);
-            Assert.Equal(2m, product.Composition[lhsBase]);
-            Assert.Equal(1m, product.Composition[rhsBase]);
+            Assert.Equal(2, product.Count);
+            Assert.Equal(2m, product[lhsBase]);
+            Assert.Equal(1m, product[rhsBase]);
 
             product *= product;
-            Assert.Equal(2, product.Composition.Count);
-            Assert.Equal(4m, product.Composition[lhsBase]);
-            Assert.Equal(2m, product.Composition[rhsBase]);
+            Assert.Equal(2, product.Count);
+            Assert.Equal(4m, product[lhsBase]);
+            Assert.Equal(2m, product[rhsBase]);
 
             SimBase thirdBase = new(Database);
             var thirdFactor = thirdBase.MakeComposition();
             product *= thirdFactor;
-            Assert.Equal(3, product.Composition.Count);
-            Assert.Equal(4m, product.Composition[lhsBase]);
-            Assert.Equal(2m, product.Composition[rhsBase]);
-            Assert.Equal(1m, product.Composition[thirdBase]);
+            Assert.Equal(3, product.Count);
+            Assert.Equal(4m, product[lhsBase]);
+            Assert.Equal(2m, product[rhsBase]);
+            Assert.Equal(1m, product[thirdBase]);
         }
 
         [Fact]
@@ -106,33 +106,33 @@ namespace ConvertAllTheThings.Core.Tests
             var rhs = rhsBase.MakeComposition();
 
             var quotient = lhs / rhs;
-            Assert.Equal(2, quotient.Composition.Count);
-            Assert.Equal(1m, quotient.Composition[lhsBase]);
-            Assert.Equal(-1m, quotient.Composition[rhsBase]);
+            Assert.Equal(2, quotient.Count);
+            Assert.Equal(1m, quotient[lhsBase]);
+            Assert.Equal(-1m, quotient[rhsBase]);
 
             quotient /= lhs;
-            Assert.Equal(1, quotient.Composition.Count);
-            Assert.Equal(-1m, quotient.Composition[rhsBase]);
+            Assert.Equal(1, quotient.Count);
+            Assert.Equal(-1m, quotient[rhsBase]);
 
             quotient /= rhs;
-            Assert.Equal(1, quotient.Composition.Count);
-            Assert.Equal(-2m, quotient.Composition[rhsBase]);
+            Assert.Equal(1, quotient.Count);
+            Assert.Equal(-2m, quotient[rhsBase]);
 
             quotient /= lhs;
-            Assert.Equal(2, quotient.Composition.Count);
-            Assert.Equal(-1m, quotient.Composition[lhsBase]);
-            Assert.Equal(-2m, quotient.Composition[rhsBase]);
+            Assert.Equal(2, quotient.Count);
+            Assert.Equal(-1m, quotient[lhsBase]);
+            Assert.Equal(-2m, quotient[rhsBase]);
 
             SimBase thirdBase = new(Database);
             var thirdFactor = thirdBase.MakeComposition();
             quotient /= thirdFactor;
-            Assert.Equal(3, quotient.Composition.Count);
-            Assert.Equal(-1m, quotient.Composition[lhsBase]);
-            Assert.Equal(-2m, quotient.Composition[rhsBase]);
-            Assert.Equal(-1m, quotient.Composition[thirdBase]);
+            Assert.Equal(3, quotient.Count);
+            Assert.Equal(-1m, quotient[lhsBase]);
+            Assert.Equal(-2m, quotient[rhsBase]);
+            Assert.Equal(-1m, quotient[thirdBase]);
 
             quotient /= quotient;
-            Assert.Equal(0, quotient.Composition.Count);
+            Assert.Equal(0, quotient.Count);
             Assert.Same(NamedComposition<SimBase>.Empty, quotient);
         }
 
@@ -146,9 +146,9 @@ namespace ConvertAllTheThings.Core.Tests
             var rhs = rhsBase.MakeComposition();
 
             var product = lhs * rhs * rhs * rhs / (lhs * lhs * lhs * rhs);
-            Assert.Equal(2, product.Composition.Count);
-            Assert.Equal(-2m, product.Composition[lhsBase]);
-            Assert.Equal(2m, product.Composition[rhsBase]);
+            Assert.Equal(2, product.Count);
+            Assert.Equal(-2m, product[lhsBase]);
+            Assert.Equal(2m, product[rhsBase]);
         }
 
         [Fact]
@@ -172,8 +172,8 @@ namespace ConvertAllTheThings.Core.Tests
             quotient = notEmpty / empty;
             Assert.Equal(notEmpty, quotient);
             quotient = empty / notEmpty;
-            Assert.Equal(1, quotient.Composition.Count);
-            Assert.Equal(-1m, quotient.Composition[notEmptyBase]);
+            Assert.Equal(1, quotient.Count);
+            Assert.Equal(-1m, quotient[notEmptyBase]);
         }
 
         [Fact]
@@ -216,20 +216,20 @@ namespace ConvertAllTheThings.Core.Tests
 
             var product = lhs * lhs * lhs / rhs;
             var squared = product.Pow(2);
-            Assert.Equal(6m, squared.Composition[lhsBase]);
-            Assert.Equal(-2m, squared.Composition[rhsBase]);
+            Assert.Equal(6m, squared[lhsBase]);
+            Assert.Equal(-2m, squared[rhsBase]);
 
             var reciprocal = squared.Pow(-1);
-            Assert.Equal(-6m, reciprocal.Composition[lhsBase]);
-            Assert.Equal(2m, reciprocal.Composition[rhsBase]);
+            Assert.Equal(-6m, reciprocal[lhsBase]);
+            Assert.Equal(2m, reciprocal[rhsBase]);
 
             var sqrRoot1 = reciprocal.Pow(0.5m);
-            Assert.Equal(-3m, sqrRoot1.Composition[lhsBase]);
-            Assert.Equal(1m, sqrRoot1.Composition[rhsBase]);
+            Assert.Equal(-3m, sqrRoot1[lhsBase]);
+            Assert.Equal(1m, sqrRoot1[rhsBase]);
 
             var sqrRoot2 = sqrRoot1.Pow(0.5m);
-            Assert.Equal(-1.5m, sqrRoot2.Composition[lhsBase]);
-            Assert.Equal(0.5m, sqrRoot2.Composition[rhsBase]);
+            Assert.Equal(-1.5m, sqrRoot2[lhsBase]);
+            Assert.Equal(0.5m, sqrRoot2[rhsBase]);
         }
 
         [Fact]
