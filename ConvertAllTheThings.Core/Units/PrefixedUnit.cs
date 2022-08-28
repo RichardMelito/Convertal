@@ -17,16 +17,16 @@ namespace ConvertAllTheThings.Core
         [JsonIgnore]
         public Quantity Quantity => Unit.Quantity;
 
-        public string? MaybeName => Prefix.MaybeName! + "_" + Unit.MaybeName!;
+        public string? Name => Prefix.Name! + "_" + Unit.Name!;
 
-        public string? MaybeSymbol
+        public string? Symbol
         {
             get
             {
-                if (Prefix.MaybeSymbol is null || Unit.MaybeSymbol is null)
+                if (Prefix.Symbol is null || Unit.Symbol is null)
                     return null;
 
-                return Prefix.MaybeSymbol + "_" + Unit.MaybeSymbol;
+                return Prefix.Symbol + "_" + Unit.Symbol;
             }
         }
 
@@ -44,7 +44,7 @@ namespace ConvertAllTheThings.Core
 
         public override string ToString()
         {
-            return MaybeName!;
+            return Name!;
         }
 
         public string ToStringSymbol()
@@ -59,7 +59,7 @@ namespace ConvertAllTheThings.Core
         {
             Database = database;
 
-            if (unit.MaybeName is null)
+            if (unit.Name is null)
                 throw new ArgumentNullException(
                     nameof(unit), 
                     "Unit in PrefixedUnit must have a name.");

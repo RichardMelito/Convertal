@@ -36,7 +36,7 @@ namespace ConvertAllTheThings.Core
 
         public NamedComposition(T key)
         {
-            if (key.MaybeName is null)
+            if (key.Name is null)
                 throw new ApplicationException();
 
             Composition = new Dictionary<T, decimal>
@@ -58,7 +58,7 @@ namespace ConvertAllTheThings.Core
                 else
                     powerString = power.ToString().TrimEnd('0');
 
-                stringBuilder.Append($"({key.MaybeName!}^{powerString})");
+                stringBuilder.Append($"({key.Name!}^{powerString})");
                 ++count;
                 if (count != (Composition.Count))
                     stringBuilder.Append('*');

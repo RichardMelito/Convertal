@@ -22,7 +22,7 @@ namespace ConvertAllTheThings.Core.JsonConverters
 
         public override void WriteAsPropertyName(Utf8JsonWriter writer, BaseQuantity value, JsonSerializerOptions options)
         {
-            writer.WritePropertyName(value.MaybeName!);
+            writer.WritePropertyName(value.Name!);
         }
     }
 }

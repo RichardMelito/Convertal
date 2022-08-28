@@ -39,8 +39,8 @@ namespace ConvertAllTheThings.Core.Tests
             Kilo = Database.DefinePrefix("kilo", 1e3m, "k");
 
             Length = Database.DefineBaseQuantity(nameof(Length), "Meter", quantitySymbol: "l", unitSymbol: "m");
-            Time = Database.DefineBaseQuantity(nameof(Time), "Second", quantitySymbol: "T", unitSymbol: "s");
-            Mass = Database.DefineBaseQuantity(nameof(Mass), "Gram", unitPrefix: Kilo, quantitySymbol: "M", unitSymbol: "g");
+            Time = Database.DefineBaseQuantity(nameof(Time), "Second", quantitySymbol: "t", unitSymbol: "s");
+            Mass = Database.DefineBaseQuantity(nameof(Mass), "Gram", unitPrefix: Kilo, quantitySymbol: "m", unitSymbol: "g");
 
             Meter = (BaseUnit)Length.FundamentalUnit;
             Second = (BaseUnit)Time.FundamentalUnit;

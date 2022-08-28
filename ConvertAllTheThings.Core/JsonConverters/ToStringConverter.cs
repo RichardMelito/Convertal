@@ -10,6 +10,8 @@ namespace ConvertAllTheThings.Core.JsonConverters
 {
     public class ToStringConverter : JsonConverter<object>
     {
+        public override bool CanConvert(Type typeToConvert) => true;
+
         public override object? Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
         {
             throw new NotImplementedException();

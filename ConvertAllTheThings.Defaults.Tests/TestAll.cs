@@ -43,7 +43,7 @@ namespace ConvertAllTheThings.Defaults.Tests
             foreach (var field in typeof(DerivedQuantities).GetFields())
             {
                 var quantity = (DerivedQuantity)field.GetValue(field.Name)!;
-                Assert.AreEqual(field.Name, quantity.MaybeName);
+                Assert.AreEqual(field.Name, quantity.Name);
             }
         }
 
@@ -53,7 +53,7 @@ namespace ConvertAllTheThings.Defaults.Tests
             foreach (var field in typeof(BaseQuantities).GetFields())
             {
                 var quantity = (BaseQuantity)field.GetValue(field.Name)!;
-                Assert.AreEqual(field.Name, quantity.MaybeName);
+                Assert.AreEqual(field.Name, quantity.Name);
             }
         }
 
@@ -66,7 +66,7 @@ namespace ConvertAllTheThings.Defaults.Tests
                 if (unit is null)
                     continue;
 
-                Assert.AreEqual(field.Name, unit.MaybeName);
+                Assert.AreEqual(field.Name, unit.Name);
             }
         }
 
@@ -79,7 +79,7 @@ namespace ConvertAllTheThings.Defaults.Tests
                 if (unit is null)
                     continue;
 
-                Assert.AreEqual(field.Name, unit.MaybeName);
+                Assert.AreEqual(field.Name, unit.Name);
             }
         }
 

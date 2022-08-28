@@ -30,6 +30,7 @@ namespace ConvertAllTheThings.Core
         public bool Disposed => _disposed;
 
         [JsonConverter(typeof(JsonConverters.ToStringConverter))]
+        //[JsonIgnore] // TODO
         public abstract IUnit FundamentalUnit { get; }
 
         [JsonIgnore]
@@ -45,16 +46,16 @@ namespace ConvertAllTheThings.Core
 
         public override string ToString()
         {
-            return MaybeName ?? BaseQuantityComposition.ToString();
+            return Name ?? BaseQuantityComposition.ToString();
         }
 
         protected void Init()
         {
             if (_initialized)
-                throw new ApplicationException($"Quantity {MaybeName ?? "{null}"} is already initialized.");
+                throw new ApplicationException($"Quantity {Name ?? "{null}"} is already initialized.");
 
             if (Database.QuantitiesByComposition.ContainsValue(this))
-                throw new ApplicationException($"Quantity {MaybeName ?? "{null}"} is already within the dictionary.");
+                throw new ApplicationException($"Quantity {Name ?? "{null}"} is already within the dictionary.");
 
             Database.QuantitiesByComposition.Add(BaseQuantityComposition, this);
             _initialized = true;
@@ -111,7 +112,7 @@ namespace ConvertAllTheThings.Core
 
             if (!Database.QuantitiesByComposition.Remove(BaseQuantityComposition))
                 throw new ApplicationException(
-                    $"Could not remove Quantity {MaybeName ?? "{null}"} with composition " +
+                    $"Could not remove Quantity {Name ?? "{null}"} with composition " +
                     $"{BaseQuantityComposition} from static dictionary.");
 
             var allSystems = Database.GetAllMaybeNameds<MeasurementSystem>();

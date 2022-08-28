@@ -31,7 +31,7 @@ namespace ConvertAllTheThings.Core
                     return 1;
                 }
 
-                return string.Compare(x.MaybeName, y.MaybeName);
+                return string.Compare(x.Name, y.Name);
             }
         }
 
@@ -42,9 +42,9 @@ namespace ConvertAllTheThings.Core
         [JsonIgnore]
         internal Database Database { get; }
 
-        public string? MaybeName { get; private set; } = null;
+        public string? Name { get; private set; } = null;
 
-        public string? MaybeSymbol { get; private set; } = null;
+        public string? Symbol { get; private set; } = null;
         
         protected MaybeNamed(Database database, string? name, string? symbol = null)
         {
@@ -57,7 +57,7 @@ namespace ConvertAllTheThings.Core
 
             Database.ThrowIfNameNotValid(name, GetTypeWithinDictionary());
 
-            MaybeName = name;
+            Name = name;
             Database.MaybeNamedsByType[GetTypeWithinDictionary()].Add(this);
 
             if (symbol is not null)
@@ -72,19 +72,19 @@ namespace ConvertAllTheThings.Core
         {
             Database.ThrowIfNameNotValid(newName, GetTypeWithinDictionary());
 
-            var needToAddToDictionary = MaybeName is null;
-            MaybeName = newName;
+            var needToAddToDictionary = Name is null;
+            Name = newName;
             if (needToAddToDictionary)
                 Database.MaybeNamedsByType[GetTypeWithinDictionary()].Add(this);
         }
 
         public void ChangeSymbol(string symbol)
         {
-            if (MaybeName is null)
+            if (Name is null)
                 throw new InvalidOperationException("Must assign a name before assigning a symbol.");
 
             Database.ThrowIfNameNotValid(symbol, GetTypeWithinDictionary(), true);
-            MaybeSymbol = symbol;
+            Symbol = symbol;
         }
 
         public void ChangeNameAndSymbol(string newName, string? symbol = null)
@@ -96,12 +96,12 @@ namespace ConvertAllTheThings.Core
 
         public override string ToString()
         {
-            return MaybeName ?? base.ToString()!;
+            return Name ?? base.ToString()!;
         }
 
         public string ToStringSymbol()
         {
-            return MaybeSymbol ?? ToString();
+            return Symbol ?? ToString();
         }
 
 

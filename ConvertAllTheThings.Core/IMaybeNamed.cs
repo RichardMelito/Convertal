@@ -9,8 +9,8 @@ namespace ConvertAllTheThings.Core
 {
     public interface IMaybeNamed : IDisposable, IComparable<IMaybeNamed>, IEquatable<IMaybeNamed>
     {
-        string? MaybeName { get; }
-        string? MaybeSymbol { get; }
+        string? Name { get; }
+        string? Symbol { get; }
 
         string ToStringSymbol(); 
 
@@ -40,7 +40,7 @@ namespace ConvertAllTheThings.Core
         
         int CalculateHashCode()
         {
-            return HashCode.Combine(MaybeName, GetTypeWithinDictionary());
+            return HashCode.Combine(Name, GetTypeWithinDictionary());
         }
     }
 }

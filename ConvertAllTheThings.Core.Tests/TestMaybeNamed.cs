@@ -115,7 +115,7 @@ namespace ConvertAllTheThings.Core.Tests
             TestNamedClass toTest = new(Database, "name3");
             
             toTest.ChangeName("newName");
-            Assert.Equal("newName", toTest.MaybeName);
+            Assert.Equal("newName", toTest.Name);
 
             Assert.Throws<InvalidOperationException>(
                 () => toTest.ChangeName("name2"));

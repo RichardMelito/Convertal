@@ -17,9 +17,9 @@ namespace ConvertAllTheThings.Core
 
         public NamedComposition<IUnit> UnitComposition => NamedComposition<IUnit>.Empty;
 
-        public string? MaybeName => null;
+        public string? Name => null;
 
-        public string? MaybeSymbol => null;
+        public string? Symbol => null;
 
         internal EmptyUnit(Database database)
         {

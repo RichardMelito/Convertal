@@ -29,7 +29,7 @@ namespace ConvertAllTheThings.Core.Tests
 
             Assert.Equal(1, _baseQuantity1.BaseQuantityComposition.Composition.Count);
             Assert.Equal(1m, _baseQuantity1.BaseQuantityComposition.Composition[_baseQuantity1]);
-            Assert.Equal("Base1", _baseQuantity1.MaybeName);
+            Assert.Equal("Base1", _baseQuantity1.Name);
             Assert.Equal("Fu1", _baseQuantity1.FundamentalUnit.Name);
             Assert.IsType<BaseUnit>(_baseQuantity1.FundamentalUnit);
             Assert.Equal(1m, _baseQuantity1.FundamentalUnit.FundamentalMultiplier);
@@ -37,14 +37,14 @@ namespace ConvertAllTheThings.Core.Tests
 
             Assert.Equal(1, _baseQuantity2.BaseQuantityComposition.Composition.Count);
             Assert.Equal(1m, _baseQuantity2.BaseQuantityComposition.Composition[_baseQuantity2]);
-            Assert.Equal("Base2", _baseQuantity2.MaybeName);
+            Assert.Equal("Base2", _baseQuantity2.Name);
             Assert.Equal("TestPrefix_Fu2", _baseQuantity2.FundamentalUnit.Name);
             Assert.IsType<PrefixedBaseUnit>(_baseQuantity2.FundamentalUnit);
             Assert.Equal(1m, _baseQuantity2.FundamentalUnit.FundamentalMultiplier);
             Assert.True(_baseQuantity2.FundamentalUnit.IsFundamental);
 
             var fu2 = (PrefixedBaseUnit)_baseQuantity2.FundamentalUnit;
-            Assert.Equal("TestPrefix", _testPrefix.MaybeName);
+            Assert.Equal("TestPrefix", _testPrefix.Name);
             Assert.Same(_testPrefix, fu2.Prefix);
             Assert.Equal(2m, fu2.Prefix.Multiplier);
             Assert.Equal(0.5m, fu2.Unit.FundamentalMultiplier);

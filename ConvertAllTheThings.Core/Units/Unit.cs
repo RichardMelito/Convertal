@@ -127,7 +127,7 @@ namespace ConvertAllTheThings.Core
 
         public override string ToString()
         {
-            return MaybeName ?? UnitComposition!.ToString();
+            return Name ?? UnitComposition!.ToString();
         }
 
         public override int GetHashCode()

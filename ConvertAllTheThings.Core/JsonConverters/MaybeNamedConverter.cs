@@ -17,7 +17,7 @@ namespace ConvertAllTheThings.Core.JsonConverters
 
         public override void Write(Utf8JsonWriter writer, MaybeNamed value, JsonSerializerOptions options)
         {
-            writer.WriteString(nameof(MaybeNamed.MaybeName), value.MaybeName);
+            writer.WriteString(nameof(MaybeNamed.Name), value.Name);
         }
     }
 }

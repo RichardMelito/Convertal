@@ -210,13 +210,13 @@ namespace ConvertAllTheThings.Core
             if (isSymbol)
             {
                 matches = (from named in nameds
-                           where named.MaybeSymbol == name
+                           where named.Symbol == name
                            select named).ToArray();
             }
             else
             {
                 matches = (from named in nameds
-                           where named.MaybeName == name
+                           where named.Name == name
                            select named).ToArray();
             }
 
@@ -315,13 +315,13 @@ namespace ConvertAllTheThings.Core
             if (isSymbol)
             {
                 matches = from named in MaybeNamedsByType[type]
-                          where named.MaybeSymbol == name
+                          where named.Symbol == name
                           select named;
             }
             else
             {
                 matches = from named in MaybeNamedsByType[type]
-                          where named.MaybeName == name
+                          where named.Name == name
                           select named;
             }
 

@@ -13,7 +13,7 @@ namespace ConvertAllTheThings.Core
     {
         internal IBaseUnit? InnerFundamentalUnit { get; set; } = null;
 
-        
+        [JsonIgnore] // TODO
         public override IBaseUnit FundamentalUnit => InnerFundamentalUnit!;
 
         [JsonIgnore]

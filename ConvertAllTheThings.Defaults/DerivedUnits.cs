@@ -150,7 +150,7 @@ namespace ConvertAllTheThings.Defaults
             foreach (var field in typeof(DerivedUnits).GetFields())
             {
                 var unit = (DerivedUnit)field.GetValue(field.Name)!;
-                if (unit.MaybeName is not null)
+                if (unit.Name is not null)
                     continue;
 
                 unit.ChangeName(field.Name);
