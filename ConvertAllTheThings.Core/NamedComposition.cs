@@ -5,11 +5,14 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using ConvertAllTheThings.Core.Extensions;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 
 namespace ConvertAllTheThings.Core
 {
+    [JsonConverter(typeof(JsonConverters.NamedCompositionConverter))]
     public class NamedComposition<T> : IEquatable<NamedComposition<T>>
-        where T : IMaybeNamed, IComparable<T>, IEquatable<T>
+        where T : IMaybeNamed
     {
         /*  describes a collection of base quantities or base units from which 
          *  derived quantities or units are formed. 

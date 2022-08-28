@@ -36,11 +36,6 @@ namespace ConvertAllTheThings.Core
             return "";
         }
 
-        public bool Equals(IUnit? other)
-        {
-            return base.Equals(other);
-        }
-
         void IMaybeNamed.DisposeThisAndDependents(bool disposeDependents)
         {
             // The EmptyUnit cannot be disposed

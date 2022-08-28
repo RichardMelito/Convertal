@@ -24,6 +24,8 @@ namespace ConvertAllTheThings.Core
         Quantity Quantity { get; }
         NamedComposition<IUnit> UnitComposition { get; }
 
+        bool IEquatable<IUnit>.Equals(IUnit? other) => ReferenceEquals(this, other);
+
         static Term ConvertTo(IUnit toConvert, decimal magnitudeToConvert, IUnit resultingIUnit)
         {
             if (toConvert.Equals(resultingIUnit))

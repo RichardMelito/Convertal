@@ -9,7 +9,7 @@ using System.Text.Json.Serialization;
 
 namespace ConvertAllTheThings.Core
 {
-    public abstract class MaybeNamed : IMaybeNamed, IDisposable, IComparable<MaybeNamed>, IEquatable<MaybeNamed>
+    public abstract class MaybeNamed : IMaybeNamed
     {
         public class MaybeNameComparer : Comparer<IMaybeNamed>
         {
@@ -104,26 +104,6 @@ namespace ConvertAllTheThings.Core
             return MaybeSymbol ?? ToString();
         }
 
-        public int CompareTo(MaybeNamed? other)
-        {
-            return DefaultComparer.Compare(this, other);
-        }
-
-        public bool Equals(MaybeNamed? other)
-        {
-            return ReferenceEquals(this, other);
-        }
-
-        public override bool Equals(object? obj)
-        {
-            return ReferenceEquals(this, obj);
-        }
-
-        public override int GetHashCode()
-        {
-            return HashCode.Combine(MaybeName, GetTypeWithinDictionary());
-        }
-
 
         #region static methods
         
@@ -147,7 +127,12 @@ namespace ConvertAllTheThings.Core
 
         public static bool operator ==(MaybeNamed? lhs, MaybeNamed? rhs)
         {
-            return ReferenceEquals(lhs, rhs);
+            if (lhs is null && rhs is null)
+                return true;
+            else if (lhs is not null && rhs is not null)
+                return lhs.Equals(rhs);
+            else
+                return false;
         }
 
         public static bool operator !=(MaybeNamed? lhs, MaybeNamed? rhs)
@@ -208,5 +193,17 @@ namespace ConvertAllTheThings.Core
             GC.SuppressFinalize(this);
         }
         #endregion
+
+
+
+        public override bool Equals(object? obj)
+        {
+            return ((IMaybeNamed)this).Equals(obj as IMaybeNamed);
+        }
+
+        public override int GetHashCode()
+        {
+            return ((IMaybeNamed)this).CalculateHashCode();
+        }
     }
 }

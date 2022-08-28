@@ -8,7 +8,7 @@ using System.Text.Json.Serialization;
 
 namespace ConvertAllTheThings.Core
 {
-    [JsonConverter(typeof(JsonConverters.BaseQuantityConverter))]
+    //[JsonConverter(typeof(JsonConverters.BaseQuantityConverter))]
     public class BaseQuantity : Quantity, IBase, IEquatable<BaseQuantity>
     {
         internal IBaseUnit? InnerFundamentalUnit { get; set; } = null;

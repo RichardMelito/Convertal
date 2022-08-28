@@ -130,11 +130,6 @@ namespace ConvertAllTheThings.Core
             return MaybeName ?? UnitComposition!.ToString();
         }
 
-        public bool Equals(IUnit? other)
-        {
-            return base.Equals(other);
-        }
-
         public override int GetHashCode()
         {
             return HashCode.Combine(base.GetHashCode(), Quantity, FundamentalMultiplier);
