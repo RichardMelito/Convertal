@@ -14,7 +14,7 @@ namespace ConvertAllTheThings.Core
 {
     public abstract class NamedComposition
     {
-        public abstract IReadOnlyDictionary<string, decimal> Composition { get; }
+        public abstract IReadOnlyDictionary<string, decimal> CompositionAsStringDictionary { get; }
     }
 
     [JsonConverter(typeof(JsonConverters.NamedCompositionConverter))]
@@ -34,6 +34,9 @@ namespace ConvertAllTheThings.Core
         public IEnumerable<decimal> Values => _innerDictionary.Values;
 
         public int Count => _innerDictionary.Count;
+
+        public override IReadOnlyDictionary<string, decimal> CompositionAsStringDictionary => 
+            _innerDictionary.ToDictionary(kvp => kvp.Key.ToString()!, kvp => kvp.Value);
 
         public decimal this[T key] => _innerDictionary[key];
 

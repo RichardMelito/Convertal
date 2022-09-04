@@ -12,21 +12,20 @@ public class NamedCompositionConverter : JsonConverter<NamedComposition>
 {
     public override bool CanConvert(Type typeToConvert)
     {
-        return typeToConvert.IsAssignableTo(typeof(INamedComposition));
+        return typeToConvert.IsAssignableTo(typeof(NamedComposition));
     }
 
-    public override INamedComposition? Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
+    public override NamedComposition? Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
     {
         throw new NotImplementedException();
     }
 
-    public override void Write(Utf8JsonWriter writer, INamedComposition value, JsonSerializerOptions options)
+    public override void Write(Utf8JsonWriter writer, NamedComposition value, JsonSerializerOptions options)
     {
+        //IReadOnlyDictionary<string, decimal> INamedComposition =>
+        //    Composition.ToDictionary(kvp => kvp.Key.ToString()!, kvp => kvp.Value);
 
-        IReadOnlyDictionary<string, decimal> INamedComposition =>
-            Composition.ToDictionary(kvp => kvp.Key.ToString()!, kvp => kvp.Value);
-
-        writer.WritePropertyName(nameof(INamedComposition));
-        JsonSerializer.Serialize(writer, value, options);
+        //writer.WritePropertyName(nameof(INamedComposition));
+        JsonSerializer.Serialize(writer, value.CompositionAsStringDictionary, options);
     }
 }
