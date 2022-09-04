@@ -5,6 +5,8 @@ using System.Text;
 using System.Collections.ObjectModel;
 using System.Threading.Tasks;
 using ConvertAllTheThings.Core.Extensions;
+using System.Text.Json.Serialization;
+using System.Collections;
 
 namespace ConvertAllTheThings.Core
 {
@@ -15,6 +17,7 @@ namespace ConvertAllTheThings.Core
 
         private readonly Dictionary<Quantity, IUnit> _quantities_units = new();
 
+        [JsonConverter(typeof(JsonConverters.ConverterForDictionaries))]
         public IReadOnlyDictionary<Quantity, IUnit> Dictionary { get; } 
 
         internal MeasurementSystem(Database database, string name)

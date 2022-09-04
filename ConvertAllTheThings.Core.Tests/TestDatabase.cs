@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
+using System.Text.Json.Serialization;
 using Xunit;
 
 namespace ConvertAllTheThings.Core.Tests
@@ -33,6 +34,9 @@ namespace ConvertAllTheThings.Core.Tests
 
         public readonly Unit FeetPerSecond;
 
+        public readonly MeasurementSystem Metric;
+        public readonly MeasurementSystem Imperial;
+
         public TestDatabase()
         {
             Milli = Database.DefinePrefix("milli", 1e-3m, "m");
@@ -57,6 +61,23 @@ namespace ConvertAllTheThings.Core.Tests
             PoundForce = Database.DefineDerivedUnit(nameof(PoundForce), Newton, 4.4482216282509m, symbol: "lbf");
 
             FeetPerSecond = Database.DefineFromComposition(nameof(FeetPerSecond), Foot.UC / Second.UC);
+
+            Metric = new(Database, nameof(Metric));
+            Metric.SetQuantityUnitPairs(new KeyValuePair<Quantity, IUnit>[]
+            {
+                new(Length, Meter),
+                new(Time, Second),
+                new(Mass, KiloGram),
+                new(Force, Newton),
+            });
+
+            Imperial = new(Database, nameof(Imperial));
+            Imperial.SetQuantityUnitPairs(new KeyValuePair<Quantity, IUnit>[]
+            {
+                new(Length, Foot),
+                new(Time, Second),
+                new(Force, PoundForce),
+            });
         }
 
         [Fact]
@@ -65,6 +86,7 @@ namespace ConvertAllTheThings.Core.Tests
             JsonSerializerOptions jsonSerializerOptions = new()
             {
                 WriteIndented = true,
+                DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull,
             };
             var x = JsonSerializer.Serialize(Database, jsonSerializerOptions);
             File.WriteAllText("database.json", x);

@@ -36,7 +36,14 @@ namespace ConvertAllTheThings.Core.JsonConverters
             writer.WritePropertyName(nameof(Database.DerivedQuantitys));
             JsonSerializer.Serialize(writer, value.DerivedQuantitys, options);
 
+            writer.WritePropertyName(nameof(Database.BaseUnits));
+            JsonSerializer.Serialize(writer, value.BaseUnits, options);
 
+            writer.WritePropertyName(nameof(Database.DerivedUnits));
+            JsonSerializer.Serialize(writer, value.DerivedUnits, options);
+
+            writer.WritePropertyName(nameof(Database.MeasurementSystems));
+            JsonSerializer.Serialize(writer, value.MeasurementSystems, options);
 
             writer.WriteEndObject();
         }
