@@ -4,11 +4,32 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Text.Json;
 
 namespace ConvertAllTheThings.Core.Extensions
 {
     public static class Extensions
     {
+        public static void ReadThrowIfFalse(this ref Utf8JsonReader reader)
+        {
+            if (!reader.Read())
+                throw new JsonException();
+        }
+
+        public static void ReadExpectTokenType(this ref Utf8JsonReader reader, JsonTokenType tokenType)
+        {
+            reader.ReadThrowIfFalse();
+            if (reader.TokenType != tokenType)
+                throw new JsonException();
+        }
+
+        public static void ReadExpectPropertyName(this ref Utf8JsonReader reader, string propertyName)
+        {
+            reader.ReadExpectTokenType(JsonTokenType.PropertyName);
+            if (reader.GetString() != propertyName)
+                throw new JsonException();
+        }
+
         public static ReadOnlyDictionary<TKey, TValue> AsReadOnly<TKey, TValue>(this IDictionary<TKey, TValue> dict)
             where TKey : notnull
         {

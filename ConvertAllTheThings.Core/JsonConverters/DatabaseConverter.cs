@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using ConvertAllTheThings.Core.Extensions;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 
@@ -12,7 +13,21 @@ namespace ConvertAllTheThings.Core.JsonConverters
     {
         public override Database? Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
         {
-            throw new NotImplementedException();
+            Database database = new();
+
+            if (reader.TokenType != JsonTokenType.StartObject)
+                throw new JsonException();
+
+            reader.ReadExpectPropertyName(nameof(Database.Prefixes));
+            reader.ReadExpectTokenType(JsonTokenType.StartArray);
+            reader.ReadThrowIfFalse();
+            while (reader.TokenType != JsonTokenType.EndArray)
+            {
+                JsonSerializer.Deserialize<Prefix>(ref reader, options);
+                reader.ReadThrowIfFalse();
+            }
+
+            return database;
         }
 
         public override void Write(Utf8JsonWriter writer, Database value, JsonSerializerOptions options)
