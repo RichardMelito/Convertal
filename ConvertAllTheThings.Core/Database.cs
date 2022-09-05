@@ -71,13 +71,13 @@ namespace ConvertAllTheThings.Core
         internal bool RemoveFromPrefixedUnitsList(PrefixedUnit toRemove) => _prefixedUnits.Remove(toRemove);
 
         public Prefix DefinePrefix(string name, decimal multiplier, string? symbol = null) => new(this, name, multiplier, symbol);
-        public Prefix DefinePrefix(PrefixProto proto) => new(this, proto.Name!, proto.Multiplier, proto.Symbol);
+        internal Prefix DefinePrefix(PrefixProto proto) => new(this, proto.Name!, proto.Multiplier, proto.Symbol);
 
         public PrefixedBaseUnit GetPrefixedUnit(BaseUnit unit, Prefix prefix)
         {
             return (PrefixedBaseUnit)GetPrefixedUnit((Unit)unit, prefix);
         }
-
+        
         public PrefixedDerivedUnit GetPrefixedUnit(DerivedUnit unit, Prefix prefix)
         {
             return (PrefixedDerivedUnit)GetPrefixedUnit((Unit)unit, prefix);
@@ -390,7 +390,23 @@ namespace ConvertAllTheThings.Core
             return quantity;
         }
 
-        internal 
+        internal BaseQuantity DefineBaseQuantity(BaseQuantityProto proto)
+        {
+            var splitFundamentalName = proto.FundamentalUnit.Split('_');
+            if (splitFundamentalName.Length == 1)
+            {
+                return DefineBaseQuantity(proto.Name!, splitFundamentalName[0], quantitySymbol: proto.Symbol);
+            }
+            else if (splitFundamentalName.Length == 2)
+            {
+                var prefix = GetFromName<Prefix>(splitFundamentalName[0]);
+                return DefineBaseQuantity(proto.Name!, splitFundamentalName[1], prefix, quantitySymbol: proto.Symbol);
+            }
+            else
+            {
+                throw new InvalidOperationException();
+            }
+        }
 
         public IEnumerable<IDerivedUnit> GetAllIDerivedUnitsComposedOf(IBaseUnit baseUnit)
         {

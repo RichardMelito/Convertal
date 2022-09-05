@@ -2,12 +2,13 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 using ConvertAllTheThings.Core.Extensions;
 
 namespace ConvertAllTheThings.Core
 {
-    public record PrefixProto(decimal Multiplier, string Name, string? Symbol) : MaybeNamedProto(Name, Symbol);
+    public record PrefixProto(string Name, string? Symbol, decimal Multiplier) : MaybeNamedProto(Name, Symbol);
 
     public class Prefix : MaybeNamed, INamed
     {
@@ -28,6 +29,7 @@ namespace ConvertAllTheThings.Core
             return res.SortByTypeAndName();
         }
 
+        [JsonPropertyOrder(2)]
         public decimal Multiplier { get; }
 
         internal Prefix(Database database, string name, decimal multiplier, string? symbol = null)

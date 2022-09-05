@@ -30,8 +30,16 @@ namespace ConvertAllTheThings.Core.JsonConverters
             while (reader.TokenType != JsonTokenType.EndArray)
             {
                 var proto = JsonSerializer.Deserialize<BaseQuantityProto>(ref reader, options)!;
+                database.DefineBaseQuantity(proto);
+                reader.ReadThrowIfFalse();
             }
-            
+
+            reader.ReadStartOfArrayProperty(nameof(Database.DerivedQuantitys));
+            while (reader.TokenType != JsonTokenType.EndArray)
+            {
+                var proto = JsonSerializer.Deserialize<DerivedQuantityProto>(ref reader, options)!;
+            }
+
             return database;
         }
 

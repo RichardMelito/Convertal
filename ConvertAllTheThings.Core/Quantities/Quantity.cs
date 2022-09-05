@@ -29,6 +29,7 @@ namespace ConvertAllTheThings.Core
         [JsonIgnore]
         public bool Disposed => _disposed;
 
+        [JsonPropertyOrder(2)]
         [JsonConverter(typeof(JsonConverters.ToStringConverter))]
         public abstract IUnit FundamentalUnit { get; }
 
