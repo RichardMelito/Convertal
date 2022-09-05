@@ -8,7 +8,8 @@ using System.Text.Json.Serialization;
 
 namespace ConvertAllTheThings.Core
 {
-    //[JsonConverter(typeof(JsonConverters.BaseQuantityConverter))]
+    public record BaseQuantityProto(string FundamentalUnit, string Name, string? Symbol) : MaybeNamedProto(Name, Symbol);
+
     public class BaseQuantity : Quantity, IBase, IEquatable<BaseQuantity>
     {
         internal IBaseUnit? InnerFundamentalUnit { get; set; } = null;

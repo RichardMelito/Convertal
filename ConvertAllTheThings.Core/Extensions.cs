@@ -10,6 +10,13 @@ namespace ConvertAllTheThings.Core.Extensions
 {
     public static class Extensions
     {
+        public static void ReadStartOfArrayProperty(this ref Utf8JsonReader reader, string propertyName)
+        {
+            reader.ReadExpectPropertyName(propertyName);
+            reader.ReadExpectTokenType(JsonTokenType.StartArray);
+            reader.ReadThrowIfFalse();
+        }
+
         public static void ReadThrowIfFalse(this ref Utf8JsonReader reader)
         {
             if (!reader.Read())

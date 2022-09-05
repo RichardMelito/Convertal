@@ -70,7 +70,8 @@ namespace ConvertAllTheThings.Core
         internal void AddToPrefixedUnitsList(PrefixedUnit toAdd) => _prefixedUnits.Add(toAdd);
         internal bool RemoveFromPrefixedUnitsList(PrefixedUnit toRemove) => _prefixedUnits.Remove(toRemove);
 
-        public Prefix DefinePrefix(string name, decimal multiplier, string? symbol = null) => new Prefix(this, name, multiplier, symbol);
+        public Prefix DefinePrefix(string name, decimal multiplier, string? symbol = null) => new(this, name, multiplier, symbol);
+        public Prefix DefinePrefix(PrefixProto proto) => new(this, proto.Name!, proto.Multiplier, proto.Symbol);
 
         public PrefixedBaseUnit GetPrefixedUnit(BaseUnit unit, Prefix prefix)
         {
@@ -268,18 +269,18 @@ namespace ConvertAllTheThings.Core
         public void ThrowIfNameNotValid(string name, Type type, bool isSymbol = false)
         {
             if (string.IsNullOrWhiteSpace(name))
-                throw new ArgumentException("MaybeName must not be empty.");
+                throw new ArgumentException("Name must not be empty.");
 
             if (decimal.TryParse(name, out _))
-                throw new ArgumentException("MaybeName must not be a number.");
+                throw new ArgumentException("Name must not be a number.");
 
             if (!name.All(char.IsLetterOrDigit))
-                throw new ArgumentException("MaybeName must be composed of alphanumeric characters.");
+                throw new ArgumentException("Name must be composed of alphanumeric characters.");
 
             if (NameAlreadyRegistered(name, type, isSymbol))
             {
                 throw new InvalidOperationException($"There is already a {type.Name} " +
-                    $"named {name}.");
+                    $"with {(isSymbol ? "symbol" : "name")} of {name}.");
             }
         }
         public bool NameIsValid<T>(string name, bool isSymbol = false)
@@ -388,6 +389,8 @@ namespace ConvertAllTheThings.Core
 
             return quantity;
         }
+
+        internal 
 
         public IEnumerable<IDerivedUnit> GetAllIDerivedUnitsComposedOf(IBaseUnit baseUnit)
         {

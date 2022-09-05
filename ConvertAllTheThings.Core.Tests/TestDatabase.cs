@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using FluentAssertions;
 using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
@@ -88,8 +89,11 @@ namespace ConvertAllTheThings.Core.Tests
                 WriteIndented = true,
                 DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull,
             };
-            var x = JsonSerializer.Serialize(Database, jsonSerializerOptions);
-            File.WriteAllText("database.json", x);
+            var text = JsonSerializer.Serialize(Database, jsonSerializerOptions);
+            File.WriteAllText("database.json", text);
+
+            var deserialized = JsonSerializer.Deserialize<Database>(text, jsonSerializerOptions);
+            Database.Should().BeEquivalentTo(deserialized);
         }
     }
 }

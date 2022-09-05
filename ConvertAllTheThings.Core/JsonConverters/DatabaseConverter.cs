@@ -18,15 +18,20 @@ namespace ConvertAllTheThings.Core.JsonConverters
             if (reader.TokenType != JsonTokenType.StartObject)
                 throw new JsonException();
 
-            reader.ReadExpectPropertyName(nameof(Database.Prefixes));
-            reader.ReadExpectTokenType(JsonTokenType.StartArray);
-            reader.ReadThrowIfFalse();
+            reader.ReadStartOfArrayProperty(nameof(Database.Prefixes));
             while (reader.TokenType != JsonTokenType.EndArray)
             {
-                JsonSerializer.Deserialize<Prefix>(ref reader, options);
+                var proto = JsonSerializer.Deserialize<PrefixProto>(ref reader, options)!;
+                database.DefinePrefix(proto);
                 reader.ReadThrowIfFalse();
             }
 
+            reader.ReadStartOfArrayProperty(nameof(Database.BaseQuantitys));
+            while (reader.TokenType != JsonTokenType.EndArray)
+            {
+                var proto = JsonSerializer.Deserialize<BaseQuantityProto>(ref reader, options)!;
+            }
+            
             return database;
         }
 

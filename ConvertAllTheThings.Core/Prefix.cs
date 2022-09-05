@@ -7,6 +7,8 @@ using ConvertAllTheThings.Core.Extensions;
 
 namespace ConvertAllTheThings.Core
 {
+    public record PrefixProto(decimal Multiplier, string Name, string? Symbol) : MaybeNamedProto(Name, Symbol);
+
     public class Prefix : MaybeNamed, INamed
     {
         public override IOrderedEnumerable<IMaybeNamed> GetAllDependents(ref IEnumerable<IMaybeNamed> toIgnore)

@@ -9,6 +9,8 @@ using System.Text.Json.Serialization;
 
 namespace ConvertAllTheThings.Core
 {
+    public record MaybeNamedProto(string? Name, string? Symbol);
+
     public abstract class MaybeNamed : IMaybeNamed
     {
         public class MaybeNameComparer : Comparer<IMaybeNamed>
