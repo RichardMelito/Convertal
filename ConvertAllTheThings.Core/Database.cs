@@ -363,6 +363,18 @@ namespace ConvertAllTheThings.Core
             return res;
         }
 
+        internal DerivedQuantity DefineDerivedQuantity(DerivedQuantityProto proto)
+        {
+            NamedComposition<BaseQuantity> composition = new(proto.BaseQuantityComposition
+                .ToDictionary(kvp => GetFromName<BaseQuantity>(kvp.Key), kvp => kvp.Value));
+
+            DerivedQuantity res = new(this, composition);
+            if (proto.Name is not null)
+                res.ChangeNameAndSymbol(proto.Name, proto.Symbol);
+
+            return res;
+        }
+
         public BaseQuantity DefineBaseQuantity(
             string quantityName,
             string fundamentalUnitName,

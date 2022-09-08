@@ -9,6 +9,7 @@ using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Diagnostics.CodeAnalysis;
 using System.Collections;
+using System.Collections.Immutable;
 
 namespace ConvertAllTheThings.Core
 {
@@ -27,7 +28,7 @@ namespace ConvertAllTheThings.Core
 
         public static readonly NamedComposition<T> Empty;
 
-        private readonly IReadOnlyDictionary<T, decimal> _innerDictionary;
+        private readonly ImmutableDictionary<T, decimal> _innerDictionary;
 
         public IEnumerable<T> Keys => _innerDictionary.Keys;
 
@@ -36,7 +37,7 @@ namespace ConvertAllTheThings.Core
         public int Count => _innerDictionary.Count;
 
         public override IReadOnlyDictionary<string, decimal> CompositionAsStringDictionary => 
-            _innerDictionary.ToDictionary(kvp => kvp.Key.ToString()!, kvp => kvp.Value);
+            _innerDictionary.ToImmutableDictionary(kvp => kvp.Key.ToString()!, kvp => kvp.Value);
 
         public decimal this[T key] => _innerDictionary[key];
 
@@ -46,11 +47,10 @@ namespace ConvertAllTheThings.Core
                 new Dictionary<T, decimal>().AsReadOnly());
         }
 
-        NamedComposition(IReadOnlyDictionary<T, decimal> composition)
+        internal NamedComposition(IReadOnlyDictionary<T, decimal> composition)
         {
-            _innerDictionary = composition;
+            _innerDictionary = composition.ToImmutableDictionary();
         }
-
 
         public NamedComposition(T key)
         {
@@ -60,7 +60,7 @@ namespace ConvertAllTheThings.Core
             _innerDictionary = new Dictionary<T, decimal>
                 {
                     { key, 1m }
-                }.AsReadOnly();
+                }.ToImmutableDictionary();
         }
 
         public override string ToString()
