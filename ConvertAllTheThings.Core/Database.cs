@@ -197,7 +197,7 @@ namespace ConvertAllTheThings.Core
         public bool TryGetFromName(
             string name,
             Type type,
-            out MaybeNamed? namedObject,
+            [NotNullWhen(true)] out MaybeNamed? namedObject,
             bool isSymbol = false)
         {
             var typeWithinDictionary = GetTypeWithinDictionary(type);
@@ -339,15 +339,54 @@ namespace ConvertAllTheThings.Core
 
         internal BaseUnit DefineBaseUnit(UnitProto proto)
         {
+            NamedComposition<IUnit>? composition = null;
+            if (proto.OtherUnitComposition is not null)
+            {
+                composition = new(proto.OtherUnitComposition.ToDictionary(
+                    kvp => ParseIUnit(kvp.Key),
+                    kvp => kvp.Value));
+            }
+
+            // True if this is a fundamental unit
             if (proto.Name is not null && TryGetFromName<BaseUnit>(proto.Name, out var unit))
             {
                 if (proto.Symbol is not null)
                     unit.ChangeSymbol(proto.Symbol);
 
+                if (composition is not null)
+                    unit.UnitComposition = composition;
+
                 return unit;
             }
 
-            return null;
+            return new BaseUnit(
+                this, 
+                proto.Name!, 
+                proto.Symbol, 
+                GetFromName<BaseQuantity>(proto.Quantity), 
+                proto.FundamentalMultiplier, 
+                proto.FundamentalOffset, 
+                composition);
+        }
+
+        // TODO extend and make public?
+        private IUnit ParseIUnit(string toParse)
+        {
+            var split = toParse.Split('_');
+            switch (split.Length)
+            {
+                case 2:
+                    {
+                        var prefix = GetFromName<Prefix>(split[0]);
+                        var unit = GetFromName<Unit>(split[1]);
+                        return GetPrefixedUnit(unit, prefix);
+                    }
+
+                case 1:
+                    return GetFromName<Unit>(split[0]);
+                default:
+                    throw new ArgumentException(toParse);
+            }
         }
 
         public DerivedUnit DefineDerivedUnit(
@@ -357,6 +396,38 @@ namespace ConvertAllTheThings.Core
             decimal offset = 0,
             string? symbol = null)
             => new(this, name, otherUnit, multiplier, offset, symbol);
+
+        internal DerivedUnit DefineDerivedUnit(UnitProto proto)
+        {
+            NamedComposition<IUnit>? composition = null;
+            if (proto.OtherUnitComposition is not null)
+            {
+                composition = new(proto.OtherUnitComposition.ToDictionary(
+                    kvp => ParseIUnit(kvp.Key),
+                    kvp => kvp.Value));
+            }
+
+            // True if this is a fundamental unit
+            if (proto.Name is not null && TryGetFromName<DerivedUnit>(proto.Name, out var unit))
+            {
+                if (proto.Symbol is not null)
+                    unit.ChangeSymbol(proto.Symbol);
+
+                if (composition is not null)
+                    unit.UnitComposition = composition;
+
+                return unit;
+            }
+
+            return new DerivedUnit(
+                this,
+                proto.Name!,
+                proto.Symbol,
+                GetFromName<DerivedQuantity>(proto.Quantity),
+                proto.FundamentalMultiplier,
+                proto.FundamentalOffset,
+                composition);
+        }
 
         public DerivedQuantity DefineDerivedQuantity(
             Func<Quantity> quantityOperation,

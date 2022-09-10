@@ -42,13 +42,39 @@ namespace ConvertAllTheThings.Core.JsonConverters
                 reader.ReadThrowIfFalse();
             }
 
+            List<UnitProto> selfComposedBaseUnits = new();
+            LinkedList<UnitProto> otherComposedBaseUnits = new();
             reader.ReadStartOfArrayProperty(nameof(Database.BaseUnits));
             while (reader.TokenType != JsonTokenType.EndArray)
             {
                 var proto = JsonSerializer.Deserialize<UnitProto>(ref reader, options)!;
-                database.DefineBaseUnit(proto);
+                if (proto.OtherUnitComposition is null)
+                    selfComposedBaseUnits.Add(proto);
+                else
+                    otherComposedBaseUnits.AddLast(proto);
                 reader.ReadThrowIfFalse();
             }
+
+            List<UnitProto> selfComposedDerivedUnits = new();
+            LinkedList<UnitProto> otherComposedDerivedUnits = new();
+            reader.ReadStartOfArrayProperty(nameof(Database.DerivedUnits));
+            while (reader.TokenType != JsonTokenType.EndArray)
+            {
+                var proto = JsonSerializer.Deserialize<UnitProto>(ref reader, options)!;
+                if (proto.OtherUnitComposition is null)
+                    selfComposedDerivedUnits.Add(proto);
+                else
+                    otherComposedDerivedUnits.AddLast(proto);
+                reader.ReadThrowIfFalse();
+            }
+
+            foreach (var proto in selfComposedBaseUnits)
+                database.DefineBaseUnit(proto);
+
+            foreach (var proto in selfComposedDerivedUnits)
+                database.DefineDerivedUnit(proto);
+
+
 
             return database;
         }

@@ -34,6 +34,29 @@ namespace ConvertAllTheThings.Core
         {
 
         }
+        
+        /// <summary>
+        /// To be called only from <see cref="Database.DefineBaseUnit(UnitProto)"/>
+        /// </summary>
+        /// <param name="database"></param>
+        /// <param name="name"></param>
+        /// <param name="symbol"></param>
+        /// <param name="quantity"></param>
+        /// <param name="fundamentalMultiplier"></param>
+        /// <param name="fundamentalOffset"></param>
+        /// <param name="composition"></param>
+        internal BaseUnit(
+            Database database, 
+            string name,
+            string? symbol,
+            BaseQuantity quantity, 
+            decimal fundamentalMultiplier,
+            decimal fundamentalOffset,
+            NamedComposition<IUnit>? composition)
+            : base(database, name, symbol, quantity, fundamentalMultiplier, fundamentalOffset, composition)
+        {
+
+        }
 
 
         // for defining from a chain of operations

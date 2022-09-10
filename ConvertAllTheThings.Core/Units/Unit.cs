@@ -16,11 +16,12 @@ namespace ConvertAllTheThings.Core
         string Quantity, 
         decimal FundamentalMultiplier, 
         decimal FundamentalOffset, 
-        Dictionary<string, decimal> UnitComposition) : MaybeNamedProto(Name, Symbol);
+        Dictionary<string, decimal>? OtherUnitComposition) : MaybeNamedProto(Name, Symbol);
 
     public abstract class Unit : MaybeNamed, IUnit
     {
         private bool _disposed = false;
+        private NamedComposition<IUnit>? _unitComposition;
 
         [JsonPropertyOrder(2)]
         [JsonConverter(typeof(JsonConverters.ToStringConverter))]
@@ -28,18 +29,26 @@ namespace ConvertAllTheThings.Core
 
         [JsonPropertyOrder(3)]
         public decimal FundamentalMultiplier { get; }
+
         [JsonPropertyOrder(4)]
+        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
         public decimal FundamentalOffset { get; }
 
         [JsonPropertyOrder(5)]
         public NamedComposition<IUnit>? OtherUnitComposition => ((IUnit)this).GetOtherUnitComposition();
 
         [JsonIgnore]
-        public NamedComposition<IUnit> UnitComposition { get; }
+        public NamedComposition<IUnit> UnitComposition 
+        { 
+            get => _unitComposition!;
+            internal set
+            {
+                if (_unitComposition is null || _unitComposition.IsComposedOfOne(this))
+                    _unitComposition = value;
 
-
-        //[JsonPropertyOrder(5)]
-        //public NamedComposition<IUnit>? OtherUnitComposition => ((IUnit)this).OtherUnitComposition;
+                throw new InvalidOperationException();
+            }
+        }
 
 
         [JsonIgnore]
@@ -49,9 +58,9 @@ namespace ConvertAllTheThings.Core
         // quantities, and thus offset will always be 0
         protected Unit(
             Database database,
-            string? name, 
-            Quantity quantity, 
-            decimal fundamentalMultiplier, 
+            string? name,
+            Quantity quantity,
+            decimal fundamentalMultiplier,
             NamedComposition<IUnit>? composition = null,
             string? symbol = null)
             : base(database, name, symbol)
@@ -65,10 +74,10 @@ namespace ConvertAllTheThings.Core
 
         protected Unit(
             Database database,
-            string? name, 
-            IUnit otherUnit, 
-            decimal multiplier, 
-            decimal offset, 
+            string? name,
+            IUnit otherUnit,
+            decimal multiplier,
+            decimal offset,
             string? symbol)
             : base(database, name, symbol)
         {
@@ -98,6 +107,17 @@ namespace ConvertAllTheThings.Core
                 var multiplier = DecimalEx.Pow(unit.FundamentalMultiplier, power);
                 FundamentalMultiplier *= multiplier;
             }
+        }
+
+        // deserialization constructor
+        protected Unit(Database database, string? name, string? symbol, Quantity quantity, decimal fundamentalMultiplier, decimal fundamentalOffset, NamedComposition<IUnit>? composition) 
+            : base(database, name, symbol)
+        {
+            Quantity = quantity;
+            FundamentalMultiplier = fundamentalMultiplier;
+            FundamentalOffset = fundamentalOffset;
+            composition?.ThrowIfRecursive(this);
+            UnitComposition = composition ?? new(this);
         }
 
         protected override Type GetDatabaseType() => typeof(Unit);

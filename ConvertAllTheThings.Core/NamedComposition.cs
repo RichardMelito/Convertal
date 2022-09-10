@@ -63,6 +63,8 @@ namespace ConvertAllTheThings.Core
                 }.ToImmutableDictionary();
         }
 
+        public bool IsComposedOfOne(T key) => TryGetValue(key, out var power) && power == 1;
+
         public void ThrowIfRecursive(T keyThatShouldAppearOnceOrNever)
         {
             if (TryGetValue(keyThatShouldAppearOnceOrNever, out var power) && power != 1)

@@ -45,5 +45,28 @@ namespace ConvertAllTheThings.Core
         {
 
         }
+
+        /// <summary>
+        /// To be called only from <see cref="Database.DefineDerivedUnit(UnitProto)"/>
+        /// </summary>
+        /// <param name="database"></param>
+        /// <param name="name"></param>
+        /// <param name="symbol"></param>
+        /// <param name="quantity"></param>
+        /// <param name="fundamentalMultiplier"></param>
+        /// <param name="fundamentalOffset"></param>
+        /// <param name="composition"></param>
+        internal DerivedUnit(
+            Database database,
+            string name,
+            string? symbol,
+            DerivedQuantity quantity,
+            decimal fundamentalMultiplier,
+            decimal fundamentalOffset,
+            NamedComposition<IUnit>? composition)
+            : base(database, name, symbol, quantity, fundamentalMultiplier, fundamentalOffset, composition)
+        {
+
+        }
     }
 }
