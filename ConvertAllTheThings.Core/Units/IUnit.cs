@@ -22,8 +22,20 @@ namespace ConvertAllTheThings.Core
          */
 
         Quantity Quantity { get; }
+
+        // TODO should this just be settable after instantiation?
         NamedComposition<IUnit> UnitComposition { get; }
 
+        NamedComposition<IUnit>? OtherUnitComposition => GetOtherUnitComposition();
+
+
+        NamedComposition<IUnit>? GetOtherUnitComposition()
+        {
+            if (UnitComposition.Count == 1 && UnitComposition.ContainsKey(this))
+                return null;
+
+            return UnitComposition;
+        }
         bool IEquatable<IUnit>.Equals(IUnit? other) => ReferenceEquals(this, other);
 
         static Term ConvertTo(IUnit toConvert, decimal magnitudeToConvert, IUnit resultingIUnit)

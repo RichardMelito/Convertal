@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Collections.ObjectModel;
+using System.Diagnostics.CodeAnalysis;
 
 namespace ConvertAllTheThings.Core
 {
@@ -239,7 +240,7 @@ namespace ConvertAllTheThings.Core
 
         public bool TryGetFromName<T>(
             string name,
-            out T? namedObject,
+            [NotNullWhen(true)] out T? namedObject,
             bool isSymbol = false)
             where T : MaybeNamed
         {
@@ -336,6 +337,19 @@ namespace ConvertAllTheThings.Core
             decimal offset = 0,
             string? symbol = null) => new(this, name, otherUnit, multiplier, offset, symbol);
 
+        internal BaseUnit DefineBaseUnit(UnitProto proto)
+        {
+            if (proto.Name is not null && TryGetFromName<BaseUnit>(proto.Name, out var unit))
+            {
+                if (proto.Symbol is not null)
+                    unit.ChangeSymbol(proto.Symbol);
+
+                return unit;
+            }
+
+            return null;
+        }
+
         public DerivedUnit DefineDerivedUnit(
             string name,
             IDerivedUnit otherUnit,
@@ -427,14 +441,12 @@ namespace ConvertAllTheThings.Core
             IEnumerable<IDerivedUnit> unitsComposedOfGiven =
                 from unit in allUnits
                 where unit is DerivedUnit &&
-                unit.UnitComposition is not null &&
                 unit.UnitComposition.ContainsKey(baseUnit)
                 select (DerivedUnit)unit;
 
             IEnumerable<IDerivedUnit> prefixedUnitsComposedOfGiven =
                 from prefixedUnit in PrefixedUnits
                 where prefixedUnit is PrefixedDerivedUnit &&
-                prefixedUnit.UnitComposition is not null &&
                 prefixedUnit.UnitComposition.ContainsKey(baseUnit)
                 select (PrefixedDerivedUnit)prefixedUnit;
 

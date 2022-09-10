@@ -14,6 +14,7 @@ namespace ConvertAllTheThings.Core
     {
         private bool _disposedValue;
 
+        // TODO will this class ever be serialized?
         [JsonIgnore]
         public Quantity Quantity => Unit.Quantity;
 
@@ -40,7 +41,7 @@ namespace ConvertAllTheThings.Core
         public Prefix Prefix { get; }
         
         [JsonIgnore]
-        public NamedComposition<IUnit> UnitComposition { get; private set; }
+        public NamedComposition<IUnit> UnitComposition { get; }
 
         public override string ToString()
         {
@@ -68,6 +69,8 @@ namespace ConvertAllTheThings.Core
             Database.AddToPrefixedUnitsList(this);
             Unit = unit;
 
+            // TODO reevaluate. Does this make sense?
+            // Makes OtherUnitComposition always null
             UnitComposition = new(this);
         }
 

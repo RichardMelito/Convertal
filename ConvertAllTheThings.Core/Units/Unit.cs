@@ -10,16 +10,37 @@ using System.Text.Json.Serialization;
 
 namespace ConvertAllTheThings.Core
 {
+    public record UnitProto(
+        string? Name, 
+        string? Symbol, 
+        string Quantity, 
+        decimal FundamentalMultiplier, 
+        decimal FundamentalOffset, 
+        Dictionary<string, decimal> UnitComposition) : MaybeNamedProto(Name, Symbol);
+
     public abstract class Unit : MaybeNamed, IUnit
     {
         private bool _disposed = false;
 
+        [JsonPropertyOrder(2)]
         [JsonConverter(typeof(JsonConverters.ToStringConverter))]
         public Quantity Quantity { get; }
 
+        [JsonPropertyOrder(3)]
         public decimal FundamentalMultiplier { get; }
+        [JsonPropertyOrder(4)]
         public decimal FundamentalOffset { get; }
-        public NamedComposition<IUnit> UnitComposition { get; protected set; }
+
+        [JsonPropertyOrder(5)]
+        public NamedComposition<IUnit>? OtherUnitComposition => ((IUnit)this).GetOtherUnitComposition();
+
+        [JsonIgnore]
+        public NamedComposition<IUnit> UnitComposition { get; }
+
+
+        //[JsonPropertyOrder(5)]
+        //public NamedComposition<IUnit>? OtherUnitComposition => ((IUnit)this).OtherUnitComposition;
+
 
         [JsonIgnore]
         public NamedComposition<IUnit> UC => UnitComposition;   // just shorthand. TODO delete this
@@ -38,6 +59,7 @@ namespace ConvertAllTheThings.Core
             Quantity = quantity;
             FundamentalMultiplier = fundamentalMultiplier;
             FundamentalOffset = 0;
+            composition?.ThrowIfRecursive(this);
             UnitComposition = composition ?? new(this);
         }
 
@@ -56,8 +78,6 @@ namespace ConvertAllTheThings.Core
             UnitComposition = new(this);
         }
 
-        protected override Type GetDatabaseType() => typeof(Unit);
-
         // for defining from a chain of operations
         protected Unit(Database database, string name, NamedComposition<IUnit> composition)
             : base(database, name)
@@ -68,6 +88,7 @@ namespace ConvertAllTheThings.Core
             //    where baseUnit.FundamentalOffset != 0m
             //    select baseUnit;
 
+            composition.ThrowIfRecursive(this);
             UnitComposition = composition;
             Quantity = Database.GetFromBaseComposition(UnitComposition);
             FundamentalMultiplier = 1m;
@@ -78,6 +99,8 @@ namespace ConvertAllTheThings.Core
                 FundamentalMultiplier *= multiplier;
             }
         }
+
+        protected override Type GetDatabaseType() => typeof(Unit);
 
         public static NamedComposition<IUnit> Multiply(params IUnit[] units)
         {

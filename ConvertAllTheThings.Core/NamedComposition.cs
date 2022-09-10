@@ -63,6 +63,12 @@ namespace ConvertAllTheThings.Core
                 }.ToImmutableDictionary();
         }
 
+        public void ThrowIfRecursive(T keyThatShouldAppearOnceOrNever)
+        {
+            if (TryGetValue(keyThatShouldAppearOnceOrNever, out var power) && power != 1)
+                throw new InvalidOperationException();
+        }
+
         public override string ToString()
         {
             StringBuilder stringBuilder = new();

@@ -92,6 +92,9 @@ namespace ConvertAllTheThings.Core.Tests
             var text = JsonSerializer.Serialize(Database, jsonSerializerOptions);
             File.WriteAllText("database.json", text);
 
+            // TODO check that anonymous units/quantities are tested
+
+
             var deserialized = JsonSerializer.Deserialize<Database>(text, jsonSerializerOptions);
             Database.Should().BeEquivalentTo(deserialized);
         }

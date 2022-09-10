@@ -42,6 +42,14 @@ namespace ConvertAllTheThings.Core.JsonConverters
                 reader.ReadThrowIfFalse();
             }
 
+            reader.ReadStartOfArrayProperty(nameof(Database.BaseUnits));
+            while (reader.TokenType != JsonTokenType.EndArray)
+            {
+                var proto = JsonSerializer.Deserialize<UnitProto>(ref reader, options)!;
+                database.DefineBaseUnit(proto);
+                reader.ReadThrowIfFalse();
+            }
+
             return database;
         }
 
