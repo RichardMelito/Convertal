@@ -74,7 +74,54 @@ namespace ConvertAllTheThings.Core.JsonConverters
             foreach (var proto in selfComposedDerivedUnits)
                 database.DefineDerivedUnit(proto);
 
+            // TODO add some kind of change tracker that ensures we're not in an unproductive infinite loop
+            while (otherComposedBaseUnits.Count > 0 || otherComposedDerivedUnits.Count > 0)
+            {
+                var node = otherComposedBaseUnits.First;
+                while (node != null)
+                {
+                    var canParseComposition = _DatabaseCanParseComposition();
+                    var oldNode = node;
+                    node = node.Next;
 
+                    if (canParseComposition)
+                    {
+                        database.DefineBaseUnit(oldNode.Value);
+                        otherComposedBaseUnits.Remove(oldNode);
+                    }
+                }
+
+                node = otherComposedDerivedUnits.First;
+                while (node != null)
+                {
+                    var canParseComposition = _DatabaseCanParseComposition();
+                    var oldNode = node;
+                    node = node.Next;
+
+                    if (canParseComposition)
+                    {
+                        database.DefineDerivedUnit(oldNode.Value);
+                        otherComposedDerivedUnits.Remove(oldNode);
+                    }
+                }
+
+                bool _DatabaseCanParseComposition()
+                {
+                    // TODO can precalculate this rather than rerunning every iteration
+                    var unitNames = node.Value.OtherUnitComposition!
+                        .Select(kvp => kvp.Key.Split('_'))
+                        .Select(split => split.Length > 2 ? throw new InvalidOperationException() : split.Last())
+                        .ToArray();
+
+                    foreach (var name in unitNames)
+                    {
+                        if (!database.TryGetFromName<Unit>(name, out _))
+                            return false;
+                    }
+
+                    return true;
+                }
+            }
 
             return database;
         }
