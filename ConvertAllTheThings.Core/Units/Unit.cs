@@ -45,8 +45,8 @@ namespace ConvertAllTheThings.Core
             {
                 if (_unitComposition is null || _unitComposition.IsComposedOfOne(this))
                     _unitComposition = value;
-
-                throw new InvalidOperationException();
+                else
+                    throw new InvalidOperationException();
             }
         }
 
