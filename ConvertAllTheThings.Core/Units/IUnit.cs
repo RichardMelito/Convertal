@@ -36,7 +36,12 @@ namespace ConvertAllTheThings.Core
 
             return UnitComposition;
         }
-        bool IEquatable<IUnit>.Equals(IUnit? other) => ReferenceEquals(this, other);
+        bool IEquatable<IUnit>.Equals(IUnit? other)
+        {
+            var castThis = (IMaybeNamed)this;
+            var castOther = other as IMaybeNamed;
+            return castThis.Equals(castOther);
+        }
 
         static Term ConvertTo(IUnit toConvert, decimal magnitudeToConvert, IUnit resultingIUnit)
         {

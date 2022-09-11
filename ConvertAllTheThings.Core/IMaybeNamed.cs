@@ -40,7 +40,7 @@ namespace ConvertAllTheThings.Core
             if (ReferenceEquals(this, other))
                 return true;
 
-            if (other is null || Database != other.Database || GetType() != other.GetType())
+            if (other is null || Database == other.Database || GetType() != other.GetType())
                 return false;
 
             return ToProto() == other.ToProto();

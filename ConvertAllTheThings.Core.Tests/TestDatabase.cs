@@ -95,7 +95,18 @@ namespace ConvertAllTheThings.Core.Tests
             // TODO check that anonymous units/quantities are tested
 
 
-            var deserialized = JsonSerializer.Deserialize<Database>(text, jsonSerializerOptions);
+            var deserialized = JsonSerializer.Deserialize<Database>(text, jsonSerializerOptions)!;
+
+            Database.EmptyQuantity.Should().BeEquivalentTo(deserialized.EmptyQuantity);
+            Database.EmptyUnit.Should().BeEquivalentTo(deserialized.EmptyUnit);
+            Database.Prefixes.Should().BeEquivalentTo(deserialized.Prefixes);
+            Database.EmptyQuantity.Should().BeEquivalentTo(deserialized.EmptyQuantity);
+            Database.BaseQuantitys.Should().BeEquivalentTo(deserialized.BaseQuantitys);
+            Database.DerivedQuantitys.Should().BeEquivalentTo(deserialized.DerivedQuantitys);
+            Database.BaseUnits.Should().BeEquivalentTo(deserialized.BaseUnits);
+            Database.DerivedUnits.Should().BeEquivalentTo(deserialized.DerivedUnits);
+
+
             Database.Should().BeEquivalentTo(deserialized);
         }
     }
