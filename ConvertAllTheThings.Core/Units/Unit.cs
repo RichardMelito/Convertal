@@ -120,6 +120,16 @@ namespace ConvertAllTheThings.Core
             UnitComposition = composition ?? new(this);
         }
 
+        public override UnitProto ToProto()
+        {
+            return new(
+                Name, 
+                Symbol, 
+                Quantity.ToString(),
+                FundamentalMultiplier, 
+                FundamentalOffset, 
+                OtherUnitComposition?.CompositionAsStringDictionary);
+        }
         protected override Type GetDatabaseType() => typeof(Unit);
 
         public static NamedComposition<IUnit> Multiply(params IUnit[] units)

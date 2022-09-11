@@ -10,6 +10,13 @@ using System.Text.Json.Serialization;
 
 namespace ConvertAllTheThings.Core
 {
+    public record PrefixedUnitProto(
+        string Name,
+        string? Symbol,
+        string Quantity,
+        decimal FundamentalMultiplier,
+        decimal FundamentalOffset) : UnitProto(Name, Symbol, Quantity, FundamentalMultiplier, FundamentalOffset, null);
+
     public abstract class PrefixedUnit : IUnit, INamed
     {
         private bool _disposedValue;
@@ -54,7 +61,7 @@ namespace ConvertAllTheThings.Core
         }
 
         [JsonIgnore]
-        internal Database Database { get; }
+        public Database Database { get; }
 
         protected PrefixedUnit(Database database, Unit unit, Prefix prefix)
         {
@@ -73,6 +80,12 @@ namespace ConvertAllTheThings.Core
             // Makes OtherUnitComposition always null
             UnitComposition = new(this);
         }
+
+        public PrefixedUnitProto ToProto()
+        {
+            return new(Name!, Symbol, Quantity.ToString(), FundamentalMultiplier, FundamentalOffset);
+        }
+        MaybeNamedProto IMaybeNamed.ToProto() => ToProto();
 
 
         public Term ConvertTo(decimal magnitudeOfThis, IUnit resultingIUnit)

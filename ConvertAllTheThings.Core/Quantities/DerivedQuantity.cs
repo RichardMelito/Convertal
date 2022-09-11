@@ -7,7 +7,12 @@ using System.Threading.Tasks;
 
 namespace ConvertAllTheThings.Core
 {
-    public record DerivedQuantityProto(string? Name, string? Symbol, string FundamentalUnit, Dictionary<string, decimal> BaseQuantityComposition) : MaybeNamedProto(Name, Symbol);
+    public record DerivedQuantityProto(
+        string? Name, 
+        string? Symbol, 
+        string FundamentalUnit, 
+        Dictionary<string, decimal> BaseQuantityComposition) 
+        : MaybeNamedProto(Name, Symbol);
 
     public class DerivedQuantity : Quantity, IDerived
     {
@@ -28,6 +33,15 @@ namespace ConvertAllTheThings.Core
             BaseQuantityComposition = composition;
             FundamentalUnit = new DerivedUnit(database, this);
             Init();
+        }
+
+        public override DerivedQuantityProto ToProto()
+        {
+            return new(
+                Name, 
+                Symbol, 
+                FundamentalUnit.ToString()!, 
+                BaseQuantityComposition.CompositionAsStringDictionary);
         }
     }
 }

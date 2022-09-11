@@ -10,6 +10,9 @@ using System.Collections;
 
 namespace ConvertAllTheThings.Core
 {
+    public record MeasurementSystemProto(string Name, Dictionary<string, string> QuantityToUnitDictionary) 
+        : MaybeNamedProto(Name, null);
+
     public class MeasurementSystem : MaybeNamed, INamed
     {
         // TODO
@@ -17,13 +20,20 @@ namespace ConvertAllTheThings.Core
 
         private readonly Dictionary<Quantity, IUnit> _quantities_units = new();
 
+        [JsonPropertyOrder(3)]
         [JsonConverter(typeof(JsonConverters.ConverterForDictionaries))]
-        public IReadOnlyDictionary<Quantity, IUnit> Dictionary { get; } 
+        public IReadOnlyDictionary<Quantity, IUnit> QuantityToUnitDictionary { get; } 
 
         internal MeasurementSystem(Database database, string name)
             : base(database, name)
         {
-            Dictionary = _quantities_units.AsReadOnly();
+            QuantityToUnitDictionary = _quantities_units.AsReadOnly();
+        }
+
+        public override MeasurementSystemProto ToProto()
+        {
+            return new(Name!, QuantityToUnitDictionary
+                .ToDictionary(kvp => kvp.Key.ToString(), kvp => kvp.Value.ToString()!));
         }
 
         public IUnit? GetUnit(Quantity quantity)

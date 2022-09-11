@@ -21,6 +21,11 @@ namespace ConvertAllTheThings.Core.Tests
             {
                 return Array.Empty<IMaybeNamed>().SortByTypeAndName();
             }
+
+            public override MaybeNamedProto ToProto()
+            {
+                throw new NotImplementedException();
+            }
         }
 
         class OtherTestNamedClass : MaybeNamed
@@ -33,6 +38,11 @@ namespace ConvertAllTheThings.Core.Tests
             public override IOrderedEnumerable<IMaybeNamed> GetAllDependents(ref IEnumerable<IMaybeNamed> toIgnore)
             {
                 return Array.Empty<IMaybeNamed>().SortByTypeAndName();
+            }
+
+            public override MaybeNamedProto ToProto()
+            {
+                throw new NotImplementedException();
             }
         }
 

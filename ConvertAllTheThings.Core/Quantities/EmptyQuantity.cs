@@ -7,6 +7,8 @@ using ConvertAllTheThings.Core.Extensions;
 
 namespace ConvertAllTheThings.Core
 {
+    public record EmptyQuantityProto() : MaybeNamedProto(null, null);
+
     public sealed class EmptyQuantity : Quantity
     {
         public override EmptyUnit FundamentalUnit => Database.EmptyUnit;
@@ -29,6 +31,11 @@ namespace ConvertAllTheThings.Core
         {
             // The Database.EmptyQuantity cannot be disposed
             return;
+        }
+
+        public override EmptyQuantityProto ToProto()
+        {
+            return new();
         }
     }
 }

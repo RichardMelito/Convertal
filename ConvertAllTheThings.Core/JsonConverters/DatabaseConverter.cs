@@ -73,10 +73,10 @@ namespace ConvertAllTheThings.Core.JsonConverters
 
             foreach (var proto in selfComposedDerivedUnits)
                 database.DefineDerivedUnit(proto);
-
-            // TODO add some kind of change tracker that ensures we're not in an unproductive infinite loop
+            
             while (otherComposedBaseUnits.Count > 0 || otherComposedDerivedUnits.Count > 0)
             {
+                var countAtStartOfLoop = otherComposedBaseUnits.Count + otherComposedDerivedUnits.Count;
                 var node = otherComposedBaseUnits.First;
                 while (node != null)
                 {
@@ -121,8 +121,27 @@ namespace ConvertAllTheThings.Core.JsonConverters
 
                     return true;
                 }
+
+                var countAtEndOfLoop = otherComposedBaseUnits.Count + otherComposedDerivedUnits.Count;
+                if (countAtEndOfLoop == countAtStartOfLoop)
+                    throw new InvalidOperationException("Infinite loop detected. Check the JSON file for circular or orphan unit composition references.");
             }
 
+            reader.ReadStartOfArrayProperty(nameof(Database.MeasurementSystems));
+            while (reader.TokenType != JsonTokenType.EndArray)
+            {
+                var proto = JsonSerializer.Deserialize<MeasurementSystemProto>(ref reader, options)!;
+                var quantityUnitPairs = proto.QuantityToUnitDictionary.ToDictionary(
+                    kvp => database.GetFromName<Quantity>(kvp.Key),
+                    kvp => database.ParseIUnit(kvp.Value))
+                    .ToArray();
+
+                MeasurementSystem measurementSystem = new(database, proto.Name!);
+                measurementSystem.SetQuantityUnitPairs(quantityUnitPairs);
+                reader.ReadThrowIfFalse();
+            }
+
+            reader.ReadExpectTokenType(JsonTokenType.EndObject);
             return database;
         }
 

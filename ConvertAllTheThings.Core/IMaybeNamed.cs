@@ -9,10 +9,12 @@ namespace ConvertAllTheThings.Core
 {
     public interface IMaybeNamed : IDisposable, IComparable<IMaybeNamed>, IEquatable<IMaybeNamed>
     {
+        Database Database { get; }
         string? Name { get; }
         string? Symbol { get; }
 
-        string ToStringSymbol(); 
+        string ToStringSymbol();
+        MaybeNamedProto ToProto();
 
         IOrderedEnumerable<IMaybeNamed> GetAllDependents(ref IEnumerable<IMaybeNamed> toIgnore);
 
@@ -35,7 +37,13 @@ namespace ConvertAllTheThings.Core
 
         bool IEquatable<IMaybeNamed>.Equals(IMaybeNamed? other)
         {
-            return ReferenceEquals(this, other);
+            if (ReferenceEquals(this, other))
+                return true;
+
+            if (other is null || Database != other.Database || GetType() != other.GetType())
+                return false;
+
+            return ToProto() == other.ToProto();
         }
         
         int CalculateHashCode()

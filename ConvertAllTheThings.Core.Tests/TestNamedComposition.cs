@@ -51,6 +51,11 @@ namespace ConvertAllTheThings.Core.Tests
             {
                 return base.GetHashCode();
             }
+
+            public override MaybeNamedProto ToProto()
+            {
+                throw new NotImplementedException();
+            }
         }
 
         [Fact]

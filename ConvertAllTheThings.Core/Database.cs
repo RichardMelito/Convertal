@@ -369,21 +369,21 @@ namespace ConvertAllTheThings.Core
                 composition);
         }
 
-        // TODO extend and make public?
-        private IUnit ParseIUnit(string toParse)
+        public IUnit ParseIUnit(string toParse, bool isSymbol = false)
         {
             var split = toParse.Split('_');
             switch (split.Length)
             {
                 case 2:
                     {
-                        var prefix = GetFromName<Prefix>(split[0]);
-                        var unit = GetFromName<Unit>(split[1]);
+                        var prefix = GetFromName<Prefix>(split[0], isSymbol);
+                        var unit = GetFromName<Unit>(split[1], isSymbol);
                         return GetPrefixedUnit(unit, prefix);
                     }
 
                 case 1:
-                    return GetFromName<Unit>(split[0]);
+                    return GetFromName<Unit>(split[0], isSymbol);
+
                 default:
                     throw new ArgumentException(toParse);
             }

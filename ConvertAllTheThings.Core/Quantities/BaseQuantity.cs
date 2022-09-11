@@ -58,5 +58,10 @@ namespace ConvertAllTheThings.Core
             res.ThrowIfSetContains(this);
             return res.SortByTypeAndName();
         }
+
+        public override BaseQuantityProto ToProto()
+        {
+            return new(Name!, Symbol, FundamentalUnit.Name!);
+        }
     }
 }

@@ -42,14 +42,14 @@ namespace ConvertAllTheThings.Core
         private bool _disposedValue;
 
         [JsonIgnore]
-        internal Database Database { get; }
+        public Database Database { get; }
 
         [JsonPropertyOrder(0)]
         public string? Name { get; private set; } = null;
 
         [JsonPropertyOrder(1)]
         public string? Symbol { get; private set; } = null;
-        
+
         protected MaybeNamed(Database database, string? name, string? symbol = null)
         {
             Database = database;
@@ -209,5 +209,7 @@ namespace ConvertAllTheThings.Core
         {
             return ((IMaybeNamed)this).CalculateHashCode();
         }
+
+        public abstract MaybeNamedProto ToProto();
     }
 }

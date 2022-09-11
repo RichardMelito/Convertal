@@ -7,6 +7,8 @@ using ConvertAllTheThings.Core.Extensions;
 
 namespace ConvertAllTheThings.Core
 {
+    public record EmptyUnitProto() : MaybeNamedProto(null, null);
+
     // should maybe inherit from Unit?
     public sealed class EmptyUnit : IUnit
     {
@@ -20,6 +22,8 @@ namespace ConvertAllTheThings.Core
         public string? Name => null;
 
         public string? Symbol => null;
+
+        public Database Database => Quantity.Database;
 
         internal EmptyUnit(Database database)
         {
@@ -53,5 +57,9 @@ namespace ConvertAllTheThings.Core
             toIgnore = toIgnore.UnionAppend(this);
             return Array.Empty<IMaybeNamed>().SortByTypeAndName();
         }
+
+        public EmptyUnitProto ToProto() => new();
+
+        MaybeNamedProto IMaybeNamed.ToProto() => ToProto();
     }
 }

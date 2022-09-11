@@ -36,8 +36,8 @@ namespace ConvertAllTheThings.Core
 
         public int Count => _innerDictionary.Count;
 
-        public override IReadOnlyDictionary<string, decimal> CompositionAsStringDictionary => 
-            _innerDictionary.ToImmutableDictionary(kvp => kvp.Key.ToString()!, kvp => kvp.Value);
+        public override Dictionary<string, decimal> CompositionAsStringDictionary => 
+            _innerDictionary.ToDictionary(kvp => kvp.Key.ToString()!, kvp => kvp.Value);
 
         public decimal this[T key] => _innerDictionary[key];
 

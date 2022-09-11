@@ -29,6 +29,11 @@ namespace ConvertAllTheThings.Core
             return res.SortByTypeAndName();
         }
 
+        public override PrefixProto ToProto()
+        {
+            return new(Name!, Symbol, Multiplier);
+        }
+
         [JsonPropertyOrder(2)]
         public decimal Multiplier { get; }
 
