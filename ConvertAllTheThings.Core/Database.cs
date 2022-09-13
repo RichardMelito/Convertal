@@ -122,7 +122,8 @@ namespace ConvertAllTheThings.Core
 
             return MaybeNamedsByType[typeWithinDictionary]
                 .Where(x => x is T)
-                .Cast<T>();
+                .Cast<T>()
+                .ToArray(); // TODO
         }
 
         public Type? GetTypeWithinDictionary(Type type)

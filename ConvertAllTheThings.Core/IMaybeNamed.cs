@@ -35,13 +35,30 @@ namespace ConvertAllTheThings.Core
             return MaybeNamed.DefaultComparer.Compare(this, other);
         }
 
+        MaybeNamedProto Proto => ToProto(); // TODO testing
+
         bool IEquatable<IMaybeNamed>.Equals(IMaybeNamed? other)
         {
             if (ReferenceEquals(this, other))
                 return true;
 
-            if (other is null || Database == other.Database || GetType() != other.GetType())
+            var type = GetType();
+            if (other is null || Database == other.Database || type != other.GetType())
                 return false;
+
+            if (type == typeof(EmptyUnit) || type == typeof(EmptyQuantity))
+                return true;
+
+            // TODO testing
+            if (type == typeof(DerivedQuantity))
+            {
+                var lhs = (DerivedQuantityProto)Proto;
+                var rhs = (DerivedQuantityProto)other.Proto;
+                var a = lhs.Name == rhs.Name;
+                var b = lhs.Symbol == rhs.Symbol;
+                var c = lhs.FundamentalUnit == rhs.FundamentalUnit;
+                var d = lhs.BaseQuantityComposition == rhs.BaseQuantityComposition;
+            }
 
             return ToProto() == other.ToProto();
         }

@@ -35,6 +35,8 @@ namespace ConvertAllTheThings.Core
             Init();
         }
 
+        public DerivedQuantityProto Proto => ToProto();
+
         public override DerivedQuantityProto ToProto()
         {
             return new(

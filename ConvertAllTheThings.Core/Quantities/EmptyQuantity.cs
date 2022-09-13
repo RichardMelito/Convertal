@@ -9,7 +9,7 @@ namespace ConvertAllTheThings.Core
 {
     public record EmptyQuantityProto() : MaybeNamedProto(null, null);
 
-    public sealed class EmptyQuantity : Quantity, IEquatable<EmptyQuantity>
+    public sealed class EmptyQuantity : Quantity
     {
         public override EmptyUnit FundamentalUnit => Database.EmptyUnit;
 
@@ -37,7 +37,5 @@ namespace ConvertAllTheThings.Core
         {
             return new();
         }
-
-        public bool Equals(EmptyQuantity? other) => other is not null;
     }
 }

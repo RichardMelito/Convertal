@@ -10,7 +10,7 @@ namespace ConvertAllTheThings.Core
     public record EmptyUnitProto() : MaybeNamedProto(null, null);
 
     // should maybe inherit from Unit?
-    public sealed class EmptyUnit : IUnit, IEquatable<EmptyUnit>
+    public sealed class EmptyUnit : IUnit
     {
         public decimal FundamentalMultiplier => 1m;
         public decimal FundamentalOffset => 0;
@@ -40,6 +40,18 @@ namespace ConvertAllTheThings.Core
             return "";
         }
 
+        public override bool Equals(object? other)
+        {
+            var castThis = (IMaybeNamed)this;
+            var castOther = other as IMaybeNamed;
+            return castThis.Equals(castOther);
+        }
+
+        public override int GetHashCode()
+        {
+            return ((IMaybeNamed)this).CalculateHashCode();
+        }
+
         void IMaybeNamed.DisposeThisAndDependents(bool disposeDependents)
         {
             // The EmptyUnit cannot be disposed
@@ -61,7 +73,5 @@ namespace ConvertAllTheThings.Core
         public EmptyUnitProto ToProto() => new();
 
         MaybeNamedProto IMaybeNamed.ToProto() => ToProto();
-
-        public bool Equals(EmptyUnit? other) => other is not null;
     }
 }
