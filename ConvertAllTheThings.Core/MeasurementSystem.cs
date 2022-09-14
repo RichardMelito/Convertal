@@ -10,42 +10,8 @@ using System.Collections;
 
 namespace ConvertAllTheThings.Core
 {
-    public class ValueEqualityDictionary<TKey, TValue> : Dictionary<TKey, TValue>, IEquatable<ValueEqualityDictionary<TKey, TValue>>
-        where TKey : notnull
-    {
-        public bool Equals(ValueEqualityDictionary<TKey, TValue>? other)
-        {
-            if (Count != other?.Count)
-                return false;
 
-            foreach (var kvp in this)
-            {
-                if (other.TryGetValue(kvp.Key, out var otherValue))
-                {
-                    if (EqualityComparer<TValue>.Default.Equals(kvp.Value, otherValue))
-                        return false;
-                }
-                else
-                {
-                    return false;
-                }
-            }
-
-            return true;
-        }
-
-        public override bool Equals(object? obj)
-        {
-            return Equals(obj as ValueEqualityDictionary<TKey, TValue>);
-        }
-
-        public override int GetHashCode()
-        {
-            throw new NotImplementedException();
-        }
-    }
-
-    public record MeasurementSystemProto(string Name, Dictionary<string, string> QuantityToUnitDictionary) 
+    public record MeasurementSystemProto(string Name, ValueEqualityDictionary<string, string> QuantityToUnitDictionary) 
         : MaybeNamedProto(Name, null);
 
     public class MeasurementSystem : MaybeNamed, INamed
@@ -67,8 +33,8 @@ namespace ConvertAllTheThings.Core
 
         public override MeasurementSystemProto ToProto()
         {
-            return new(Name!, QuantityToUnitDictionary
-                .ToDictionary(kvp => kvp.Key.ToString(), kvp => kvp.Value.ToString()!));
+            return new(Name!, new(QuantityToUnitDictionary
+                .ToDictionary(kvp => kvp.Key.ToString(), kvp => kvp.Value.ToString()!)));
         }
 
         public IUnit? GetUnit(Quantity quantity)

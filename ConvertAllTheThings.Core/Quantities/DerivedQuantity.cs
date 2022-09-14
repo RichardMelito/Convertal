@@ -10,8 +10,8 @@ namespace ConvertAllTheThings.Core
     public record DerivedQuantityProto(
         string? Name, 
         string? Symbol, 
-        string FundamentalUnit, 
-        Dictionary<string, decimal> BaseQuantityComposition) 
+        string FundamentalUnit,
+        ValueEqualityDictionary<string, decimal> BaseQuantityComposition) 
         : MaybeNamedProto(Name, Symbol);
 
     public class DerivedQuantity : Quantity, IDerived
@@ -35,15 +35,13 @@ namespace ConvertAllTheThings.Core
             Init();
         }
 
-        public DerivedQuantityProto Proto => ToProto();
-
         public override DerivedQuantityProto ToProto()
         {
             return new(
                 Name, 
                 Symbol, 
-                FundamentalUnit.ToString()!, 
-                BaseQuantityComposition.CompositionAsStringDictionary);
+                FundamentalUnit.ToString()!,
+                new(BaseQuantityComposition.CompositionAsStringDictionary));
         }
     }
 }

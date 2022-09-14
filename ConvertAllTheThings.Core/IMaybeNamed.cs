@@ -35,8 +35,6 @@ namespace ConvertAllTheThings.Core
             return MaybeNamed.DefaultComparer.Compare(this, other);
         }
 
-        MaybeNamedProto Proto => ToProto(); // TODO testing
-
         bool IEquatable<IMaybeNamed>.Equals(IMaybeNamed? other)
         {
             if (ReferenceEquals(this, other))
@@ -52,12 +50,13 @@ namespace ConvertAllTheThings.Core
             // TODO testing
             if (type == typeof(DerivedQuantity))
             {
-                var lhs = (DerivedQuantityProto)Proto;
-                var rhs = (DerivedQuantityProto)other.Proto;
+                var lhs = (DerivedQuantityProto)ToProto();
+                var rhs = (DerivedQuantityProto)other.ToProto();
                 var a = lhs.Name == rhs.Name;
                 var b = lhs.Symbol == rhs.Symbol;
                 var c = lhs.FundamentalUnit == rhs.FundamentalUnit;
                 var d = lhs.BaseQuantityComposition == rhs.BaseQuantityComposition;
+                var e = lhs.BaseQuantityComposition.Equals(rhs.BaseQuantityComposition);
             }
 
             return ToProto() == other.ToProto();
