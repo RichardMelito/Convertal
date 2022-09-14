@@ -10,6 +10,41 @@ using System.Collections;
 
 namespace ConvertAllTheThings.Core
 {
+    public class ValueEqualityDictionary<TKey, TValue> : Dictionary<TKey, TValue>, IEquatable<ValueEqualityDictionary<TKey, TValue>>
+        where TKey : notnull
+    {
+        public bool Equals(ValueEqualityDictionary<TKey, TValue>? other)
+        {
+            if (Count != other?.Count)
+                return false;
+
+            foreach (var kvp in this)
+            {
+                if (other.TryGetValue(kvp.Key, out var otherValue))
+                {
+                    if (EqualityComparer<TValue>.Default.Equals(kvp.Value, otherValue))
+                        return false;
+                }
+                else
+                {
+                    return false;
+                }
+            }
+
+            return true;
+        }
+
+        public override bool Equals(object? obj)
+        {
+            return Equals(obj as ValueEqualityDictionary<TKey, TValue>);
+        }
+
+        public override int GetHashCode()
+        {
+            throw new NotImplementedException();
+        }
+    }
+
     public record MeasurementSystemProto(string Name, Dictionary<string, string> QuantityToUnitDictionary) 
         : MaybeNamedProto(Name, null);
 
