@@ -11,7 +11,9 @@ using System.Collections;
 namespace ConvertAllTheThings.Core
 {
 
-    public record MeasurementSystemProto(string Name, ValueEqualityDictionary<string, string> QuantityToUnitDictionary) 
+    public record MeasurementSystemProto(
+        string Name,
+        [property: JsonPropertyOrder(2)] ValueEqualityDictionary<string, string> QuantityToUnitDictionary) 
         : MaybeNamedProto(Name, null);
 
     public class MeasurementSystem : MaybeNamed, INamed
@@ -21,8 +23,6 @@ namespace ConvertAllTheThings.Core
 
         private readonly Dictionary<Quantity, IUnit> _quantities_units = new();
 
-        [JsonPropertyOrder(3)]
-        [JsonConverter(typeof(JsonConverters.ConverterForDictionaries))]
         public IReadOnlyDictionary<Quantity, IUnit> QuantityToUnitDictionary { get; } 
 
         internal MeasurementSystem(Database database, string name)

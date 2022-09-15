@@ -31,9 +31,9 @@ namespace ConvertAllTheThings.Core
         public IEnumerable<BaseQuantity> BaseQuantitys => GetAllMaybeNameds<BaseQuantity>();
         public IEnumerable<DerivedQuantity> DerivedQuantitys => GetAllMaybeNameds<DerivedQuantity>();
         public IEnumerable<BaseUnit> BaseUnits => GetAllMaybeNameds<BaseUnit>();
-        //public IEnumerable<PrefixedBaseUnit> PrefixedBaseUnits => _prefixedUnits.Where(x => x is PrefixedBaseUnit).Cast<PrefixedBaseUnit>();
+        public IEnumerable<PrefixedBaseUnit> PrefixedBaseUnits => _prefixedUnits.Where(x => x is PrefixedBaseUnit).Cast<PrefixedBaseUnit>();
         public IEnumerable<DerivedUnit> DerivedUnits => GetAllMaybeNameds<DerivedUnit>();
-        //public IEnumerable<PrefixedDerivedUnit> PrefixedDerivedUnits => _prefixedUnits.Where(x => x is PrefixedDerivedUnit).Cast<PrefixedDerivedUnit>();
+        public IEnumerable<PrefixedDerivedUnit> PrefixedDerivedUnits => _prefixedUnits.Where(x => x is PrefixedDerivedUnit).Cast<PrefixedDerivedUnit>();
         public IEnumerable<MeasurementSystem> MeasurementSystems => GetAllMaybeNameds<MeasurementSystem>();
 
         internal Dictionary<Type, List<MaybeNamed>> MaybeNamedsByType { get; } = new();
@@ -122,8 +122,7 @@ namespace ConvertAllTheThings.Core
 
             return MaybeNamedsByType[typeWithinDictionary]
                 .Where(x => x is T)
-                .Cast<T>()
-                .ToArray(); // TODO
+                .Cast<T>();
         }
 
         public Type? GetTypeWithinDictionary(Type type)

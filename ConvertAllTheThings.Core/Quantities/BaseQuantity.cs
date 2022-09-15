@@ -8,16 +8,17 @@ using System.Text.Json.Serialization;
 
 namespace ConvertAllTheThings.Core
 {
-    public record BaseQuantityProto(string Name, string? Symbol, string FundamentalUnit) : MaybeNamedProto(Name, Symbol);
+    public record BaseQuantityProto(
+        string Name, 
+        string? Symbol,
+        [property: JsonPropertyOrder(2)] string FundamentalUnit) : MaybeNamedProto(Name, Symbol);
 
     public class BaseQuantity : Quantity, IBase, IEquatable<BaseQuantity>
     {
         internal IBaseUnit? InnerFundamentalUnit { get; set; } = null;
 
-        [JsonIgnore]
         public override IBaseUnit FundamentalUnit => InnerFundamentalUnit!;
 
-        [JsonIgnore]
         public override NamedComposition<BaseQuantity> BaseQuantityComposition { get; }
 
         internal BaseQuantity(Database database, string name, string? symbol)

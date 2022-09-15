@@ -13,31 +13,25 @@ namespace ConvertAllTheThings.Core
     public record UnitProto(
         string? Name, 
         string? Symbol, 
-        string Quantity, 
-        decimal FundamentalMultiplier, 
-        decimal FundamentalOffset, 
-        ValueEqualityDictionary<string, decimal>? OtherUnitComposition) : MaybeNamedProto(Name, Symbol);
+        [property: JsonPropertyOrder(2)] string Quantity,
+        [property: JsonPropertyOrder(3)] decimal FundamentalMultiplier,
+        [property: JsonPropertyOrder(4), JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)] decimal FundamentalOffset,
+        [property: JsonPropertyOrder(5)] ValueEqualityDictionary<string, decimal>? OtherUnitComposition) 
+        : MaybeNamedProto(Name, Symbol);
 
     public abstract class Unit : MaybeNamed, IUnit
     {
         private bool _disposed = false;
         private NamedComposition<IUnit>? _unitComposition;
 
-        [JsonPropertyOrder(2)]
-        [JsonConverter(typeof(JsonConverters.ToStringConverter))]
         public Quantity Quantity { get; }
 
-        [JsonPropertyOrder(3)]
         public decimal FundamentalMultiplier { get; }
 
-        [JsonPropertyOrder(4)]
-        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
         public decimal FundamentalOffset { get; }
 
-        [JsonPropertyOrder(5)]
         public NamedComposition<IUnit>? OtherUnitComposition => ((IUnit)this).GetOtherUnitComposition();
 
-        [JsonIgnore]
         public NamedComposition<IUnit> UnitComposition 
         { 
             get => _unitComposition!;
@@ -51,7 +45,6 @@ namespace ConvertAllTheThings.Core
         }
 
 
-        [JsonIgnore]
         public NamedComposition<IUnit> UC => UnitComposition;   // just shorthand. TODO delete this
 
         // only to be called when defining fundamental units for new

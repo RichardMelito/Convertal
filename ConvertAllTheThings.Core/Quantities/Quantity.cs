@@ -9,7 +9,6 @@ using System.Text.Json.Serialization;
 
 namespace ConvertAllTheThings.Core
 {
-    //[JsonConverter(typeof(JsonConverters.QuantityConverter))]
     public abstract class Quantity : MaybeNamed
     {
         /*  There will never be multiple quantities for something in the same 
@@ -26,14 +25,10 @@ namespace ConvertAllTheThings.Core
         private bool _disposed = false;
         private bool _initialized = false;
 
-        [JsonIgnore]
         public bool Disposed => _disposed;
 
-        [JsonPropertyOrder(2)]
-        [JsonConverter(typeof(JsonConverters.ToStringConverter))]
         public abstract IUnit FundamentalUnit { get; }
 
-        [JsonIgnore]
         public abstract NamedComposition<BaseQuantity> BaseQuantityComposition { get; }
 
         protected Quantity(Database database, string? name, string? symbol)

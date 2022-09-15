@@ -18,7 +18,6 @@ namespace ConvertAllTheThings.Core
         public abstract IReadOnlyDictionary<string, decimal> CompositionAsStringDictionary { get; }
     }
 
-    [JsonConverter(typeof(JsonConverters.NamedCompositionConverter))]
     public class NamedComposition<T> : NamedComposition, IReadOnlyDictionary<T, decimal>, IEquatable<NamedComposition<T>>
         where T : IMaybeNamed
     {

@@ -15,14 +15,13 @@ namespace ConvertAllTheThings.Core
         string? Symbol,
         string Quantity,
         decimal FundamentalMultiplier,
-        decimal FundamentalOffset) : UnitProto(Name, Symbol, Quantity, FundamentalMultiplier, FundamentalOffset, null);
+        decimal FundamentalOffset) 
+        : UnitProto(Name, Symbol, Quantity, FundamentalMultiplier, FundamentalOffset, null);
 
     public abstract class PrefixedUnit : IUnit, INamed
     {
         private bool _disposedValue;
 
-        // TODO will this class ever be serialized?
-        [JsonIgnore]
         public Quantity Quantity => Unit.Quantity;
 
         public string? Name => Prefix.Name! + "_" + Unit.Name!;
@@ -41,13 +40,10 @@ namespace ConvertAllTheThings.Core
         public decimal FundamentalMultiplier => Unit.FundamentalMultiplier * Prefix.Multiplier;
         public decimal FundamentalOffset => Unit.FundamentalOffset / Prefix.Multiplier;
 
-        [JsonConverter(typeof(JsonConverters.ToStringConverter))]
         public Unit Unit { get; private set; }
         
-        [JsonConverter(typeof(JsonConverters.ToStringConverter))]
         public Prefix Prefix { get; }
         
-        [JsonIgnore]
         public NamedComposition<IUnit> UnitComposition { get; }
 
         public override string ToString()
@@ -60,7 +56,6 @@ namespace ConvertAllTheThings.Core
             return Prefix.ToStringSymbol() + "_" + Unit.ToStringSymbol();
         }
 
-        [JsonIgnore]
         public Database Database { get; }
 
         protected PrefixedUnit(Database database, Unit unit, Prefix prefix)

@@ -47,19 +47,6 @@ namespace ConvertAllTheThings.Core
             if (type == typeof(EmptyUnit) || type == typeof(EmptyQuantity))
                 return true;
 
-            // TODO testing
-            if (type == typeof(DerivedUnit))
-            {
-                var lhs = (UnitProto)ToProto();
-                var rhs = (UnitProto)other.ToProto();
-                var a = lhs.Name == rhs.Name;
-                var b = lhs.Symbol == rhs.Symbol;
-                var c = lhs.FundamentalMultiplier == rhs.FundamentalMultiplier;
-                var d = lhs.FundamentalOffset == rhs.FundamentalOffset;
-                var e = lhs.Quantity == rhs.Quantity;
-                var f = lhs.OtherUnitComposition == rhs.OtherUnitComposition;
-            }
-
             return ToProto() == other.ToProto();
         }
         

@@ -147,33 +147,30 @@ namespace ConvertAllTheThings.Core.JsonConverters
 
         public override void Write(Utf8JsonWriter writer, Database value, JsonSerializerOptions options)
         {
-            //JsonSerializer.Serialize(writer, value, options);
-            //return;
-            
             // Just need MaybeNamedsByType. That plus constructors are everything we need.
             writer.WriteStartObject();
 
             // Prefixes first since they're the simplest
             writer.WritePropertyName(nameof(Database.Prefixes));
-            JsonSerializer.Serialize(writer, value.Prefixes, options);
+            JsonSerializer.Serialize(writer, value.Prefixes.Select(q => q.ToProto()), options);
 
             // Now BaseQuantitys since they are the most fundamental.
             // Don't need their BaseQuantityComposition since it is just themselves.
             // For all Quantitys, only store the names of their FundamentalUnits to avoid circular references.
             writer.WritePropertyName(nameof(Database.BaseQuantitys));
-            JsonSerializer.Serialize(writer, value.BaseQuantitys, options);
+            JsonSerializer.Serialize(writer, value.BaseQuantitys.Select(q => q.ToProto()), options);
 
             writer.WritePropertyName(nameof(Database.DerivedQuantitys));
             JsonSerializer.Serialize(writer, value.DerivedQuantitys.Select(q => q.ToProto()), options);
 
             writer.WritePropertyName(nameof(Database.BaseUnits));
-            JsonSerializer.Serialize(writer, value.BaseUnits, options);
+            JsonSerializer.Serialize(writer, value.BaseUnits.Select(q => q.ToProto()), options);
 
             writer.WritePropertyName(nameof(Database.DerivedUnits));
-            JsonSerializer.Serialize(writer, value.DerivedUnits, options);
+            JsonSerializer.Serialize(writer, value.DerivedUnits.Select(q => q.ToProto()), options);
 
             writer.WritePropertyName(nameof(Database.MeasurementSystems));
-            JsonSerializer.Serialize(writer, value.MeasurementSystems, options);
+            JsonSerializer.Serialize(writer, value.MeasurementSystems.Select(q => q.ToProto()), options);
 
             writer.WriteEndObject();
         }

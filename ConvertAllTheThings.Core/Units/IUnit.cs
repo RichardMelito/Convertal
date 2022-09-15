@@ -23,7 +23,6 @@ namespace ConvertAllTheThings.Core
 
         Quantity Quantity { get; }
 
-        // TODO should this just be settable after instantiation?
         NamedComposition<IUnit> UnitComposition { get; }
 
         NamedComposition<IUnit>? OtherUnitComposition => GetOtherUnitComposition();

@@ -9,18 +9,15 @@ namespace ConvertAllTheThings.Core
 {
     public record DerivedQuantityProto(
         string? Name, 
-        string? Symbol, 
-        string? FundamentalUnit,
-        ValueEqualityDictionary<string, decimal> BaseQuantityComposition) 
+        string? Symbol,
+        [property: JsonPropertyOrder(2)] string? FundamentalUnit,
+        [property: JsonPropertyOrder(3)] ValueEqualityDictionary<string, decimal> BaseQuantityComposition) 
         : MaybeNamedProto(Name, Symbol);
 
     public class DerivedQuantity : Quantity, IDerived
     {
-        [JsonPropertyOrder(2)]
-        [JsonConverter(typeof(JsonConverters.ToStringConverter))]
         public override IUnit FundamentalUnit { get; }
 
-        [JsonPropertyOrder(3)]
         public override NamedComposition<BaseQuantity> BaseQuantityComposition { get; }
 
         /// <summary>

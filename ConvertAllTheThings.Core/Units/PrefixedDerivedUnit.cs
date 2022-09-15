@@ -10,7 +10,6 @@ namespace ConvertAllTheThings.Core
 {
     public class PrefixedDerivedUnit : PrefixedUnit, IDerivedUnit
     {
-        [JsonConverter(typeof(JsonConverters.ToStringConverter))]
         public new DerivedUnit Unit => (DerivedUnit)base.Unit;
 
         internal PrefixedDerivedUnit(Database database, DerivedUnit unit, Prefix prefix) 
