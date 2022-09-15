@@ -414,7 +414,7 @@ namespace ConvertAllTheThings.Core
                 if (proto.Symbol is not null)
                     unit.ChangeSymbol(proto.Symbol);
 
-                if (composition is not null)
+                if (composition is not null && unit.UnitComposition is null)
                     unit.UnitComposition = composition;
 
                 return unit;
@@ -454,7 +454,7 @@ namespace ConvertAllTheThings.Core
             NamedComposition<BaseQuantity> composition = new(proto.BaseQuantityComposition
                 .ToDictionary(kvp => GetFromName<BaseQuantity>(kvp.Key), kvp => kvp.Value));
 
-            DerivedQuantity res = new(this, composition);
+            DerivedQuantity res = new(this, composition, proto.FundamentalUnit);
             if (proto.Name is not null)
                 res.ChangeNameAndSymbol(proto.Name, proto.Symbol);
 

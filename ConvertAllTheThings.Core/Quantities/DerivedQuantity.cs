@@ -10,7 +10,7 @@ namespace ConvertAllTheThings.Core
     public record DerivedQuantityProto(
         string? Name, 
         string? Symbol, 
-        string FundamentalUnit,
+        string? FundamentalUnit,
         ValueEqualityDictionary<string, decimal> BaseQuantityComposition) 
         : MaybeNamedProto(Name, Symbol);
 
@@ -27,11 +27,11 @@ namespace ConvertAllTheThings.Core
         /// To be called only from <see cref="Quantity.GetFromBaseComposition(NamedComposition{BaseQuantity})"/>
         /// </summary>
         /// <param name="composition"></param>
-        internal DerivedQuantity(Database database, NamedComposition<BaseQuantity> composition)
+        internal DerivedQuantity(Database database, NamedComposition<BaseQuantity> composition, string? fundamentalUnitName = null)
             : base(database, null, null)
         {
             BaseQuantityComposition = composition;
-            FundamentalUnit = new DerivedUnit(database, this);
+            FundamentalUnit = new DerivedUnit(database, this, fundamentalUnitName);
             Init();
         }
 
@@ -40,7 +40,7 @@ namespace ConvertAllTheThings.Core
             return new(
                 Name, 
                 Symbol, 
-                FundamentalUnit.ToString()!,
+                FundamentalUnit.Name,
                 new(BaseQuantityComposition.CompositionAsStringDictionary));
         }
     }

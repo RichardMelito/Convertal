@@ -12,8 +12,8 @@ namespace ConvertAllTheThings.Core
         /// To be called only from <see cref="DerivedQuantity.DerivedQuantity(NamedComposition{BaseQuantity})"/>
         /// </summary>
         /// <param name="quantity"></param>
-        internal DerivedUnit(Database database, DerivedQuantity quantity)
-            : base(database, null, quantity, 1m, GetComposition(quantity))
+        internal DerivedUnit(Database database, DerivedQuantity quantity, string? name = null)
+            : base(database, name, quantity, 1m, GetComposition(quantity))
         {
 
         }

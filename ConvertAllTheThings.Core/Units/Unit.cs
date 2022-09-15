@@ -16,7 +16,7 @@ namespace ConvertAllTheThings.Core
         string Quantity, 
         decimal FundamentalMultiplier, 
         decimal FundamentalOffset, 
-        Dictionary<string, decimal>? OtherUnitComposition) : MaybeNamedProto(Name, Symbol);
+        ValueEqualityDictionary<string, decimal>? OtherUnitComposition) : MaybeNamedProto(Name, Symbol);
 
     public abstract class Unit : MaybeNamed, IUnit
     {
@@ -128,7 +128,7 @@ namespace ConvertAllTheThings.Core
                 Quantity.ToString(),
                 FundamentalMultiplier, 
                 FundamentalOffset, 
-                OtherUnitComposition?.CompositionAsStringDictionary);
+                OtherUnitComposition is null ? null : new(OtherUnitComposition.CompositionAsStringDictionary));
         }
         protected override Type GetDatabaseType() => typeof(Unit);
 

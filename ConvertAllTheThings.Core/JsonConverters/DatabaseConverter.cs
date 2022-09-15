@@ -164,7 +164,7 @@ namespace ConvertAllTheThings.Core.JsonConverters
             JsonSerializer.Serialize(writer, value.BaseQuantitys, options);
 
             writer.WritePropertyName(nameof(Database.DerivedQuantitys));
-            JsonSerializer.Serialize(writer, value.DerivedQuantitys, options);
+            JsonSerializer.Serialize(writer, value.DerivedQuantitys.Select(q => q.ToProto()), options);
 
             writer.WritePropertyName(nameof(Database.BaseUnits));
             JsonSerializer.Serialize(writer, value.BaseUnits, options);

@@ -48,15 +48,16 @@ namespace ConvertAllTheThings.Core
                 return true;
 
             // TODO testing
-            if (type == typeof(DerivedQuantity))
+            if (type == typeof(DerivedUnit))
             {
-                var lhs = (DerivedQuantityProto)ToProto();
-                var rhs = (DerivedQuantityProto)other.ToProto();
+                var lhs = (UnitProto)ToProto();
+                var rhs = (UnitProto)other.ToProto();
                 var a = lhs.Name == rhs.Name;
                 var b = lhs.Symbol == rhs.Symbol;
-                var c = lhs.FundamentalUnit == rhs.FundamentalUnit;
-                var d = lhs.BaseQuantityComposition == rhs.BaseQuantityComposition;
-                var e = lhs.BaseQuantityComposition.Equals(rhs.BaseQuantityComposition);
+                var c = lhs.FundamentalMultiplier == rhs.FundamentalMultiplier;
+                var d = lhs.FundamentalOffset == rhs.FundamentalOffset;
+                var e = lhs.Quantity == rhs.Quantity;
+                var f = lhs.OtherUnitComposition == rhs.OtherUnitComposition;
             }
 
             return ToProto() == other.ToProto();
