@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 16
-VisualStudioVersion = 16.0.31005.135
+# Visual Studio Version 17
+VisualStudioVersion = 17.3.32825.248
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ConvertAllTheThings.Core", "ConvertAllTheThings.Core\ConvertAllTheThings.Core.csproj", "{8FAB4710-4E72-4DC4-9849-1CB1FB1ADB20}"
 EndProject
@@ -9,7 +9,14 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ConvertAllTheThings.Core.Te
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ConvertAllTheThings.Defaults", "ConvertAllTheThings.Defaults\ConvertAllTheThings.Defaults.csproj", "{8C0C43B5-D2A5-46A9-A479-4B60A183643B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ConvertAllTheThings.Defaults.Tests", "ConvertAllTheThings.Defaults.Tests\ConvertAllTheThings.Defaults.Tests.csproj", "{93AA0C1A-9B83-4034-8C3F-A5D1E64B5D9A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ConvertAllTheThings.Defaults.Tests", "ConvertAllTheThings.Defaults.Tests\ConvertAllTheThings.Defaults.Tests.csproj", "{93AA0C1A-9B83-4034-8C3F-A5D1E64B5D9A}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{2B819143-8450-4B6E-A189-0A37A3C22408}"
+	ProjectSection(SolutionItems) = preProject
+		.editorconfig = .editorconfig
+		LICENSE = LICENSE
+		README.md = README.md
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
