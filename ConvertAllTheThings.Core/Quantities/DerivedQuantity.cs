@@ -1,17 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Text.Json.Serialization;
-using System.Threading.Tasks;
+﻿using System.Text.Json.Serialization;
 
 namespace ConvertAllTheThings.Core
 {
     public record DerivedQuantityProto(
-        string? Name, 
+        string? Name,
         string? Symbol,
         [property: JsonPropertyOrder(2)] string? FundamentalUnit,
-        [property: JsonPropertyOrder(3)] ValueEqualityDictionary<string, decimal> BaseQuantityComposition) 
+        [property: JsonPropertyOrder(3)] ValueEqualityDictionary<string, decimal> BaseQuantityComposition)
         : MaybeNamedProto(Name, Symbol);
 
     public class DerivedQuantity : Quantity, IDerived
@@ -35,8 +30,8 @@ namespace ConvertAllTheThings.Core
         public override DerivedQuantityProto ToProto()
         {
             return new(
-                Name, 
-                Symbol, 
+                Name,
+                Symbol,
                 FundamentalUnit.Name,
                 new(BaseQuantityComposition.CompositionAsStringDictionary));
         }

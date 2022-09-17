@@ -1,30 +1,16 @@
-﻿using System;
+﻿using ConvertAllTheThings.Core.Extensions;
+using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using ConvertAllTheThings.Core.Extensions;
-using System.Threading.Tasks;
-using System.Text.Json;
-using System.Text.Json.Serialization;
 using System.Collections.ObjectModel;
 using System.Diagnostics.CodeAnalysis;
+using System.Linq;
+using System.Text.Json.Serialization;
 
 namespace ConvertAllTheThings.Core
 {
     [JsonConverter(typeof(JsonConverters.DatabaseConverter))]
     public class Database
     {
-        //// serialization lists
-        //// These are kind of redundant with MaybeNamedsByType but I'll deal with that later
-        //private readonly List<BaseQuantity> _baseQuantities = new();
-        //private readonly List<DerivedQuantity> _derivedQuantities = new();
-        //private readonly List<BaseUnit> _baseUnits = new();
-        //private readonly List<DerivedUnit> _derivedUnits = new();
-        //private readonly List<Prefix> _prefixes = new();
-        //private readonly List<PrefixedBaseUnit> _prefixedBaseUnits = new();
-        //private readonly List<PrefixedDerivedUnit> _prefixedDerivedUnits = new();
-        //private readonly List<MeasurementSystem> _measurementSystems = new();
-
         private readonly List<PrefixedUnit> _prefixedUnits = new();
 
         public IEnumerable<Prefix> Prefixes => GetAllMaybeNameds<Prefix>();
@@ -39,16 +25,12 @@ namespace ConvertAllTheThings.Core
         internal Dictionary<Type, List<MaybeNamed>> MaybeNamedsByType { get; } = new();
         internal Dictionary<NamedComposition<BaseQuantity>, Quantity> QuantitiesByComposition { get; } = new();
 
-        [JsonIgnore]
         public EmptyQuantity EmptyQuantity { get; }
 
-        [JsonIgnore]
         public EmptyUnit EmptyUnit { get; }
 
-        [JsonIgnore]
         public IReadOnlyDictionary<NamedComposition<BaseQuantity>, Quantity> CompositionAndQuantitiesDictionary { get; }
 
-        [JsonIgnore]
         public ReadOnlyCollection<PrefixedUnit> PrefixedUnits { get; }
 
         /*  Move name lookup/storage stuff from MaybeNamed into here
@@ -78,7 +60,7 @@ namespace ConvertAllTheThings.Core
         {
             return (PrefixedBaseUnit)GetPrefixedUnit((Unit)unit, prefix);
         }
-        
+
         public PrefixedDerivedUnit GetPrefixedUnit(DerivedUnit unit, Prefix prefix)
         {
             return (PrefixedDerivedUnit)GetPrefixedUnit((Unit)unit, prefix);
@@ -360,12 +342,12 @@ namespace ConvertAllTheThings.Core
             }
 
             return new BaseUnit(
-                this, 
-                proto.Name!, 
-                proto.Symbol, 
-                GetFromName<BaseQuantity>(proto.Quantity), 
-                proto.FundamentalMultiplier, 
-                proto.FundamentalOffset, 
+                this,
+                proto.Name!,
+                proto.Symbol,
+                GetFromName<BaseQuantity>(proto.Quantity),
+                proto.FundamentalMultiplier,
+                proto.FundamentalOffset,
                 composition);
         }
 

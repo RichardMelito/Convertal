@@ -1,15 +1,13 @@
-﻿using System;
+﻿using ConvertAllTheThings.Core.Extensions;
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using ConvertAllTheThings.Core.Extensions;
 using System.Text.Json.Serialization;
 
 namespace ConvertAllTheThings.Core
 {
     public record BaseQuantityProto(
-        string Name, 
+        string Name,
         string? Symbol,
         [property: JsonPropertyOrder(2)] string FundamentalUnit) : MaybeNamedProto(Name, Symbol);
 

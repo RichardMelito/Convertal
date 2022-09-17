@@ -1,22 +1,19 @@
-﻿using System;
+﻿using ConvertAllTheThings.Core.Extensions;
+using DecimalMath;
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using DecimalMath;
-using ConvertAllTheThings.Core.Extensions;
-using System.Text.Json;
 using System.Text.Json.Serialization;
 
 namespace ConvertAllTheThings.Core
 {
     public record UnitProto(
-        string? Name, 
-        string? Symbol, 
+        string? Name,
+        string? Symbol,
         [property: JsonPropertyOrder(2)] string Quantity,
         [property: JsonPropertyOrder(3)] decimal FundamentalMultiplier,
         [property: JsonPropertyOrder(4), JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)] decimal FundamentalOffset,
-        [property: JsonPropertyOrder(5)] ValueEqualityDictionary<string, decimal>? OtherUnitComposition) 
+        [property: JsonPropertyOrder(5)] ValueEqualityDictionary<string, decimal>? OtherUnitComposition)
         : MaybeNamedProto(Name, Symbol);
 
     public abstract class Unit : MaybeNamed, IUnit
@@ -32,8 +29,8 @@ namespace ConvertAllTheThings.Core
 
         public NamedComposition<IUnit>? OtherUnitComposition => ((IUnit)this).GetOtherUnitComposition();
 
-        public NamedComposition<IUnit> UnitComposition 
-        { 
+        public NamedComposition<IUnit> UnitComposition
+        {
             get => _unitComposition!;
             internal set
             {
@@ -103,7 +100,7 @@ namespace ConvertAllTheThings.Core
         }
 
         // deserialization constructor
-        protected Unit(Database database, string? name, string? symbol, Quantity quantity, decimal fundamentalMultiplier, decimal fundamentalOffset, NamedComposition<IUnit>? composition) 
+        protected Unit(Database database, string? name, string? symbol, Quantity quantity, decimal fundamentalMultiplier, decimal fundamentalOffset, NamedComposition<IUnit>? composition)
             : base(database, name, symbol)
         {
             Quantity = quantity;
@@ -116,11 +113,11 @@ namespace ConvertAllTheThings.Core
         public override UnitProto ToProto()
         {
             return new(
-                Name, 
-                Symbol, 
+                Name,
+                Symbol,
                 Quantity.ToString(),
-                FundamentalMultiplier, 
-                FundamentalOffset, 
+                FundamentalMultiplier,
+                FundamentalOffset,
                 OtherUnitComposition is null ? null : new(OtherUnitComposition.CompositionAsStringDictionary));
         }
         protected override Type GetDatabaseType() => typeof(Unit);

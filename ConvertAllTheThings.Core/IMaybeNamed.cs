@@ -1,9 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using ConvertAllTheThings.Core.Extensions;
 
 namespace ConvertAllTheThings.Core
 {
@@ -49,7 +46,7 @@ namespace ConvertAllTheThings.Core
 
             return ToProto() == other.ToProto();
         }
-        
+
         int CalculateHashCode()
         {
             return HashCode.Combine(Name, GetTypeWithinDictionary());

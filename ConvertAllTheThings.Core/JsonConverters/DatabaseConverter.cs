@@ -1,9 +1,7 @@
-﻿using System;
+﻿using ConvertAllTheThings.Core.Extensions;
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using ConvertAllTheThings.Core.Extensions;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 
@@ -73,7 +71,7 @@ namespace ConvertAllTheThings.Core.JsonConverters
 
             foreach (var proto in selfComposedDerivedUnits)
                 database.DefineDerivedUnit(proto);
-            
+
             while (otherComposedBaseUnits.Count > 0 || otherComposedDerivedUnits.Count > 0)
             {
                 var countAtStartOfLoop = otherComposedBaseUnits.Count + otherComposedDerivedUnits.Count;

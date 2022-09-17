@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace ConvertAllTheThings.Core
+﻿namespace ConvertAllTheThings.Core
 {
     public class DerivedUnit : Unit, IDerivedUnit
     {
@@ -29,9 +23,9 @@ namespace ConvertAllTheThings.Core
         // for defining from an existing IDerivedUnit
         internal DerivedUnit(
             Database database,
-            string name, 
-            IDerivedUnit otherUnit, 
-            decimal multiplier, 
+            string name,
+            IDerivedUnit otherUnit,
+            decimal multiplier,
             decimal offset = 0,
             string? symbol = null)
             : base(database, name, otherUnit, multiplier, offset, symbol: symbol)

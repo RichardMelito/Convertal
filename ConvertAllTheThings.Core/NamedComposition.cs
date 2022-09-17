@@ -1,24 +1,15 @@
-﻿using System;
+﻿using ConvertAllTheThings.Core.Extensions;
+using System;
+using System.Collections;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
+using System.Collections.Immutable;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
-using ConvertAllTheThings.Core.Extensions;
-using System.Text.Json;
-using System.Text.Json.Serialization;
-using System.Diagnostics.CodeAnalysis;
-using System.Collections;
-using System.Collections.Immutable;
 
 namespace ConvertAllTheThings.Core
 {
-    public abstract class NamedComposition
-    {
-        public abstract IReadOnlyDictionary<string, decimal> CompositionAsStringDictionary { get; }
-    }
-
-    public class NamedComposition<T> : NamedComposition, IReadOnlyDictionary<T, decimal>, IEquatable<NamedComposition<T>>
+    public class NamedComposition<T> : IReadOnlyDictionary<T, decimal>, IEquatable<NamedComposition<T>>
         where T : IMaybeNamed
     {
         /*  describes a collection of base quantities or base units from which 
@@ -35,7 +26,7 @@ namespace ConvertAllTheThings.Core
 
         public int Count => _innerDictionary.Count;
 
-        public override Dictionary<string, decimal> CompositionAsStringDictionary => 
+        public Dictionary<string, decimal> CompositionAsStringDictionary =>
             _innerDictionary.ToDictionary(kvp => kvp.Key.ToString()!, kvp => kvp.Value);
 
         public decimal this[T key] => _innerDictionary[key];
@@ -115,11 +106,11 @@ namespace ConvertAllTheThings.Core
         {
             var multiplyFactor = multiplication ? 1.0m : -1.0m;
             SortedDictionary<T, decimal> resultingComposition = new();
-            
+
             var keysInBothSides = lhs.Keys.Intersect(rhs.Keys);
             foreach (var bothSidesKey in keysInBothSides)
             {
-                var resultingPower = lhs[bothSidesKey] + 
+                var resultingPower = lhs[bothSidesKey] +
                     (multiplyFactor * rhs[bothSidesKey]);
 
                 if (resultingPower != 0.0m)
@@ -193,7 +184,7 @@ namespace ConvertAllTheThings.Core
             return Equals(obj as NamedComposition<T>);
         }
 
-        public static bool operator == (NamedComposition<T>? lhs, NamedComposition<T>? rhs)
+        public static bool operator ==(NamedComposition<T>? lhs, NamedComposition<T>? rhs)
         {
             if (lhs is null)
                 return rhs is null;
@@ -201,7 +192,7 @@ namespace ConvertAllTheThings.Core
             return lhs.Equals(rhs);
         }
 
-        public static bool operator != (NamedComposition<T>? lhs, NamedComposition<T>? rhs)
+        public static bool operator !=(NamedComposition<T>? lhs, NamedComposition<T>? rhs)
         {
             return !(lhs == rhs);
         }

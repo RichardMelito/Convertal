@@ -1,20 +1,15 @@
-﻿using System;
+﻿using ConvertAllTheThings.Core.Extensions;
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using ConvertAllTheThings.Core.Extensions;
-using System.Text.Json;
-using System.Text.Json.Serialization;
 
 namespace ConvertAllTheThings.Core
 {
-    //[JsonConverter(typeof(JsonConverters.ConverterForIUnit))]
     public interface IUnit : IMaybeNamed, IEquatable<IUnit>, IComparable<IUnit>
     {
         bool IsFundamental => Quantity.FundamentalUnit.Equals(this);
         decimal FundamentalMultiplier { get; }
-        
+
         decimal FundamentalOffset { get; }
         /*  K is fundamental
          *  C = K - 273

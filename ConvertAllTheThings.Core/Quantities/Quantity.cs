@@ -1,11 +1,7 @@
-﻿using System;
+﻿using ConvertAllTheThings.Core.Extensions;
+using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using ConvertAllTheThings.Core.Extensions;
-using System.Text.Json.Serialization;
 
 namespace ConvertAllTheThings.Core
 {
@@ -34,7 +30,7 @@ namespace ConvertAllTheThings.Core
         protected Quantity(Database database, string? name, string? symbol)
             : base(database, name, symbol)
         {
-            
+
         }
 
         protected override Type GetDatabaseType() => typeof(Quantity);
@@ -71,12 +67,12 @@ namespace ConvertAllTheThings.Core
             return Database.GetFromBaseComposition(resultingComposition);
         }
 
-        public static Quantity operator* (Quantity lhs, Quantity rhs)
+        public static Quantity operator *(Quantity lhs, Quantity rhs)
         {
             return lhs.MultiplyOrDivide(lhs, rhs, multiplication: true);
         }
 
-        public static Quantity operator/ (Quantity lhs, Quantity rhs)
+        public static Quantity operator /(Quantity lhs, Quantity rhs)
         {
             return lhs.MultiplyOrDivide(lhs, rhs, multiplication: false);
         }

@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using DecimalMath;
+﻿using DecimalMath;
 
 namespace ConvertAllTheThings.Core
 {
@@ -34,7 +29,7 @@ namespace ConvertAllTheThings.Core
             var resultingUnit = system?.GetUnit(Quantity) ?? Quantity.FundamentalUnit;
             return ConvertUnitTo(resultingUnit);
         }
-        
+
         public Term ConvertUnitToFundamental()
         {
             return Unit.ConvertToFundamental(Magnitude);
@@ -54,13 +49,13 @@ namespace ConvertAllTheThings.Core
         }
 
         public static Term operator *(decimal multiplier, Term term)
-            => new (multiplier * term.Magnitude, term.Unit);
+            => new(multiplier * term.Magnitude, term.Unit);
 
         public static Term operator *(Term term, decimal multiplier)
-            => new (multiplier * term.Magnitude, term.Unit);
+            => new(multiplier * term.Magnitude, term.Unit);
 
         public static Term operator /(Term term, decimal divisor)
-            => new (term.Magnitude / divisor, term.Unit);
+            => new(term.Magnitude / divisor, term.Unit);
 
         public static Term operator /(decimal divisor, Term term)
         {

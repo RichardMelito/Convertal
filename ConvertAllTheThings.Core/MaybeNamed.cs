@@ -1,10 +1,7 @@
-﻿using System;
+﻿using ConvertAllTheThings.Core.Extensions;
+using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using ConvertAllTheThings.Core.Extensions;
 using System.Text.Json.Serialization;
 
 namespace ConvertAllTheThings.Core
@@ -41,13 +38,10 @@ namespace ConvertAllTheThings.Core
 
         private bool _disposedValue;
 
-        [JsonIgnore]
         public Database Database { get; }
 
-        [JsonPropertyOrder(0)]
         public string? Name { get; private set; } = null;
 
-        [JsonPropertyOrder(1)]
         public string? Symbol { get; private set; } = null;
 
         protected MaybeNamed(Database database, string? name, string? symbol = null)
@@ -110,7 +104,7 @@ namespace ConvertAllTheThings.Core
 
 
         #region static methods
-        
+
 
         //// for resetting after unit tests
         //internal static void ClearAll()
@@ -145,8 +139,8 @@ namespace ConvertAllTheThings.Core
         }
         #endregion
 
-        
-        
+
+
 
 
         #region IDisposable 

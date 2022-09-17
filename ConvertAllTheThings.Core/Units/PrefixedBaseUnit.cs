@@ -1,10 +1,6 @@
-﻿using System;
+﻿using ConvertAllTheThings.Core.Extensions;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Text.Json.Serialization;
-using System.Threading.Tasks;
-using ConvertAllTheThings.Core.Extensions;
 
 namespace ConvertAllTheThings.Core
 {
@@ -15,7 +11,7 @@ namespace ConvertAllTheThings.Core
         internal PrefixedBaseUnit(Database database, BaseUnit unit, Prefix prefix)
             : base(database, unit, prefix)
         {
-            
+
         }
 
         public IOrderedEnumerable<IMaybeNamed> GetAllDependents(ref IEnumerable<IMaybeNamed> toIgnore)

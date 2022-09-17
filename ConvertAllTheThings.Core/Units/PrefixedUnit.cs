@@ -1,12 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
+﻿using ConvertAllTheThings.Core.Extensions;
+using System;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using ConvertAllTheThings.Core.Extensions;
-using System.Text.Json;
-using System.Text.Json.Serialization;
 
 namespace ConvertAllTheThings.Core
 {
@@ -15,7 +9,7 @@ namespace ConvertAllTheThings.Core
         string? Symbol,
         string Quantity,
         decimal FundamentalMultiplier,
-        decimal FundamentalOffset) 
+        decimal FundamentalOffset)
         : UnitProto(Name, Symbol, Quantity, FundamentalMultiplier, FundamentalOffset, null);
 
     public abstract class PrefixedUnit : IUnit, INamed
@@ -41,9 +35,9 @@ namespace ConvertAllTheThings.Core
         public decimal FundamentalOffset => Unit.FundamentalOffset / Prefix.Multiplier;
 
         public Unit Unit { get; private set; }
-        
+
         public Prefix Prefix { get; }
-        
+
         public NamedComposition<IUnit> UnitComposition { get; }
 
         public override string ToString()
@@ -64,7 +58,7 @@ namespace ConvertAllTheThings.Core
 
             if (unit.Name is null)
                 throw new ArgumentNullException(
-                    nameof(unit), 
+                    nameof(unit),
                     "Unit in PrefixedUnit must have a name.");
 
             Prefix = prefix;

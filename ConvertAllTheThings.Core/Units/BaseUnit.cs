@@ -1,9 +1,6 @@
-﻿using System;
+﻿using ConvertAllTheThings.Core.Extensions;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using ConvertAllTheThings.Core.Extensions;
 
 namespace ConvertAllTheThings.Core
 {
@@ -13,9 +10,9 @@ namespace ConvertAllTheThings.Core
         // for defining from an existng IBaseUnit
         internal BaseUnit(
             Database database,
-            string name, 
-            IBaseUnit otherUnit, 
-            decimal multiplier, 
+            string name,
+            IBaseUnit otherUnit,
+            decimal multiplier,
             decimal offset = 0,
             string? symbol = null)
             : base(database, name, otherUnit, multiplier, offset, symbol)
@@ -34,7 +31,7 @@ namespace ConvertAllTheThings.Core
         {
 
         }
-        
+
         /// <summary>
         /// To be called only from <see cref="Database.DefineBaseUnit(UnitProto)"/>
         /// </summary>
@@ -46,10 +43,10 @@ namespace ConvertAllTheThings.Core
         /// <param name="fundamentalOffset"></param>
         /// <param name="composition"></param>
         internal BaseUnit(
-            Database database, 
+            Database database,
             string name,
             string? symbol,
-            BaseQuantity quantity, 
+            BaseQuantity quantity,
             decimal fundamentalMultiplier,
             decimal fundamentalOffset,
             NamedComposition<IUnit>? composition)

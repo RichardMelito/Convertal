@@ -2,8 +2,6 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Text.Json;
 
 namespace ConvertAllTheThings.Core.Extensions
@@ -44,7 +42,7 @@ namespace ConvertAllTheThings.Core.Extensions
         }
 
         public static IOrderedEnumerable<T> SortByTypeAndName<T>(this IEnumerable<T> toSort)
-            where T: notnull, IMaybeNamed
+            where T : notnull, IMaybeNamed
         {
             var res = toSort.OrderByDescending((x) =>
             {
@@ -59,7 +57,7 @@ namespace ConvertAllTheThings.Core.Extensions
                     _ => 0
                 };
             });
-            res = res.ThenBy(x=>x, MaybeNamed.DefaultComparer);
+            res = res.ThenBy(x => x, MaybeNamed.DefaultComparer);
 
             return res;
         }

@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace ConvertAllTheThings.Core
+﻿namespace ConvertAllTheThings.Core
 {
     public interface IDerivedUnit : IUnit, IDerived
     {

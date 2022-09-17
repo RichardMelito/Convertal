@@ -1,19 +1,15 @@
-﻿using System;
+﻿using ConvertAllTheThings.Core.Extensions;
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Collections.ObjectModel;
-using System.Threading.Tasks;
-using ConvertAllTheThings.Core.Extensions;
 using System.Text.Json.Serialization;
-using System.Collections;
 
 namespace ConvertAllTheThings.Core
 {
 
     public record MeasurementSystemProto(
         string Name,
-        [property: JsonPropertyOrder(2)] ValueEqualityDictionary<string, string> QuantityToUnitDictionary) 
+        [property: JsonPropertyOrder(2)] ValueEqualityDictionary<string, string> QuantityToUnitDictionary)
         : MaybeNamedProto(Name, null);
 
     public class MeasurementSystem : MaybeNamed, INamed
@@ -23,7 +19,7 @@ namespace ConvertAllTheThings.Core
 
         private readonly Dictionary<Quantity, IUnit> _quantities_units = new();
 
-        public IReadOnlyDictionary<Quantity, IUnit> QuantityToUnitDictionary { get; } 
+        public IReadOnlyDictionary<Quantity, IUnit> QuantityToUnitDictionary { get; }
 
         internal MeasurementSystem(Database database, string name)
             : base(database, name)
