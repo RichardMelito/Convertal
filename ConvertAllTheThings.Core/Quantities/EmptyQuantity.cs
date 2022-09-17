@@ -1,39 +1,40 @@
-﻿using ConvertAllTheThings.Core.Extensions;
+﻿// Created by Richard Melito and licensed to you under The Clear BSD License.
+
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using ConvertAllTheThings.Core.Extensions;
 
-namespace ConvertAllTheThings.Core
+namespace ConvertAllTheThings.Core;
+
+public record EmptyQuantityProto() : MaybeNamedProto(null, null);
+
+public sealed class EmptyQuantity : Quantity
 {
-    public record EmptyQuantityProto() : MaybeNamedProto(null, null);
+    public override EmptyUnit FundamentalUnit => Database.EmptyUnit;
 
-    public sealed class EmptyQuantity : Quantity
+    public override NamedComposition<BaseQuantity> BaseQuantityComposition => NamedComposition<BaseQuantity>.Empty;
+
+    internal EmptyQuantity(Database database)
+        : base(database, null, null)
     {
-        public override EmptyUnit FundamentalUnit => Database.EmptyUnit;
+        Init();
+    }
 
-        public override NamedComposition<BaseQuantity> BaseQuantityComposition => NamedComposition<BaseQuantity>.Empty;
+    public override IOrderedEnumerable<IMaybeNamed> GetAllDependents(ref IEnumerable<IMaybeNamed> toIgnore)
+    {
+        toIgnore = toIgnore.UnionAppend(this);
+        return Array.Empty<IMaybeNamed>().SortByTypeAndName();
+    }
 
-        internal EmptyQuantity(Database database)
-            : base(database, null, null)
-        {
-            Init();
-        }
+    protected override void DisposeBody(bool disposeDependents)
+    {
+        // The Database.EmptyQuantity cannot be disposed
+        return;
+    }
 
-        public override IOrderedEnumerable<IMaybeNamed> GetAllDependents(ref IEnumerable<IMaybeNamed> toIgnore)
-        {
-            toIgnore = toIgnore.UnionAppend(this);
-            return Array.Empty<IMaybeNamed>().SortByTypeAndName();
-        }
-
-        protected override void DisposeBody(bool disposeDependents)
-        {
-            // The Database.EmptyQuantity cannot be disposed
-            return;
-        }
-
-        public override EmptyQuantityProto ToProto()
-        {
-            return new();
-        }
+    public override EmptyQuantityProto ToProto()
+    {
+        return new();
     }
 }

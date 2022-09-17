@@ -1,16 +1,9 @@
-﻿using Xunit;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using ConvertAllTheThings.Core;
+﻿// Created by Richard Melito and licensed to you under The Clear BSD License.
 
-namespace ConvertAllTheThings.Core.Tests
+namespace ConvertAllTheThings.Core.Tests;
+
+public abstract class BaseTestClass
 {
-    public abstract class BaseTestClass
-    {
-        public const decimal DELTA = 0.000000001m;
-        protected Database Database { get; } = new();
-    }
+    public const decimal DELTA = 0.000000001m;
+    protected Database Database { get; } = new();
 }
