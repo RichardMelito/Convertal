@@ -66,7 +66,7 @@ namespace ConvertAllTheThings.Core
             StringBuilder stringBuilder = new();
 
             var count = 0;
-            foreach (var (key, power) in this)
+            foreach (var (key, power) in this.OrderBy(kvp => kvp.Key))
             {
                 string powerString;
                 if (power == decimal.Truncate(power))
