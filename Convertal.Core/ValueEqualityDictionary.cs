@@ -1,10 +1,10 @@
-﻿// Created by Richard Melito and licensed to you under The Clear BSD License.
+// Created by Richard Melito and licensed to you under The Clear BSD License.
 
 using System;
 using System.Collections.Generic;
 using System.Runtime.Serialization;
 
-namespace ConvertAllTheThings.Core;
+namespace Convertal.Core;
 
 public class ValueEqualityDictionary<TKey, TValue> : Dictionary<TKey, TValue>, IEquatable<ValueEqualityDictionary<TKey, TValue>>
     where TKey : notnull

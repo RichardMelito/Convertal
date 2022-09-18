@@ -1,8 +1,8 @@
-﻿// Created by Richard Melito and licensed to you under The Clear BSD License.
+// Created by Richard Melito and licensed to you under The Clear BSD License.
 
 using System.Text.Json.Serialization;
 
-namespace ConvertAllTheThings.Core;
+namespace Convertal.Core;
 
 public record DerivedQuantityProto(
     string? Name,

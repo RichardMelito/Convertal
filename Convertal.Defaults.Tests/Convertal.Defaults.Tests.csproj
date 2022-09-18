@@ -14,7 +14,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\ConvertAllTheThings.Defaults\ConvertAllTheThings.Defaults.csproj" />
+    <ProjectReference Include="..\Convertal.Defaults\Convertal.Defaults.csproj" />
   </ItemGroup>
 
 </Project>

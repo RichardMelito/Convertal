@@ -1,10 +1,10 @@
-﻿// Created by Richard Melito and licensed to you under The Clear BSD License.
+// Created by Richard Melito and licensed to you under The Clear BSD License.
 
-using ConvertAllTheThings.Core;
-using static ConvertAllTheThings.Defaults.BaseQuantities;
+using Convertal.Core;
+using static Convertal.Defaults.BaseQuantities;
 using static DecimalMath.DecimalEx;
 
-namespace ConvertAllTheThings.Defaults;
+namespace Convertal.Defaults;
 
 public static class BaseUnits
 {

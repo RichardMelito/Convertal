@@ -10,7 +10,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\ConvertAllTheThings.Core\ConvertAllTheThings.Core.csproj" />
+    <ProjectReference Include="..\Convertal.Core\Convertal.Core.csproj" />
   </ItemGroup>
 
 </Project>

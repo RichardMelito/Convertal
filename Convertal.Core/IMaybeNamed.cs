@@ -1,10 +1,10 @@
-﻿// Created by Richard Melito and licensed to you under The Clear BSD License.
+// Created by Richard Melito and licensed to you under The Clear BSD License.
 
 using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace ConvertAllTheThings.Core;
+namespace Convertal.Core;
 
 public interface IMaybeNamed : IDisposable, IComparable<IMaybeNamed>, IEquatable<IMaybeNamed>
 {

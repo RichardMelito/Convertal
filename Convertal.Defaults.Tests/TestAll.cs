@@ -3,10 +3,10 @@
 using System.IO;
 using System.Text.Json;
 using System.Text.Json.Serialization;
-using ConvertAllTheThings.Core;
+using Convertal.Core;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
-namespace ConvertAllTheThings.Defaults.Tests;
+namespace Convertal.Defaults.Tests;
 
 [TestClass]
 public class TestAll

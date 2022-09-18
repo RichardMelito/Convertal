@@ -1,9 +1,9 @@
-﻿// Created by Richard Melito and licensed to you under The Clear BSD License.
+// Created by Richard Melito and licensed to you under The Clear BSD License.
 
-using ConvertAllTheThings.Core.Extensions;
+using Convertal.Core.Extensions;
 using Xunit;
 
-namespace ConvertAllTheThings.Core.Tests;
+namespace Convertal.Core.Tests;
 
 public class TestNamedComposition : BaseTestClass
 {

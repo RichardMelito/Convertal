@@ -1,8 +1,8 @@
-﻿// Created by Richard Melito and licensed to you under The Clear BSD License.
+// Created by Richard Melito and licensed to you under The Clear BSD License.
 
 using System;
 
-namespace ConvertAllTheThings.Core;
+namespace Convertal.Core;
 
 public interface IBaseUnit : IUnit, IBase, IEquatable<IBaseUnit>
 // TODO interface hierarchy for IEquatable and IComparable

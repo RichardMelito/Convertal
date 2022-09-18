@@ -1,12 +1,12 @@
-﻿// Created by Richard Melito and licensed to you under The Clear BSD License.
+// Created by Richard Melito and licensed to you under The Clear BSD License.
 
-using ConvertAllTheThings.Core;
-using static ConvertAllTheThings.Defaults.BaseUnits;
-using static ConvertAllTheThings.Defaults.DerivedQuantities;
-using static ConvertAllTheThings.Defaults.Prefixes;
+using Convertal.Core;
+using static Convertal.Defaults.BaseUnits;
+using static Convertal.Defaults.DerivedQuantities;
+using static Convertal.Defaults.Prefixes;
 using static DecimalMath.DecimalEx;
 
-namespace ConvertAllTheThings.Defaults;
+namespace Convertal.Defaults;
 
 public static class DerivedUnits
 {

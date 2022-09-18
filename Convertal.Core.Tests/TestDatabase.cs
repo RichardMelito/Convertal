@@ -1,11 +1,11 @@
-﻿// Created by Richard Melito and licensed to you under The Clear BSD License.
+// Created by Richard Melito and licensed to you under The Clear BSD License.
 
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using FluentAssertions;
 using Xunit;
 
-namespace ConvertAllTheThings.Core.Tests;
+namespace Convertal.Core.Tests;
 
 public class TestDatabase : BaseTestClass
 {

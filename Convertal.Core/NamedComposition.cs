@@ -1,4 +1,4 @@
-﻿// Created by Richard Melito and licensed to you under The Clear BSD License.
+// Created by Richard Melito and licensed to you under The Clear BSD License.
 
 using System;
 using System.Collections;
@@ -7,9 +7,9 @@ using System.Collections.Immutable;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Text;
-using ConvertAllTheThings.Core.Extensions;
+using Convertal.Core.Extensions;
 
-namespace ConvertAllTheThings.Core;
+namespace Convertal.Core;
 
 public class NamedComposition<T> : IReadOnlyDictionary<T, decimal>, IEquatable<NamedComposition<T>>
     where T : IMaybeNamed

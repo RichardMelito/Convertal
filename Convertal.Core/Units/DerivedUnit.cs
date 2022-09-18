@@ -1,6 +1,6 @@
-﻿// Created by Richard Melito and licensed to you under The Clear BSD License.
+// Created by Richard Melito and licensed to you under The Clear BSD License.
 
-namespace ConvertAllTheThings.Core;
+namespace Convertal.Core;
 
 public class DerivedUnit : Unit, IDerivedUnit
 {

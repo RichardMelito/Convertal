@@ -1,4 +1,4 @@
-﻿// Created by Richard Melito and licensed to you under The Clear BSD License.
+// Created by Richard Melito and licensed to you under The Clear BSD License.
 
 using System;
 using System.Collections.Generic;
@@ -6,9 +6,9 @@ using System.Collections.ObjectModel;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Text.Json.Serialization;
-using ConvertAllTheThings.Core.Extensions;
+using Convertal.Core.Extensions;
 
-namespace ConvertAllTheThings.Core;
+namespace Convertal.Core;
 
 [JsonConverter(typeof(JsonConverters.DatabaseConverter))]
 public class Database

@@ -1,4 +1,4 @@
-﻿// Created by Richard Melito and licensed to you under The Clear BSD License.
+// Created by Richard Melito and licensed to you under The Clear BSD License.
 
 using System;
 using System.Collections.Generic;
@@ -6,7 +6,7 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text.Json;
 
-namespace ConvertAllTheThings.Core.Extensions;
+namespace Convertal.Core.Extensions;
 
 public static class Extensions
 {

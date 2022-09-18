@@ -1,10 +1,10 @@
-﻿// Created by Richard Melito and licensed to you under The Clear BSD License.
+// Created by Richard Melito and licensed to you under The Clear BSD License.
 
 using System.Collections.Generic;
 using System.Linq;
-using ConvertAllTheThings.Core.Extensions;
+using Convertal.Core.Extensions;
 
-namespace ConvertAllTheThings.Core;
+namespace Convertal.Core;
 
 public class PrefixedBaseUnit : PrefixedUnit, IBaseUnit
 {
