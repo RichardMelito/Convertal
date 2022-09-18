@@ -88,7 +88,7 @@ public class TestDatabase : BaseTestClass
         };
         var text = JsonSerializer.Serialize(Database, jsonSerializerOptions);
         // TODO don't write this out to a file
-        File.WriteAllText("database.json", text);
+        //File.WriteAllText("database.json", text);
 
         // TODO check that anonymous units/quantities are tested
 
