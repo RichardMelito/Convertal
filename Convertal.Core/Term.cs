@@ -106,4 +106,20 @@ public class Term
         var convertedRhs = rhs.ConvertUnitTo(lhs.Unit);
         return new(lhs.Magnitude - convertedRhs.Magnitude, lhs.Unit);
     }
+
+    /*  For vector stuff need:
+     *      Flag on Quantity for whether it is a vector or scalar or either (example of either: distance (scalar) vs displacement (vector))
+     *          Should those be separate Quantities? Maybe new Quantity functionality for child Quantities that differ only on directionality?
+     *      "Relaxed" mode: carry directionality between operations but do simple magnitude-only multiplication.
+     *          For when users only want to enter the magnitude and assume everything is orthogonal.
+     *      "Strict" mode: must use full i-j-k notation
+     *      Can use "_i..._j..._k" for text representations
+     *      Maybe need special i-j-k empty quantity term?
+     */
+
+    // Cross product
+    public static Term operator &(Term lhs, Term rhs)
+    {
+
+    }
 }
