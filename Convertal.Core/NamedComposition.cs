@@ -12,7 +12,7 @@ using Convertal.Core.Extensions;
 namespace Convertal.Core;
 
 public class NamedComposition<T> : IReadOnlyDictionary<T, decimal>, IEquatable<NamedComposition<T>>
-    where T : IMaybeNamed
+    where T : IVectorOrScalar
 {
     /*  describes a collection of base quantities or base units from which 
      *  derived quantities or units are formed. 
@@ -78,7 +78,7 @@ public class NamedComposition<T> : IReadOnlyDictionary<T, decimal>, IEquatable<N
 
             stringBuilder.Append($"({key.Name!}^{powerString})");
             ++count;
-            if (count != (this.Count))
+            if (count != Count)
                 stringBuilder.Append('*');
         }
 
@@ -159,13 +159,13 @@ public class NamedComposition<T> : IReadOnlyDictionary<T, decimal>, IEquatable<N
         if (other is null)
             return false;
 
-        if (this.Count != other.Count)
+        if (Count != other.Count)
             return false;
 
         // check if any keys in this that are not in other
         // don't need to do the reverse since we already know there 
         // are the same number of keys in each
-        if (this.Keys.Except(other.Keys).Any())
+        if (Keys.Except(other.Keys).Any())
             return false;
 
         foreach (var kvp in this)

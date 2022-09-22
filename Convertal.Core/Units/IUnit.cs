@@ -7,7 +7,7 @@ using Convertal.Core.Extensions;
 
 namespace Convertal.Core;
 
-public interface IUnit : IMaybeNamed, IEquatable<IUnit>, IComparable<IUnit>
+public interface IUnit : IVectorOrScalar, IEquatable<IUnit>, IComparable<IUnit>
 {
     bool IsFundamental => Quantity.FundamentalUnit.Equals(this);
     decimal FundamentalMultiplier { get; }

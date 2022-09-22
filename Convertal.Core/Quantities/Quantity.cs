@@ -7,7 +7,7 @@ using Convertal.Core.Extensions;
 
 namespace Convertal.Core;
 
-public abstract class Quantity : MaybeNamed
+public abstract class Quantity : MaybeNamed, IVectorOrScalar
 {
     /*  There will never be multiple quantities for something in the same 
      *  way there are multiple units for a quantity. So there's F, C, K, etc. 
@@ -24,6 +24,9 @@ public abstract class Quantity : MaybeNamed
     private bool _initialized = false;
 
     public bool Disposed => _disposed;
+
+    public bool IsVector { get; init; }
+    public bool IsScalar => !IsVector;
 
     public abstract IUnit FundamentalUnit { get; }
 

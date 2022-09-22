@@ -2,6 +2,6 @@
 
 namespace Convertal.Core;
 
-public interface IBase : INamed
+public interface IBase : INamed, IVectorOrScalar
 {
 }
