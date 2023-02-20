@@ -115,11 +115,22 @@ public class Term
      *      "Strict" mode: must use full i-j-k notation
      *      Can use "_i..._j..._k" for text representations
      *      Maybe need special i-j-k empty quantity term?
+     *      
+     *      For quantities and units:
+     *          scalar: pow
+     *          vector: dotP pow
+     *          scalar scalar: multiply, divide
+     *          scalar vector: multiply, divide
+     *          vector scalar: multiply, divide
+     *          vector vector: crossP, dotP
+     *      For Terms, can do multiply, divide, crossP, add, subtract, pow
+     *          scalar: pow, negate
+     *          vector: dotP pow, negate
+     *          scalar scalar: multiply, divide, 
+     *              same quantity: add, subtract
+     *          scalar vector: multiply, divide
+     *          vector scalar: multiply, divide
+     *          vector vector: crossP, dotP
+     *              same quantity: add, subtract
      */
-
-    // Cross product
-    public static Term operator &(Term lhs, Term rhs)
-    {
-
-    }
 }

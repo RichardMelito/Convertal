@@ -1,7 +1,5 @@
 ﻿// Created by Richard Melito and licensed to you under The Clear BSD License.
 
-using System.Numerics;
-
 namespace Convertal.Core;
 
 public interface IVectorOrScalar : IMaybeNamed
@@ -10,24 +8,30 @@ public interface IVectorOrScalar : IMaybeNamed
     bool IsScalar => !IsVector;
 }
 
-public interface IScalar<TScalar, TVector> :
-    IAdditionOperators<TScalar, TScalar, TScalar>,
-    ISubtractionOperators<TScalar, TScalar, TScalar>,
-    IDivisionOperators<TScalar, TScalar, TScalar>,
-    IMultiplyOperators<TScalar, TScalar, TScalar>,
-    IPowerFunctions<TScalar>,
-    IRootFunctions<TScalar>
+public interface IScalar<TScalar, TVector> : IVectorOrScalar
     where TScalar : IScalar<TScalar, TVector>
     where TVector : IVector<TVector, TScalar>
 {
+    bool IVectorOrScalar.IsVector => false;
+
+    static abstract TScalar operator *(TScalar left, TScalar right);
+    static abstract TScalar operator /(TScalar left, TScalar right);
+
     static abstract TVector operator *(TScalar scalar, TVector vector);
+    static virtual TVector operator *(TVector vector, TScalar scalar) => scalar * vector;
+
+    TScalar Pow(decimal power);
 }
 
-public interface IVector<TVector, TScalar> :
-    IAdditionOperators<TVector, TVector, TVector>,
-    ISubtractionOperators<TVector, TVector, TVector>,
-
+public interface IVector<TVector, TScalar> : IVectorOrScalar
     where TVector : IVector<TVector, TScalar>
     where TScalar : IScalar<TScalar, TVector>
 {
+    bool IVectorOrScalar.IsVector => true;
+
+    static virtual TScalar operator *(TVector lhs, TVector rhs) => lhs.DotP(rhs);
+    static virtual TVector operator &(TVector lhs, TVector rhs) => lhs.CrossP(rhs);
+
+    TScalar DotP(TVector other);
+    TVector CrossP(TVector other);
 }

@@ -22,6 +22,9 @@ public interface IUnit : IVectorOrScalar, IEquatable<IUnit>, IComparable<IUnit>
 
     NamedComposition<IUnit> UnitComposition { get; }
 
+    /// <summary>
+    /// Used for serialization. If <see cref="UnitComposition"/> is composed of just this instance, then this property returns null.
+    /// </summary>
     NamedComposition<IUnit>? OtherUnitComposition => GetOtherUnitComposition();
 
 
