@@ -12,8 +12,19 @@ namespace Convertal.Core;
 
 public class VectorComposition<T> : NamedComposition<T>,
     IVector<VectorComposition<T>, ScalarComposition<T>>
-    where T : IMaybeNamed
+    where T : IMaybeNamed, IVectorOrScalar
 {
+
+    public static readonly VectorComposition<T> Empty;
+
+    public override bool IsVector => true;
+
+    static VectorComposition()
+    {
+        Empty = new VectorComposition<T>(
+            new Dictionary<T, decimal>().ToImmutableDictionary());
+    }
+
     internal VectorComposition(IReadOnlyDictionary<T, decimal> composition)
         : base(composition)
     {
@@ -23,31 +34,9 @@ public class VectorComposition<T> : NamedComposition<T>,
     public VectorComposition(T key)
         : base(key)
     {
-
+        
     }
 
-    public bool Equals(VectorComposition<T>? other)
-    {
-        return base.Equals(other as VectorComposition<T>);
-    }
-
-    public static VectorComposition<T> operator *(VectorComposition<T> vector, ScalarComposition<T> scalar)
-    {
-        return new(MultiplyOrDivide(vector, scalar, true));
-    }
-
-    public static VectorComposition<T> operator /(VectorComposition<T> vector, ScalarComposition<T> scalar)
-    {
-        return new(MultiplyOrDivide(vector, scalar, false));
-    }
-
-    public static VectorComposition<T> operator %(VectorComposition<T> lhs, VectorComposition<T> rhs)
-    {
-        return new(MultiplyOrDivide(lhs, rhs, true));
-    }
-
-    public static ScalarComposition<T> operator *(VectorComposition<T> lhs, VectorComposition<T> rhs)
-    {
-        return new(MultiplyOrDivide(lhs, rhs, true));   
-    }
+    public ScalarComposition<T> DotP(VectorComposition<T> other) => throw new NotImplementedException();
+    public VectorComposition<T> CrossP(VectorComposition<T> other) => throw new NotImplementedException();
 }

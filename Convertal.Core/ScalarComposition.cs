@@ -12,9 +12,11 @@ namespace Convertal.Core;
 
 public class ScalarComposition<T> : NamedComposition<T>, 
     IScalar<ScalarComposition<T>, VectorComposition<T>>
-    where T : IMaybeNamed
+    where T : IMaybeNamed, IVectorOrScalar
 {
     public static readonly ScalarComposition<T> Empty;
+
+    public override bool IsVector => false;
 
     static ScalarComposition()
     {
@@ -45,12 +47,40 @@ public class ScalarComposition<T> : NamedComposition<T>,
         foreach (var (key, currentPower) in this)
             newDict.Add(key, currentPower * power);
 
-        return new ScalarComposition<T>(newDict.ToImmutableDictionary());
+        return new ScalarComposition<T>(newDict.AsReadOnly());
     }
 
-    public bool Equals(ScalarComposition<T>? other)
+
+    private static ScalarComposition<T> MultiplyOrDivide(
+        ScalarComposition<T> lhs,
+        ScalarComposition<T> rhs,
+        bool multiplication)
     {
-        return base.Equals(other as ScalarComposition<T>);
+        var multiplyFactor = multiplication ? 1.0m : -1.0m;
+        SortedDictionary<T, decimal> resultingComposition = new();
+
+        var keysInBothSides = lhs.Keys.Intersect(rhs.Keys);
+        foreach (var bothSidesKey in keysInBothSides)
+        {
+            var resultingPower = lhs[bothSidesKey] +
+                (multiplyFactor * rhs[bothSidesKey]);
+
+            if (resultingPower != 0.0m)
+                resultingComposition[bothSidesKey] = resultingPower;
+        }
+
+        var keysInLhs = lhs.Keys.Except(keysInBothSides);
+        foreach (var lhsKey in keysInLhs)
+            resultingComposition[lhsKey] = lhs[lhsKey];
+
+        var keysInRhs = rhs.Keys.Except(keysInBothSides);
+        foreach (var rhsKey in keysInRhs)
+            resultingComposition[rhsKey] = rhs[rhsKey] * multiplyFactor;
+
+        if (resultingComposition.Count == 0)
+            return Empty;
+
+        return new ScalarComposition<T>(resultingComposition.AsReadOnly());
     }
 
     public static ScalarComposition<T> operator *(ScalarComposition<T> lhs, ScalarComposition<T> rhs)
@@ -65,6 +95,28 @@ public class ScalarComposition<T> : NamedComposition<T>,
 
     public static VectorComposition<T> operator *(ScalarComposition<T> scalar, VectorComposition<T> vector)
     {
-        return new(MultiplyOrDivide(scalar, vector, true));
+        SortedDictionary<T, decimal> resultingComposition = new();
+
+        var keysInBothSides = scalar.Keys.Intersect(vector.Keys);
+        foreach (var bothSidesKey in keysInBothSides)
+        {
+            var resultingPower = scalar[bothSidesKey] + vector[bothSidesKey];
+
+            if (resultingPower != 0.0m)
+                resultingComposition[bothSidesKey] = resultingPower;
+        }
+
+        var keysInLhs = scalar.Keys.Except(keysInBothSides);
+        foreach (var lhsKey in keysInLhs)
+            resultingComposition[lhsKey] = scalar[lhsKey];
+
+        var keysInRhs = vector.Keys.Except(keysInBothSides);
+        foreach (var rhsKey in keysInRhs)
+            resultingComposition[rhsKey] = vector[rhsKey];
+
+        if (resultingComposition.Count == 0)
+            return VectorComposition<T>.Empty;
+
+        return new VectorComposition<T>(resultingComposition.AsReadOnly());
     }
 }

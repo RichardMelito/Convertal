@@ -37,12 +37,6 @@ public static class Extensions
             throw new JsonException();
     }
 
-    public static ReadOnlyDictionary<TKey, TValue> AsReadOnly<TKey, TValue>(this IDictionary<TKey, TValue> dict)
-        where TKey : notnull
-    {
-        return new ReadOnlyDictionary<TKey, TValue>(dict);
-    }
-
     public static IOrderedEnumerable<T> SortByTypeAndName<T>(this IEnumerable<T> toSort)
         where T : notnull, IMaybeNamed
     {

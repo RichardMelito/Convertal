@@ -11,16 +11,16 @@ using Convertal.Core.Extensions;
 
 namespace Convertal.Core;
 
-public class NamedComposition<T> : IReadOnlyDictionary<T, decimal>, IEquatable<NamedComposition<T>>
-    where T : IVectorOrScalar
+public abstract class NamedComposition<T> : IVectorOrScalar, IReadOnlyDictionary<T, decimal>, IEquatable<NamedComposition<T>>
+    where T : IMaybeNamed, IVectorOrScalar
 {
     /*  describes a collection of base quantities or base units from which 
-     *  derived quantities or units are formed. 
+     *  derived quantities or units are formed.
      */
 
-    public static readonly NamedComposition<T> Empty;
+    public abstract bool IsVector { get; }
 
-    private readonly ImmutableDictionary<T, decimal> _innerDictionary;
+    private readonly IReadOnlyDictionary<T, decimal> _innerDictionary;
 
     public IEnumerable<T> Keys => _innerDictionary.Keys;
 
@@ -33,15 +33,9 @@ public class NamedComposition<T> : IReadOnlyDictionary<T, decimal>, IEquatable<N
 
     public decimal this[T key] => _innerDictionary[key];
 
-    static NamedComposition()
-    {
-        Empty = new NamedComposition<T>(
-            new Dictionary<T, decimal>().AsReadOnly());
-    }
-
     internal NamedComposition(IReadOnlyDictionary<T, decimal> composition)
     {
-        _innerDictionary = composition.ToImmutableDictionary();
+        _innerDictionary = composition;
     }
 
     public NamedComposition(T key)
@@ -101,62 +95,30 @@ public class NamedComposition<T> : IReadOnlyDictionary<T, decimal>, IEquatable<N
         return new(convertedComposition.AsReadOnly());
     }
 
-    public static NamedComposition<T> MultiplyOrDivide(
-        NamedComposition<T> lhs,
-        NamedComposition<T> rhs,
-        bool multiplication)
-    {
-        var multiplyFactor = multiplication ? 1.0m : -1.0m;
-        SortedDictionary<T, decimal> resultingComposition = new();
-
-        var keysInBothSides = lhs.Keys.Intersect(rhs.Keys);
-        foreach (var bothSidesKey in keysInBothSides)
-        {
-            var resultingPower = lhs[bothSidesKey] +
-                (multiplyFactor * rhs[bothSidesKey]);
-
-            if (resultingPower != 0.0m)
-                resultingComposition[bothSidesKey] = resultingPower;
-        }
-
-        var keysInLhs = lhs.Keys.Except(keysInBothSides);
-        foreach (var lhsKey in keysInLhs)
-            resultingComposition[lhsKey] = lhs[lhsKey];
-
-        var keysInRhs = rhs.Keys.Except(keysInBothSides);
-        foreach (var rhsKey in keysInRhs)
-            resultingComposition[rhsKey] = rhs[rhsKey] * multiplyFactor;
-
-        if (resultingComposition.Count == 0)
-            return Empty;
-
-        return new NamedComposition<T>(resultingComposition.AsReadOnly());
-    }
-
     public static NamedComposition<T> operator *(NamedComposition<T> lhs, NamedComposition<T> rhs)
-        => MultiplyOrDivide(lhs, rhs, true);
-
-    public static NamedComposition<T> operator /(NamedComposition<T> lhs, NamedComposition<T> rhs)
-        => MultiplyOrDivide(lhs, rhs, false);
-
-    public NamedComposition<T> Pow(decimal power)
     {
-        if (power == 0)
-            return Empty;
+        if (lhs.IsVector)
+        {
+            var lhsVec = (VectorComposition<T>)lhs;
+            if (rhs.IsVector)
+                return lhsVec.DotP((VectorComposition<T>)rhs);
 
-        if (power == 1)
-            return this;
+            return ((ScalarComposition<T>)rhs) * lhsVec;
+        }
+        else
+        {
+            var lhsScalar = (ScalarComposition<T>)lhs;
+            if (rhs.IsVector)
+                return lhsScalar * (VectorComposition<T>)rhs;
 
-        SortedDictionary<T, decimal> newDict = new();
-        foreach (var (key, currentPower) in this)
-            newDict.Add(key, currentPower * power);
-
-        return new NamedComposition<T>(newDict.AsReadOnly());
+            return lhsScalar * ((ScalarComposition<T>)rhs);
+        }
+        
     }
 
     public bool Equals(NamedComposition<T>? other)
     {
-        if (other is null)
+        if (other?.IsVector != IsVector)
             return false;
 
         if (Count != other.Count)
