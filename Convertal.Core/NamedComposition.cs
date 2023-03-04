@@ -85,6 +85,8 @@ public abstract class NamedComposition<T> : IVectorOrScalar, IReadOnlyDictionary
 
         where TExistingBase : IBase, IComparable<TExistingBase>, IEquatable<TExistingBase>
     {
+        // TODO might need to store whether the multiplies are dots or crosses in the composition
+
         SortedDictionary<T, decimal> convertedComposition = new();
         foreach (var (existingBase, power) in existingBaseComposition)
         {
@@ -92,7 +94,10 @@ public abstract class NamedComposition<T> : IVectorOrScalar, IReadOnlyDictionary
             convertedComposition.Add(convertedBase, power);
         }
 
-        return new(convertedComposition.AsReadOnly());
+        if (existingBaseComposition.IsVector)
+            return new VectorComposition<T>(convertedComposition.AsReadOnly());
+        else
+            return new ScalarComposition<T>(convertedComposition.AsReadOnly());
     }
 
     public static NamedComposition<T> operator *(NamedComposition<T> lhs, NamedComposition<T> rhs)
