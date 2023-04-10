@@ -13,6 +13,14 @@ public record BaseQuantityProto(
     string? Symbol,
     [property: JsonPropertyOrder(2)] string FundamentalUnit) : MaybeNamedProto(Name, Symbol);
 
+public interface IBaseQuantity : IQuantity, IBase
+{
+}
+
+public interface IDerivedQuantity : IQuantity, IDerived
+{
+}
+
 public class BaseQuantity : Quantity, IBase, IEquatable<BaseQuantity>
 {
     internal IBaseUnit? InnerFundamentalUnit { get; set; } = null;

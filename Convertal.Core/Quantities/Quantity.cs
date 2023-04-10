@@ -7,7 +7,16 @@ using Convertal.Core.Extensions;
 
 namespace Convertal.Core;
 
-public abstract class Quantity : MaybeNamed, IVectorOrScalar
+public interface IQuantity : IMaybeNamed, IVectorOrScalar
+{
+    NamedComposition<IBaseQuantity> BaseQuantityComposition { get; }
+    bool Disposed { get; }
+    IUnit FundamentalUnit { get; }
+    Quantity MultiplyOrDivide(Quantity lhs, Quantity rhs, bool multiplication);
+    string ToString();
+}
+
+public abstract class Quantity : MaybeNamed, IQuantity
 {
     /*  There will never be multiple quantities for something in the same 
      *  way there are multiple units for a quantity. So there's F, C, K, etc. 
@@ -25,12 +34,10 @@ public abstract class Quantity : MaybeNamed, IVectorOrScalar
 
     public bool Disposed => _disposed;
 
-    public bool IsVector { get; init; }
-    public bool IsScalar => !IsVector;
-
     public abstract IUnit FundamentalUnit { get; }
 
-    public abstract NamedComposition<BaseQuantity> BaseQuantityComposition { get; }
+    public abstract NamedComposition<IBaseQuantity> BaseQuantityComposition { get; }
+    public abstract bool IsVector { get; }
 
     protected Quantity(Database database, string? name, string? symbol)
         : base(database, name, symbol)
@@ -38,6 +45,7 @@ public abstract class Quantity : MaybeNamed, IVectorOrScalar
 
     }
 
+    // TODO
     protected override Type GetDatabaseType() => typeof(Quantity);
 
     public override string ToString()
@@ -57,30 +65,25 @@ public abstract class Quantity : MaybeNamed, IVectorOrScalar
         _initialized = true;
     }
 
-    public Quantity Pow(decimal power)
-    {
-        return Database.GetFromBaseComposition(BaseQuantityComposition.Pow(power));
-    }
+    //public Quantity MultiplyOrDivide(Quantity lhs, Quantity rhs, bool multiplication)
+    //{
+    //    var resultingComposition = NamedComposition<IBaseQuantity>.MultiplyOrDivide(
+    //        lhs.BaseQuantityComposition,
+    //        rhs.BaseQuantityComposition,
+    //        multiplication: multiplication);
 
-    public Quantity MultiplyOrDivide(Quantity lhs, Quantity rhs, bool multiplication)
-    {
-        var resultingComposition = NamedComposition<BaseQuantity>.MultiplyOrDivide(
-            lhs.BaseQuantityComposition,
-            rhs.BaseQuantityComposition,
-            multiplication: multiplication);
+    //    return Database.GetFromBaseComposition(resultingComposition);
+    //}
 
-        return Database.GetFromBaseComposition(resultingComposition);
-    }
+    //public static Quantity operator *(Quantity lhs, Quantity rhs)
+    //{
+    //    return lhs.MultiplyOrDivide(lhs, rhs, multiplication: true);
+    //}
 
-    public static Quantity operator *(Quantity lhs, Quantity rhs)
-    {
-        return lhs.MultiplyOrDivide(lhs, rhs, multiplication: true);
-    }
-
-    public static Quantity operator /(Quantity lhs, Quantity rhs)
-    {
-        return lhs.MultiplyOrDivide(lhs, rhs, multiplication: false);
-    }
+    //public static Quantity operator /(Quantity lhs, Quantity rhs)
+    //{
+    //    return lhs.MultiplyOrDivide(lhs, rhs, multiplication: false);
+    //}
 
     public override IOrderedEnumerable<IMaybeNamed> GetAllDependents(ref IEnumerable<IMaybeNamed> toIgnore)
     {

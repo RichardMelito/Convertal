@@ -13,6 +13,7 @@ public interface IScalar<TScalar, TVector> : IVectorOrScalar
     where TVector : IVector<TVector, TScalar>
 {
     bool IVectorOrScalar.IsVector => false;
+    TVector? VectorAnalog { get; }
 
     static abstract TScalar operator *(TScalar left, TScalar right);
     static abstract TScalar operator /(TScalar left, TScalar right);
@@ -28,6 +29,7 @@ public interface IVector<TVector, TScalar> : IVectorOrScalar
     where TScalar : IScalar<TScalar, TVector>
 {
     bool IVectorOrScalar.IsVector => true;
+    TScalar ScalarAnalog { get;}
 
     static virtual TScalar operator *(TVector lhs, TVector rhs) => lhs.DotP(rhs);
     static virtual TVector operator &(TVector lhs, TVector rhs) => lhs.CrossP(rhs);

@@ -25,13 +25,13 @@ public class Database
     public IEnumerable<MeasurementSystem> MeasurementSystems => GetAllMaybeNameds<MeasurementSystem>();
 
     internal Dictionary<Type, List<MaybeNamed>> MaybeNamedsByType { get; } = new();
-    internal Dictionary<NamedComposition<BaseQuantity>, Quantity> QuantitiesByComposition { get; } = new();
+    internal Dictionary<NamedComposition<IBaseQuantity>, Quantity> QuantitiesByComposition { get; } = new();
 
     public EmptyQuantity EmptyQuantity { get; }
 
     public EmptyUnit EmptyUnit { get; }
 
-    public IReadOnlyDictionary<NamedComposition<BaseQuantity>, Quantity> CompositionAndQuantitiesDictionary { get; }
+    public IReadOnlyDictionary<NamedComposition<IBaseQuantity>, Quantity> CompositionAndQuantitiesDictionary { get; }
 
     public ReadOnlyCollection<PrefixedUnit> PrefixedUnits { get; }
 
@@ -523,7 +523,7 @@ public class Database
         return GetFromBaseComposition(resultingQuantComp);
     }
 
-    public Quantity GetFromBaseComposition(NamedComposition<BaseQuantity> composition)
+    public Quantity GetFromBaseComposition(NamedComposition<IBaseQuantity> composition)
     {
         if (QuantitiesByComposition.TryGetValue(composition, out var res))
             return res;

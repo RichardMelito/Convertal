@@ -16,15 +16,19 @@ public class ScalarComposition<T> : NamedComposition<T>,
 {
     public static readonly ScalarComposition<T> Empty;
 
+    public VectorComposition<T>? VectorAnalog { get; internal set; }
+
     public override bool IsVector => false;
 
     static ScalarComposition()
     {
         Empty = new ScalarComposition<T>(
-            new Dictionary<T, decimal>().ToImmutableDictionary());
+            new Dictionary<T, decimal>().ToImmutableDictionary())
+        {
+            VectorAnalog = VectorComposition<T>.Empty,
+        };
     }
 
-    
     internal ScalarComposition(IReadOnlyDictionary<T, decimal> composition)
         : base(composition)
     {
