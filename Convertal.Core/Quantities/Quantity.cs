@@ -7,15 +7,6 @@ using Convertal.Core.Extensions;
 
 namespace Convertal.Core;
 
-public interface IQuantity : IMaybeNamed, IVectorOrScalar
-{
-    NamedComposition<IBaseQuantity> BaseQuantityComposition { get; }
-    bool Disposed { get; }
-    IUnit FundamentalUnit { get; }
-    Quantity MultiplyOrDivide(Quantity lhs, Quantity rhs, bool multiplication);
-    string ToString();
-}
-
 public abstract class Quantity : MaybeNamed, IQuantity
 {
     /*  There will never be multiple quantities for something in the same 

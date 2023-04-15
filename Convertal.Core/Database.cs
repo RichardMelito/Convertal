@@ -459,13 +459,13 @@ public class Database
         if (unitPrefix is null)
         {
             BaseUnit unit = new(this, fundamentalUnitName, quantity, 1m, unitSymbol);
-            quantity.InnerFundamentalUnit = unit;
+            quantity.SettableFundamentalUnit = unit;
         }
         else
         {
             var fundamentalMultiplier = 1m / unitPrefix.Multiplier;
             BaseUnit unit = new(this, fundamentalUnitName, quantity, fundamentalMultiplier, unitSymbol);
-            quantity.InnerFundamentalUnit = new PrefixedBaseUnit(this, unit, unitPrefix);
+            quantity.SettableFundamentalUnit = new PrefixedBaseUnit(this, unit, unitPrefix);
         }
 
         return quantity;

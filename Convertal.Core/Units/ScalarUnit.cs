@@ -9,10 +9,12 @@ public abstract class ScalarUnit : IUnit, IScalar<ScalarUnit, VectorUnit>
     public abstract decimal FundamentalMultiplier { get; }
     public abstract decimal FundamentalOffset { get; }
     public abstract Quantity Quantity { get; }
-    public abstract NamedComposition<IUnit> UnitComposition { get; }
+    public abstract ScalarComposition<IUnit> UnitComposition { get; }
     public abstract Database Database { get; }
     public abstract string? Name { get; }
     public abstract string? Symbol { get; }
+
+    NamedComposition<IUnit> IUnit.UnitComposition => UnitComposition;
 
     public abstract void Dispose();
     public abstract MaybeNamedProto ToProto();

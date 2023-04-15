@@ -2,8 +2,6 @@
 
 namespace Convertal.Core;
 
-public interface IVectorOrScalar
+public interface IDerivedQuantity : IQuantity, IDerived
 {
-    bool IsVector { get; }
-    bool IsScalar => !IsVector;
 }
