@@ -7,7 +7,7 @@ namespace Convertal.Core;
 public interface IBaseUnit : IUnit, IBase, IEquatable<IBaseUnit>
 // TODO interface hierarchy for IEquatable and IComparable
 {
-    BaseQuantity BaseQuantity => (BaseQuantity)Quantity;
+    IBaseQuantity BaseQuantity => (IBaseQuantity)Quantity;
 
     bool IEquatable<IBaseUnit>.Equals(IBaseUnit? other)
     {

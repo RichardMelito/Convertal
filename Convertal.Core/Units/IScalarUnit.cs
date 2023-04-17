@@ -29,18 +29,18 @@ namespace Convertal.Core;
  *  \ IVectorDerivedUnit : IVectorUnit, IDerivedUnit
  *  \ Unit
  *    \ ScalarUnit : IScalarUnit
- *      \ ScalarBaseUnit : IBase
- *      \ ScalarDerivedUnit : IDerived
+ *      \ ScalarBaseUnit : IBaseUnit
+ *      \ ScalarDerivedUnit : IDerivedUnit
  *    \ VectorUnit : IVectorUnit
- *      \ VectorBaseUnit : IBase
- *      \ VectorDerivedUnit : IDerived
+ *      \ VectorBaseUnit : IBaseUnit
+ *      \ VectorDerivedUnit : IDerivedUnit
  *  \ PrefixedUnit
  *    \ ScalarPrefixedUnit : IScalarUnit
- *      \ ScalarPrefixedBaseUnit : IBase
- *      \ ScalarPrefixedDerivedUnit : IDerived
+ *      \ ScalarPrefixedBaseUnit : IBaseUnit
+ *      \ ScalarPrefixedDerivedUnit : IDerivedUnit
  *    \ VectorPrefixedUnit : IVectorUnit
- *      \ VectorPrefixedBaseUnit : IBase
- *      \ VectorPrefixedDerivedUnit : IDerived
+ *      \ VectorPrefixedBaseUnit : IBaseUnit
+ *      \ VectorPrefixedDerivedUnit : IDerivedUnit
  */
 
 public interface IScalarUnit : IUnit, IScalar<IScalarUnit, IVectorUnit>

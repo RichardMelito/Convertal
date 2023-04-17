@@ -38,7 +38,15 @@ public abstract class NamedComposition<T> : IVectorOrScalar, IReadOnlyDictionary
         _innerDictionary = composition;
     }
 
-    public NamedComposition(T key)
+    public static NamedComposition<T> Make(T key)
+    {
+        if (key.IsVector)
+            return new VectorComposition<T>(key);
+        else
+            return new ScalarComposition<T>(key);
+    }
+
+    protected NamedComposition(T key)
     {
         if (key.Name is null)
             throw new ApplicationException();

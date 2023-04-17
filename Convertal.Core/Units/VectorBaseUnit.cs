@@ -1,22 +1,20 @@
 ﻿// Created by Richard Melito and licensed to you under The Clear BSD License.
 
-using System;
-using System.Text;
-using System.Threading.Tasks;
+using System.Collections.Generic;
+using System.Linq;
+using Convertal.Core.Extensions;
 
 namespace Convertal.Core;
 
-public abstract class VectorUnit : Unit, IVectorUnit
+public class VectorBaseUnit : VectorUnit, IBaseUnit
 {
-    public override bool IsVector => true;
-
-    public override VectorComposition<IUnit> UnitComposition => (VectorComposition<IUnit>)base.UnitComposition;
-
-    // TODO
-    public abstract IScalarUnit ScalarAnalog { get; }
-
+    // TODO interface or concretion?
+    // TODO default
+    internal IScalarBaseUnit SettableScalarAnalog { get; set; } = null!;
+    public override IScalarBaseUnit ScalarAnalog => SettableScalarAnalog;
+    
     // for defining from a chain of operations
-    internal VectorUnit(
+    internal VectorBaseUnit(
         Database database,
         string name,
         VectorComposition<IUnit> composition)
@@ -28,7 +26,7 @@ public abstract class VectorUnit : Unit, IVectorUnit
     /// <summary>
     /// Only to be called from <see cref="BaseQuantity.DefineNewBaseQuantity(string, string, Prefix?)"/>
     /// </summary>
-    internal VectorUnit(
+    internal VectorBaseUnit(
         Database database,
         string? name,
         VectorQuantity quantity,
@@ -40,7 +38,7 @@ public abstract class VectorUnit : Unit, IVectorUnit
     }
 
     // for defining from an existing IVectorUnit
-    internal VectorUnit(
+    internal VectorBaseUnit(
         Database database,
         string? name,
         IVectorUnit otherUnit,
@@ -55,7 +53,7 @@ public abstract class VectorUnit : Unit, IVectorUnit
     /// <summary>
     /// To be called only from <see cref="Database.DefineBaseUnit(UnitProto)"/>
     /// </summary>
-    internal VectorUnit(
+    internal VectorBaseUnit(
         Database database,
         string? name,
         string? symbol,
@@ -67,7 +65,18 @@ public abstract class VectorUnit : Unit, IVectorUnit
     {
     }
 
-    // TODO
-    public IScalarUnit DotP(IVectorUnit other) => throw new NotImplementedException();
-    public IVectorUnit CrossP(IVectorUnit other) => throw new NotImplementedException();
+    // TODO copy-paste of ScalarBaseUnit's implementation
+    public override IOrderedEnumerable<IMaybeNamed> GetAllDependents(ref IEnumerable<IMaybeNamed> toIgnore)
+    {
+        var res = base.GetAllDependents(ref toIgnore).AsEnumerable();
+
+        var unitsComposedOfThis = Database.GetAllIDerivedUnitsComposedOf(this).Cast<IMaybeNamed>();
+        res = res.Union(unitsComposedOfThis);
+
+        foreach (var unit in unitsComposedOfThis.Except(toIgnore))
+            res = res.Union(unit.GetAllDependents(ref toIgnore));
+
+        res.ThrowIfSetContains(this);
+        return res.SortByTypeAndName();
+    }
 }

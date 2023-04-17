@@ -29,22 +29,22 @@ public abstract class Unit : MaybeNamed, IUnit
 
     public decimal FundamentalOffset { get; }
 
+    // TODO what even is this? I can't remember
     public NamedComposition<IUnit>? OtherUnitComposition => ((IUnit)this).GetOtherUnitComposition();
 
-    public NamedComposition<IUnit> UnitComposition
+    public virtual NamedComposition<IUnit> UnitComposition => _unitComposition!;
+
+    internal void SetUnitComposition(NamedComposition<IUnit> composition)
     {
-        get => _unitComposition!;
-        internal set
-        {
-            if (_unitComposition is null || _unitComposition.IsComposedOfOne(this))
-                _unitComposition = value;
-            else
-                throw new InvalidOperationException();
-        }
+        if (_unitComposition is null || _unitComposition.IsComposedOfOne(this))
+            _unitComposition = composition;
+        else
+            throw new InvalidOperationException();
     }
 
-
     public NamedComposition<IUnit> UC => UnitComposition;   // just shorthand. TODO delete this
+
+    public abstract bool IsVector { get; }
 
     // only to be called when defining fundamental units for new
     // quantities, and thus offset will always be 0
@@ -61,7 +61,7 @@ public abstract class Unit : MaybeNamed, IUnit
         FundamentalMultiplier = fundamentalMultiplier;
         FundamentalOffset = 0;
         composition?.ThrowIfRecursive(this);
-        UnitComposition = composition ?? new(this);
+        UnitComposition = composition ?? NamedComposition<IUnit>.Make(this);
     }
 
     protected Unit(
@@ -76,7 +76,7 @@ public abstract class Unit : MaybeNamed, IUnit
         Quantity = otherUnit.Quantity;
         FundamentalMultiplier = otherUnit.FundamentalMultiplier * multiplier;
         FundamentalOffset = (otherUnit.FundamentalOffset / multiplier) + offset;
-        UnitComposition = new(this);
+        UnitComposition = NamedComposition<IUnit>.Make(this);
     }
 
     // for defining from a chain of operations
@@ -109,7 +109,7 @@ public abstract class Unit : MaybeNamed, IUnit
         FundamentalMultiplier = fundamentalMultiplier;
         FundamentalOffset = fundamentalOffset;
         composition?.ThrowIfRecursive(this);
-        UnitComposition = composition ?? new(this);
+        UnitComposition = composition ?? NamedComposition<IUnit>.Make(this);
     }
 
     public override UnitProto ToProto()
