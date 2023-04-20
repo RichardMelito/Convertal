@@ -21,33 +21,41 @@ public class ScalarBaseUnit : ScalarUnit, IBaseUnit
     {
     }
 
+    // TODO fix method reference
+    /// <summary>
+    /// Only to be called from <see cref="BaseQuantity.DefineNewBaseQuantity(string, string, Prefix?)"/>
+    /// </summary>
     internal ScalarBaseUnit(
         Database database,
-        string? name,
-        ScalarQuantity quantity,
+        string name,
+        ScalarBaseQuantity quantity,
         decimal fundamentalMultiplier,
-        ScalarComposition<IUnit>? composition = null,
-        string? symbol = null)
-        : base(database, name, quantity, fundamentalMultiplier, composition, symbol)
+        string? symbol)
+        : base(database, name, quantity, fundamentalMultiplier, symbol: symbol)
     {
     }
 
+    // for defining from an existing IScalarBaseUnit
     internal ScalarBaseUnit(
         Database database,
-        string? name,
-        IScalarUnit otherUnit,
+        string name,
+        IScalarBaseUnit otherUnit,
         decimal multiplier,
-        decimal offset,
-        string? symbol)
+        decimal offset = 0,
+        string? symbol = null)
         : base(database, name, otherUnit, multiplier, offset, symbol)
     {
     }
 
+    // TODO fix method reference
+    /// <summary>
+    /// To be called only from <see cref="Database.DefineBaseUnit(UnitProto)"/>
+    /// </summary>
     internal ScalarBaseUnit(
         Database database,
-        string? name,
+        string name,
         string? symbol,
-        ScalarQuantity quantity,
+        ScalarBaseQuantity quantity,
         decimal fundamentalMultiplier,
         decimal fundamentalOffset,
         ScalarComposition<IUnit>? composition)

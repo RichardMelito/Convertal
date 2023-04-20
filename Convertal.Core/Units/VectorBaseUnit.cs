@@ -28,23 +28,22 @@ public class VectorBaseUnit : VectorUnit, IBaseUnit
     /// </summary>
     internal VectorBaseUnit(
         Database database,
-        string? name,
-        VectorQuantity quantity,
+        string name,
+        VectorBaseQuantity quantity,
         decimal fundamentalMultiplier,
-        VectorComposition<IUnit>? composition = null,
-        string? symbol = null)
-        : base(database, name, quantity, fundamentalMultiplier, composition, symbol)
+        string? symbol)
+        : base(database, name, quantity, fundamentalMultiplier, symbol: symbol)
     {
     }
 
-    // for defining from an existing IVectorUnit
+    // for defining from an existing IVectorBaseUnit
     internal VectorBaseUnit(
         Database database,
-        string? name,
-        IVectorUnit otherUnit,
+        string name,
+        IVectorBaseUnit otherUnit,
         decimal multiplier,
-        decimal offset,
-        string? symbol)
+        decimal offset = 0,
+        string? symbol = null)
         : base(database, name, otherUnit, multiplier, offset, symbol)
     {
     }
@@ -55,9 +54,9 @@ public class VectorBaseUnit : VectorUnit, IBaseUnit
     /// </summary>
     internal VectorBaseUnit(
         Database database,
-        string? name,
+        string name,
         string? symbol,
-        VectorQuantity quantity,
+        VectorBaseQuantity quantity,
         decimal fundamentalMultiplier,
         decimal fundamentalOffset,
         VectorComposition<IUnit>? composition)
