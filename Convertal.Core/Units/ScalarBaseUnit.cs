@@ -6,7 +6,7 @@ using Convertal.Core.Extensions;
 
 namespace Convertal.Core;
 
-public class ScalarBaseUnit : ScalarUnit, IBaseUnit
+public class ScalarBaseUnit : ScalarUnit, IScalarBaseUnit
 {
     // TODO interface or concretion?
     internal IVectorBaseUnit? SettableVectorAnalog { get; set; }

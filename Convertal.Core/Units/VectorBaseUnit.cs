@@ -6,7 +6,7 @@ using Convertal.Core.Extensions;
 
 namespace Convertal.Core;
 
-public class VectorBaseUnit : VectorUnit, IBaseUnit
+public class VectorBaseUnit : VectorUnit, IVectorBaseUnit
 {
     // TODO interface or concretion?
     // TODO default

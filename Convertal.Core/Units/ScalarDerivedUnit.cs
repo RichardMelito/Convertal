@@ -2,7 +2,7 @@
 
 namespace Convertal.Core;
 
-public class ScalarDerivedUnit : ScalarUnit, IDerivedUnit
+public class ScalarDerivedUnit : ScalarUnit, IScalarDerivedUnit
 {
     internal IVectorDerivedUnit? SettableVectorAnalog { get; set; }
     public override IVectorDerivedUnit? VectorAnalog => SettableVectorAnalog;

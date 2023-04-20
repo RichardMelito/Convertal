@@ -2,7 +2,7 @@
 
 namespace Convertal.Core;
 
-public class VectorDerivedUnit : VectorUnit, IDerivedUnit
+public class VectorDerivedUnit : VectorUnit, IVectorDerivedUnit
 {
     // TODO interface or concretion?
     // TODO default

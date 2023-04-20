@@ -1,4 +1,4 @@
-// Created by Richard Melito and licensed to you under The Clear BSD License.
+﻿// Created by Richard Melito and licensed to you under The Clear BSD License.
 
 using System.Collections.Generic;
 using System.Linq;
@@ -6,14 +6,16 @@ using Convertal.Core.Extensions;
 
 namespace Convertal.Core;
 
-public class PrefixedBaseUnit : PrefixedUnit, IBaseUnit
+public class ScalarPrefixedBaseUnit : ScalarPrefixedUnit, IScalarBaseUnit
 {
-    public new BaseUnit Unit => (BaseUnit)base.Unit;
+    public override ScalarBaseUnit Unit => (ScalarBaseUnit)base.Unit;
 
-    internal PrefixedBaseUnit(Database database, BaseUnit unit, Prefix prefix)
+    internal VectorPrefixedBaseUnit? SettableVectorAnalog { get; set; }
+    public override VectorPrefixedBaseUnit? VectorAnalog => SettableVectorAnalog;
+
+    internal ScalarPrefixedBaseUnit(Database database, ScalarBaseUnit unit, Prefix prefix)
         : base(database, unit, prefix)
     {
-
     }
 
     public IOrderedEnumerable<IMaybeNamed> GetAllDependents(ref IEnumerable<IMaybeNamed> toIgnore)

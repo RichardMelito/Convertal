@@ -21,7 +21,6 @@ public record UnitProto(
 public abstract class Unit : MaybeNamed, IUnit
 {
     private bool _disposed = false;
-    private NamedComposition<IUnit>? _unitComposition;
 
     public Quantity Quantity { get; }
 
@@ -32,15 +31,7 @@ public abstract class Unit : MaybeNamed, IUnit
     // TODO what even is this? I can't remember
     public NamedComposition<IUnit>? OtherUnitComposition => ((IUnit)this).GetOtherUnitComposition();
 
-    public virtual NamedComposition<IUnit> UnitComposition => _unitComposition!;
-
-    internal void SetUnitComposition(NamedComposition<IUnit> composition)
-    {
-        if (_unitComposition is null || _unitComposition.IsComposedOfOne(this))
-            _unitComposition = composition;
-        else
-            throw new InvalidOperationException();
-    }
+    public virtual NamedComposition<IUnit> UnitComposition { get; }
 
     public NamedComposition<IUnit> UC => UnitComposition;   // just shorthand. TODO delete this
 
@@ -83,6 +74,7 @@ public abstract class Unit : MaybeNamed, IUnit
     protected Unit(Database database, string name, NamedComposition<IUnit> composition)
         : base(database, name)
     {
+        ArgumentNullException.ThrowIfNull(composition);
         // TODO: notify user that offsets will be ignored
         //var offsetQuery =
         //    from baseUnit in composition.Keys

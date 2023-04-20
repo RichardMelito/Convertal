@@ -17,6 +17,7 @@ public record PrefixedUnitProto(
 public abstract class PrefixedUnit : IUnit, INamed
 {
     private bool _disposedValue;
+    public abstract bool IsVector { get; }
 
     public Quantity Quantity => Unit.Quantity;
 
@@ -36,7 +37,7 @@ public abstract class PrefixedUnit : IUnit, INamed
     public decimal FundamentalMultiplier => Unit.FundamentalMultiplier * Prefix.Multiplier;
     public decimal FundamentalOffset => Unit.FundamentalOffset / Prefix.Multiplier;
 
-    public Unit Unit { get; private set; }
+    public virtual Unit Unit { get; }
 
     public Prefix Prefix { get; }
 
@@ -69,7 +70,7 @@ public abstract class PrefixedUnit : IUnit, INamed
 
         // TODO reevaluate. Does this make sense?
         // Makes OtherUnitComposition always null
-        UnitComposition = new(this);
+        UnitComposition = NamedComposition<IUnit>.Make(this);
     }
 
     public PrefixedUnitProto ToProto()
