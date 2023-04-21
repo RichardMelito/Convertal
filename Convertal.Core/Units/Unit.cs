@@ -22,6 +22,7 @@ public abstract class Unit : MaybeNamed, IUnit
 {
     private bool _disposed = false;
 
+    // TODO make virtual?
     public Quantity Quantity { get; }
 
     public decimal FundamentalMultiplier { get; }
