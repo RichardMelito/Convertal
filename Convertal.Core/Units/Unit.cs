@@ -117,24 +117,24 @@ public abstract class Unit : MaybeNamed, IUnit
     }
     protected override Type GetDatabaseType() => typeof(Unit);
 
-    public static NamedComposition<IUnit> Multiply(params IUnit[] units)
-    {
-        return MultiplyOrDivide(true, units);
-    }
+    //public static NamedComposition<IUnit> Multiply(params IUnit[] units)
+    //{
+    //    return MultiplyOrDivide(true, units);
+    //}
 
-    public static NamedComposition<IUnit> Divide(params IUnit[] units)
-    {
-        return MultiplyOrDivide(false, units);
-    }
+    //public static NamedComposition<IUnit> Divide(params IUnit[] units)
+    //{
+    //    return MultiplyOrDivide(false, units);
+    //}
 
-    public static NamedComposition<IUnit> MultiplyOrDivide(bool multiplication, params IUnit[] units)
-    {
-        var res = units[0].UnitComposition;
-        for (int i = 1; i < units.Length; ++i)
-            res = NamedComposition<IUnit>.MultiplyOrDivide(res, units[i].UnitComposition, multiplication);
+    //public static NamedComposition<IUnit> MultiplyOrDivide(bool multiplication, params IUnit[] units)
+    //{
+    //    var res = units[0].UnitComposition;
+    //    for (int i = 1; i < units.Length; ++i)
+    //        res = NamedComposition<IUnit>.MultiplyOrDivide(res, units[i].UnitComposition, multiplication);
 
-        return res;
-    }
+    //    return res;
+    //}
 
     public Term ConvertTo(decimal magnitudeOfThis, IUnit resultingIUnit)
     {

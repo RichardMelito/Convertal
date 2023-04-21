@@ -23,7 +23,11 @@ public sealed class VectorEmptyUnit : IVectorUnit
 
     public string? Symbol => null;
 
-    public IScalarUnit? VectorAnalog => Database.ScalarEmptyUnit;
+    public ScalarEmptyUnit ScalarAnalog => Database.ScalarEmptyUnit;
+
+    NamedComposition<IUnit> IUnit.UnitComposition => UnitComposition;
+
+    IScalarUnit IVector<IVectorUnit, IScalarUnit>.ScalarAnalog => ScalarAnalog;
 
     internal VectorEmptyUnit(Database database)
     {
@@ -70,4 +74,7 @@ public sealed class VectorEmptyUnit : IVectorUnit
     {
         return ((IMaybeNamed)this).CalculateHashCode();
     }
+
+    public IScalarUnit DotP(IVectorUnit other) => throw new NotImplementedException();
+    public IVectorUnit CrossP(IVectorUnit other) => throw new NotImplementedException();
 }

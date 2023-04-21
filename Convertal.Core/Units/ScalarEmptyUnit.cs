@@ -15,6 +15,7 @@ public sealed class ScalarEmptyUnit : IScalarUnit
 
     public Quantity Quantity { get; }
 
+    NamedComposition<IUnit> IUnit.UnitComposition => UnitComposition;
     public ScalarComposition<IUnit> UnitComposition => ScalarComposition<IUnit>.Empty;
 
     public Database Database => Quantity.Database;
@@ -23,7 +24,9 @@ public sealed class ScalarEmptyUnit : IScalarUnit
 
     public string? Symbol => null;
 
-    public IVectorUnit? VectorAnalog => Database.VectorEmptyUnit;
+    public VectorEmptyUnit? VectorAnalog => Database.VectorEmptyUnit;
+
+    IVectorUnit? IScalar<IScalarUnit, IVectorUnit>.VectorAnalog => VectorAnalog;
 
     internal ScalarEmptyUnit(Database database)
     {
