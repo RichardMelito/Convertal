@@ -10,8 +10,8 @@ public interface IVector<TVector, TScalar> : IVectorOrScalar
 {
     bool IVectorOrScalar.IsVector => true;
 
-    // TODO can be null?
-    TScalar ScalarAnalog { get;}
+    // TODO make things nullable
+    TScalar? ScalarAnalog { get;}
 
     static virtual TVector operator /(TVector left, TScalar right) => throw new NotImplementedException();
 

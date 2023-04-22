@@ -4,28 +4,27 @@ using DecimalMath;
 
 namespace Convertal.Core;
 
-public class Term
+public abstract record Term : IVectorOrScalar
 {
-    public decimal Magnitude { get; }
-    public IUnit Unit { get; }
-    public Quantity Quantity => Unit.Quantity;
-    public Term(decimal magnitude, IUnit unit)
-    {
-        Magnitude = magnitude;
-        Unit = unit;
-    }
+    public abstract decimal Magnitude { get; }
+    public virtual IUnit Unit { get; }
+    public virtual Quantity Quantity => Unit.Quantity;
+
+    protected virtual string AmountString => Magnitude.ToString();
+
+    protected Term(IUnit unit) => Unit = unit;
 
     public override string ToString()
     {
-        return Magnitude + " " + Unit;
+        return AmountString + " " + Unit;
     }
 
     public string ToStringSymbol()
     {
-        return Magnitude + " " + Unit.ToStringSymbol();
+        return AmountString + " " + Unit.ToStringSymbol();
     }
 
-    public Term ConvertUnitToPreferredSystem(MeasurementSystem? input = null)
+    public virtual Term ConvertUnitToPreferredSystem(MeasurementSystem? input = null)
     {
         var system = input ?? MeasurementSystem.Current;
         var resultingUnit = system?.GetUnit(Quantity) ?? Quantity.FundamentalUnit;
@@ -40,14 +39,6 @@ public class Term
     public Term ConvertUnitTo(IUnit resultingIUnit)
     {
         return Unit.ConvertTo(Magnitude, resultingIUnit);
-    }
-
-    public Term Pow(decimal power)
-    {
-        var fundamental = ConvertUnitToFundamental();
-        var resMagnitude = DecimalEx.Pow(fundamental.Magnitude, power);
-        var resQuantity = fundamental.Quantity.Pow(power);
-        return new(resMagnitude, resQuantity.FundamentalUnit);
     }
 
     public static Term operator *(decimal multiplier, Term term)

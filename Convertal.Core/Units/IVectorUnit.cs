@@ -4,5 +4,6 @@ namespace Convertal.Core;
 
 public interface IVectorUnit : IUnit, IVector<IVectorUnit, IScalarUnit>
 {
+    VectorTerm ToTerm(decimal magnitude) => new(magnitude, this);
 }
 

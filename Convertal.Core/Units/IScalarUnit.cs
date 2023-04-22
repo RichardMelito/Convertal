@@ -50,4 +50,6 @@ public interface IScalarUnit : IUnit, IScalar<IScalarUnit, IVectorUnit>
     static virtual IScalarUnit operator /(IScalarUnit left, IScalarUnit right) => throw new NotImplementedException();
 
     static virtual IVectorUnit operator *(IScalarUnit scalar, IVectorUnit vector) => throw new NotImplementedException();
+
+    ScalarTerm ToTerm(decimal magnitude) => new(magnitude, this);
 }
