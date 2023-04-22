@@ -8,6 +8,8 @@ namespace Convertal.Core;
 public record VectorTerm : Term, IVector<VectorTerm, ScalarTerm>
 {
     private decimal? _magnitude;
+    public override bool IsVector => true;
+
     public override decimal Magnitude => _magnitude ??= DecimalEx.Sqrt(I*I + J*J + K*K);
 
     public decimal I { get; init; }
@@ -38,4 +40,10 @@ public record VectorTerm : Term, IVector<VectorTerm, ScalarTerm>
 
     public override VectorTerm ConvertUnitToPreferredSystem(MeasurementSystem? input = null)
         => (VectorTerm)base.ConvertUnitToPreferredSystem(input);
+
+    public override VectorTerm ConvertUnitToFundamental() => (VectorTerm)base.ConvertUnitToFundamental();
+    public override VectorTerm ConvertUnitTo(IUnit resultingIUnit)
+        => (VectorTerm)base.ConvertUnitTo(resultingIUnit);
+    public ScalarTerm DotP(VectorTerm other) => throw new NotImplementedException();
+    public VectorTerm CrossP(VectorTerm other) => throw new NotImplementedException();
 }

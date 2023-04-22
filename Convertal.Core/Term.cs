@@ -12,6 +12,8 @@ public abstract record Term : IVectorOrScalar
 
     protected virtual string AmountString => Magnitude.ToString();
 
+    public abstract bool IsVector { get; }
+
     protected Term(IUnit unit) => Unit = unit;
 
     public override string ToString()
@@ -31,12 +33,12 @@ public abstract record Term : IVectorOrScalar
         return ConvertUnitTo(resultingUnit);
     }
 
-    public Term ConvertUnitToFundamental()
+    public virtual Term ConvertUnitToFundamental()
     {
         return Unit.ConvertToFundamental(Magnitude);
     }
 
-    public Term ConvertUnitTo(IUnit resultingIUnit)
+    public virtual Term ConvertUnitTo(IUnit resultingIUnit)
     {
         return Unit.ConvertTo(Magnitude, resultingIUnit);
     }

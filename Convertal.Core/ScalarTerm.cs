@@ -6,6 +6,8 @@ namespace Convertal.Core;
 
 public record ScalarTerm : Term, IScalar<ScalarTerm, VectorTerm>
 {
+    public override bool IsVector => false;
+
     public override decimal Magnitude { get; }
     public override IScalarUnit Unit => (IScalarUnit)base.Unit;
     public override ScalarQuantity Quantity => (ScalarQuantity)base.Quantity;
@@ -25,4 +27,8 @@ public record ScalarTerm : Term, IScalar<ScalarTerm, VectorTerm>
 
     public override ScalarTerm ConvertUnitToPreferredSystem(MeasurementSystem? input = null)
         => (ScalarTerm)base.ConvertUnitToPreferredSystem(input);
+
+    public override ScalarTerm ConvertUnitToFundamental() => (ScalarTerm)base.ConvertUnitToFundamental();
+    public override ScalarTerm ConvertUnitTo(IUnit resultingIUnit)
+        => (ScalarTerm)base.ConvertUnitTo(resultingIUnit);
 }

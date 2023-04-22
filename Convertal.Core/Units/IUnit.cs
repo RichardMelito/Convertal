@@ -48,7 +48,7 @@ public interface IUnit : IVectorOrScalar, IMaybeNamed, IEquatable<IUnit>, ICompa
             return new Term(magnitudeToConvert, toConvert);
 
         if (resultingIUnit.Quantity != toConvert.Quantity)
-            throw new ArgumentException("Can only convert to other units of the same quantity.");
+            throw new InvalidOperationException("Can only convert to other units of the same quantity.");
 
         var fundamental = toConvert.ConvertToFundamental(magnitudeToConvert);
         var magnitude =
