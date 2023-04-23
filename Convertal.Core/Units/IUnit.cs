@@ -10,7 +10,6 @@ namespace Convertal.Core;
 public interface IUnit : IVectorOrScalar, IMaybeNamed, IEquatable<IUnit>, IComparable<IUnit>
 {
     bool IsFundamental => Quantity.FundamentalUnit.Equals(this);
-    decimal FundamentalMultiplier { get; }
 
     decimal FundamentalOffset { get; }
     /*  K is fundamental
@@ -40,47 +39,6 @@ public interface IUnit : IVectorOrScalar, IMaybeNamed, IEquatable<IUnit>, ICompa
         var castThis = (IMaybeNamed)this;
         var castOther = other as IMaybeNamed;
         return castThis.Equals(castOther);
-    }
-
-    static Term ConvertTo(IUnit toConvert, decimal magnitudeToConvert, IUnit resultingIUnit)
-    {
-        if (toConvert.Equals(resultingIUnit))
-            return new Term(magnitudeToConvert, toConvert);
-
-        if (resultingIUnit.Quantity != toConvert.Quantity)
-            throw new InvalidOperationException("Can only convert to other units of the same quantity.");
-
-        var fundamental = toConvert.ConvertToFundamental(magnitudeToConvert);
-        var magnitude =
-            (fundamental.Magnitude / resultingIUnit.FundamentalMultiplier)
-            - resultingIUnit.FundamentalOffset;
-        return new Term(magnitude, resultingIUnit);
-
-        /*  converting from km to mm
-         *      km multiplier = 1000
-         *      mm multiplier = 0.001
-         *      1 km = 1,000,000 mm
-         *      => multiplier = km.multiplier / mm.multiplier
-         */
-    }
-
-    static Term ConvertToFundamental(IUnit toConvert, decimal magnitudeToConvert)
-    {
-        if (toConvert.IsFundamental)
-            return new Term(magnitudeToConvert, toConvert);
-
-        var magnitude = toConvert.FundamentalMultiplier * (magnitudeToConvert + toConvert.FundamentalOffset);
-        return new(magnitude, toConvert.Quantity.FundamentalUnit);
-    }
-
-    Term ConvertTo(decimal magnitudeOfThis, IUnit resultingIUnit)
-    {
-        return ConvertTo(this, magnitudeOfThis, resultingIUnit);
-    }
-
-    Term ConvertToFundamental(decimal magnitudeOfThis)
-    {
-        return ConvertToFundamental(this, magnitudeOfThis);
     }
 
     static IOrderedEnumerable<IMaybeNamed> GetAllDependents(IUnit unit, ref IEnumerable<IMaybeNamed> toIgnore)

@@ -11,11 +11,15 @@ public interface IScalar<TScalar, TVector> : IVectorOrScalar
     bool IVectorOrScalar.IsVector => false;
     TVector? VectorAnalog { get; }
 
-    static virtual TScalar operator *(TScalar left, TScalar right) => throw new NotImplementedException();
-    static virtual TScalar operator /(TScalar left, TScalar right) => throw new NotImplementedException();
+    static virtual TScalar operator *(TScalar left, TScalar right) => left.Multiply(right);
+    static virtual TScalar operator /(TScalar left, TScalar right) => left.Divide(right);
 
-    static virtual TVector operator *(TScalar scalar, TVector vector) => throw new NotImplementedException();
-    static virtual TVector operator *(TVector vector, TScalar scalar) => scalar * vector;
+    static virtual TVector operator *(TScalar scalar, TVector vector) => scalar.Multiply(vector);
+    static virtual TVector operator *(TVector vector, TScalar scalar) => vector.Multiply(scalar);
+
+    TScalar Multiply(TScalar other);
+    TVector Multiply(TVector vector);
+    TScalar Divide(TScalar other);
 
     TScalar Pow(decimal power);
 }

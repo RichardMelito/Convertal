@@ -13,10 +13,13 @@ public interface IVector<TVector, TScalar> : IVectorOrScalar
     // TODO make things nullable
     TScalar? ScalarAnalog { get;}
 
-    static virtual TVector operator /(TVector left, TScalar right) => throw new NotImplementedException();
+    static virtual TVector operator /(TVector left, TScalar right) => left.Divide(right);
 
     static virtual TScalar operator *(TVector lhs, TVector rhs) => lhs.DotP(rhs);
     static virtual TVector operator &(TVector lhs, TVector rhs) => lhs.CrossP(rhs);
+
+    TVector Multiply(TScalar scalar);
+    TVector Divide(TScalar scalar);
 
     TScalar DotP(TVector other);
     TVector CrossP(TVector other);

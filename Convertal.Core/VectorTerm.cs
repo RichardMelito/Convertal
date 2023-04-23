@@ -1,20 +1,55 @@
 ﻿// Created by Richard Melito and licensed to you under The Clear BSD License.
 
 using System;
+using Convertal.Core.Extensions;
 using DecimalMath;
 
 namespace Convertal.Core;
 
 public record VectorTerm : Term, IVector<VectorTerm, ScalarTerm>
 {
-    private decimal? _magnitude;
+    private readonly decimal? _magnitude;
+    private readonly decimal _i;
+    private readonly decimal _j;
+    private readonly decimal _k;
+
     public override bool IsVector => true;
 
-    public override decimal Magnitude => _magnitude ??= DecimalEx.Sqrt(I*I + J*J + K*K);
+    public override decimal Magnitude => _magnitude!.Value;
 
-    public decimal I { get; init; }
-    public decimal J { get; init; }
-    public decimal K { get; init; }
+    public decimal I
+    {
+        get => _i;
+        init
+        {
+            _i = value;
+            // These checks for recalculation are for the case where a caller uses the "with" keyword
+            // to make a mutated copy of a Term. Based on my understanding, the copy will have the original
+            // Term's _magnitude, so it will need to be recalculated.
+            if (_magnitude.HasValue)
+                _magnitude = CalculateMagnitude();
+        }
+    }
+    public decimal J
+    {
+        get => _j;
+        init
+        {
+            _j = value;
+            if (_magnitude.HasValue)
+                _magnitude = CalculateMagnitude();
+        }
+    }
+    public decimal K
+    {
+        get => _k;
+        init
+        {
+            _k = value;
+            if (_magnitude.HasValue)
+                _magnitude = CalculateMagnitude();
+        }
+    }
 
     public override IVectorUnit Unit => (IVectorUnit)base.Unit;
     public override VectorQuantity Quantity => (VectorQuantity)base.Quantity;
@@ -28,6 +63,7 @@ public record VectorTerm : Term, IVector<VectorTerm, ScalarTerm>
         : base(unit)
     {
         I = J = K = DecimalEx.Sqrt(magnitude / 3);
+        _magnitude = magnitude;
     }
 
     public VectorTerm(decimal i, decimal j, decimal k, IVectorUnit unit)
@@ -36,14 +72,32 @@ public record VectorTerm : Term, IVector<VectorTerm, ScalarTerm>
         I = i;
         J = j;
         K = k;
+        _magnitude = CalculateMagnitude();
     }
+
+    private decimal CalculateMagnitude() => DecimalEx.Sqrt(I * I + J * J + K * K);
 
     public override VectorTerm ConvertUnitToPreferredSystem(MeasurementSystem? input = null)
         => (VectorTerm)base.ConvertUnitToPreferredSystem(input);
 
-    public override VectorTerm ConvertUnitToFundamental() => (VectorTerm)base.ConvertUnitToFundamental();
+    public override VectorTerm ConvertUnitToFundamental()
+    {
+
+        (VectorTerm)base.ConvertUnitToFundamental();
+    }
     public override VectorTerm ConvertUnitTo(IUnit resultingIUnit)
         => (VectorTerm)base.ConvertUnitTo(resultingIUnit);
-    public ScalarTerm DotP(VectorTerm other) => throw new NotImplementedException();
+
+    public ScalarTerm DotP(VectorTerm other)
+    {
+        var fund = ConvertUnitToFundamental();
+        var otherFund = other.ConvertUnitToFundamental();
+
+        // It looks like we can't actually use the interface operators much....
+        var resQuantity = Quantity.DotP(other.Quantity);
+        return new(
+            fund.I * otherFund.I + fund.J * otherFund.J + fund.K * otherFund.K,
+            resQuantity.FundamentalUnit);
+    }
     public VectorTerm CrossP(VectorTerm other) => throw new NotImplementedException();
 }

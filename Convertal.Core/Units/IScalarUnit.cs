@@ -52,4 +52,47 @@ public interface IScalarUnit : IUnit, IScalar<IScalarUnit, IVectorUnit>
     static virtual IVectorUnit operator *(IScalarUnit scalar, IVectorUnit vector) => throw new NotImplementedException();
 
     ScalarTerm ToTerm(decimal magnitude) => new(magnitude, this);
+
+    decimal FundamentalMultiplier { get; }
+
+    static ScalarTerm ConvertTo(IScalarUnit toConvert, decimal magnitudeToConvert, IScalarUnit resultingIUnit)
+    {
+        if (toConvert.Equals(resultingIUnit))
+            return new ScalarTerm(magnitudeToConvert, toConvert);
+
+        if (resultingIUnit.Quantity != toConvert.Quantity)
+            throw new InvalidOperationException("Can only convert to other units of the same quantity.");
+
+        var fundamental = toConvert.ConvertToFundamental(magnitudeToConvert);
+        var magnitude =
+            (fundamental.Magnitude / resultingIUnit.FundamentalMultiplier)
+            - resultingIUnit.FundamentalOffset;
+        return new (magnitude, resultingIUnit);
+
+        /*  converting from km to mm
+         *      km multiplier = 1000
+         *      mm multiplier = 0.001
+         *      1 km = 1,000,000 mm
+         *      => multiplier = km.multiplier / mm.multiplier
+         */
+    }
+
+    static ScalarTerm ConvertToFundamental(IScalarUnit toConvert, decimal magnitudeToConvert)
+    {
+        if (toConvert.IsFundamental)
+            return new (magnitudeToConvert, toConvert);
+
+        var magnitude = toConvert.FundamentalMultiplier * (magnitudeToConvert + toConvert.FundamentalOffset);
+        return new(magnitude, (IScalarUnit)toConvert.Quantity.FundamentalUnit);
+    }
+
+    ScalarTerm ConvertTo(decimal magnitudeOfThis, IScalarUnit resultingIUnit)
+    {
+        return ConvertTo(this, magnitudeOfThis, resultingIUnit);
+    }
+
+    ScalarTerm ConvertToFundamental(decimal magnitudeOfThis)
+    {
+        return ConvertToFundamental(this, magnitudeOfThis);
+    }
 }
