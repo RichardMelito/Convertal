@@ -26,23 +26,6 @@ public abstract record Term : IVectorOrScalar
         return AmountString + " " + Unit.ToStringSymbol();
     }
 
-    public virtual Term ConvertUnitToPreferredSystem(MeasurementSystem? input = null)
-    {
-        var system = input ?? MeasurementSystem.Current;
-        var resultingUnit = system?.GetUnit(Quantity) ?? Quantity.FundamentalUnit;
-        return ConvertUnitTo(resultingUnit);
-    }
-
-    public virtual Term ConvertUnitToFundamental()
-    {
-        return Unit.ConvertToFundamental(Magnitude);
-    }
-
-    public virtual Term ConvertUnitTo(IUnit resultingIUnit)
-    {
-        return Unit.ConvertTo(Magnitude, resultingIUnit);
-    }
-
     public static Term operator *(decimal multiplier, Term term)
         => new(multiplier * term.Magnitude, term.Unit);
 

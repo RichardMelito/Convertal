@@ -77,16 +77,23 @@ public record VectorTerm : Term, IVector<VectorTerm, ScalarTerm>
 
     private decimal CalculateMagnitude() => DecimalEx.Sqrt(I * I + J * J + K * K);
 
-    public override VectorTerm ConvertUnitToPreferredSystem(MeasurementSystem? input = null)
-        => (VectorTerm)base.ConvertUnitToPreferredSystem(input);
 
-    public override VectorTerm ConvertUnitToFundamental()
+    public VectorTerm ConvertUnitToPreferredSystem(MeasurementSystem? input = null)
     {
-
-        (VectorTerm)base.ConvertUnitToFundamental();
+        var system = input ?? MeasurementSystem.Current;
+        var resultingUnit = system?.GetVectorUnit(Quantity) ?? Quantity.FundamentalUnit;
+        return ConvertUnitTo(resultingUnit);
     }
-    public override VectorTerm ConvertUnitTo(IUnit resultingIUnit)
-        => (VectorTerm)base.ConvertUnitTo(resultingIUnit);
+
+    public VectorTerm ConvertUnitToFundamental()
+    {
+        return Unit.ConvertToFundamental(I, J, K);
+    }
+
+    public VectorTerm ConvertUnitTo(IVectorUnit resultingIUnit)
+    {
+        return Unit.ConvertTo(I, J, K, resultingIUnit);
+    }
 
     public ScalarTerm DotP(VectorTerm other)
     {
@@ -98,6 +105,7 @@ public record VectorTerm : Term, IVector<VectorTerm, ScalarTerm>
         return new(
             fund.I * otherFund.I + fund.J * otherFund.J + fund.K * otherFund.K,
             resQuantity.FundamentalUnit);
+        TODO
     }
     public VectorTerm CrossP(VectorTerm other) => throw new NotImplementedException();
 }

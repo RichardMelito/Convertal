@@ -1,9 +1,13 @@
 ﻿// Created by Richard Melito and licensed to you under The Clear BSD License.
+using System;
 
 namespace Convertal.Core;
 
 public abstract class VectorQuantity : Quantity, IVector<VectorQuantity, ScalarQuantity>
 {
+    // Must be implemented by derived types
+    public override IVectorUnit FundamentalUnit => throw new NotImplementedException();
+
     // Must be set at construciton by derived types
     protected VectorComposition<IBaseQuantity> SettableBaseQuantityComposition { get; init; } = null!;
     public override VectorComposition<IBaseQuantity> BaseQuantityComposition => SettableBaseQuantityComposition;

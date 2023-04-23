@@ -51,9 +51,13 @@ public interface IScalarUnit : IUnit, IScalar<IScalarUnit, IVectorUnit>
 
     static virtual IVectorUnit operator *(IScalarUnit scalar, IVectorUnit vector) => throw new NotImplementedException();
 
-    ScalarTerm ToTerm(decimal magnitude) => new(magnitude, this);
+    decimal FundamentalOffset { get; }
+    /*  K is fundamental
+     *  C = K - 273
+     *  C's FundamentalOffset = +273
+     */
 
-    decimal FundamentalMultiplier { get; }
+    ScalarTerm ToTerm(decimal magnitude) => new(magnitude, this);
 
     static ScalarTerm ConvertTo(IScalarUnit toConvert, decimal magnitudeToConvert, IScalarUnit resultingIUnit)
     {
@@ -66,6 +70,8 @@ public interface IScalarUnit : IUnit, IScalar<IScalarUnit, IVectorUnit>
         var fundamental = toConvert.ConvertToFundamental(magnitudeToConvert);
         var magnitude =
             (fundamental.Magnitude / resultingIUnit.FundamentalMultiplier)
+
+            // TODO is subtraction correct?
             - resultingIUnit.FundamentalOffset;
         return new (magnitude, resultingIUnit);
 

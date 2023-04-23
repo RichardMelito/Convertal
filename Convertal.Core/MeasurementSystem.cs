@@ -34,6 +34,9 @@ public class MeasurementSystem : MaybeNamed, INamed
             .ToDictionary(kvp => kvp.Key.ToString(), kvp => kvp.Value.ToString()!)));
     }
 
+    public IScalarUnit? GetScalarUnit(ScalarQuantity quantity) => (IScalarUnit?)GetUnit(quantity);
+    public IVectorUnit? GetVectorUnit(VectorQuantity quantity) => (IVectorUnit?)GetUnit(quantity);
+
     public IUnit? GetUnit(Quantity quantity)
     {
         if (_quantities_units.TryGetValue(quantity, out var res))

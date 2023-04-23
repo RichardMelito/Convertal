@@ -11,11 +11,7 @@ public interface IUnit : IVectorOrScalar, IMaybeNamed, IEquatable<IUnit>, ICompa
 {
     bool IsFundamental => Quantity.FundamentalUnit.Equals(this);
 
-    decimal FundamentalOffset { get; }
-    /*  K is fundamental
-     *  C = K - 273
-     *  C's FundamentalOffset = +273
-     */
+    decimal FundamentalMultiplier { get; }
 
     Quantity Quantity { get; }
 

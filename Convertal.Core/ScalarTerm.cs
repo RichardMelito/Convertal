@@ -25,10 +25,21 @@ public record ScalarTerm : Term, IScalar<ScalarTerm, VectorTerm>
         return new(resMagnitude, resQuantity.FundamentalUnit);
     }
 
-    public override ScalarTerm ConvertUnitToPreferredSystem(MeasurementSystem? input = null)
-        => (ScalarTerm)base.ConvertUnitToPreferredSystem(input);
 
-    public override ScalarTerm ConvertUnitToFundamental() => (ScalarTerm)base.ConvertUnitToFundamental();
-    public override ScalarTerm ConvertUnitTo(IUnit resultingIUnit)
-        => (ScalarTerm)base.ConvertUnitTo(resultingIUnit);
+    public ScalarTerm ConvertUnitToPreferredSystem(MeasurementSystem? input = null)
+    {
+        var system = input ?? MeasurementSystem.Current;
+        var resultingUnit = system?.GetScalarUnit(Quantity) ?? Quantity.FundamentalUnit;
+        return ConvertUnitTo(resultingUnit);
+    }
+
+    public ScalarTerm ConvertUnitToFundamental()
+    {
+        return Unit.ConvertToFundamental(Magnitude);
+    }
+
+    public ScalarTerm ConvertUnitTo(IScalarUnit resultingIUnit)
+    {
+        return Unit.ConvertTo(Magnitude, resultingIUnit);
+    }
 }
