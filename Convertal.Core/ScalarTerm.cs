@@ -42,4 +42,56 @@ public record ScalarTerm : Term, IScalar<ScalarTerm, VectorTerm>
     {
         return Unit.ConvertTo(Magnitude, resultingIUnit);
     }
+
+    public ScalarTerm Multiply(ScalarTerm other)
+    {
+        var fund = ConvertUnitToFundamental();
+        var otherFund = other.ConvertUnitToFundamental();
+        var resQuantity = Quantity.Multiply(other.Quantity);
+        return new(fund.Magnitude * otherFund.Magnitude, resQuantity.FundamentalUnit);
+    }
+    public VectorTerm Multiply(VectorTerm vector)
+    {
+        var fund = ConvertUnitToFundamental();
+        var vectorFund = vector.ConvertUnitToFundamental();
+        var resQuantity = Quantity.Multiply(vector.Quantity);
+        return new(
+            fund.Magnitude * vectorFund.I,
+            fund.Magnitude * vectorFund.J,
+            fund.Magnitude * vectorFund.K,
+            resQuantity.FundamentalUnit);
+    }
+
+    public ScalarTerm Divide(ScalarTerm other)
+    {
+        var fund = ConvertUnitToFundamental();
+        var otherFund = other.ConvertUnitToFundamental();
+        var resQuantity = Quantity.Divide(other.Quantity);
+        return new(fund.Magnitude / otherFund.Magnitude, resQuantity.FundamentalUnit);
+    }
+
+    public override ScalarTerm Multiply(decimal multiplier) => new(Magnitude * multiplier, Unit);
+    public override ScalarTerm Divide(decimal divisor) => new(Magnitude / divisor, Unit);
+
+    public static ScalarTerm operator *(ScalarTerm term, decimal multiplier) => term.Multiply(multiplier);
+    public static ScalarTerm operator *(decimal multiplier, ScalarTerm term) => term.Multiply(multiplier);
+    public static ScalarTerm operator /(ScalarTerm term, decimal divisor) => term.Divide(divisor);
+    public static ScalarTerm operator /(decimal numerator, ScalarTerm term)
+    {
+        var resMagnitude = numerator / term.ConvertUnitToFundamental().Magnitude;
+        var resQuantity = term.Quantity.Database.EmptyQuantity / term.Quantity;
+        return new(resMagnitude, resQuantity.FundamentalUnit);
+    }
+
+    public static ScalarTerm operator +(ScalarTerm lhs, ScalarTerm rhs)
+    {
+        var convertedRhs = rhs.ConvertUnitTo(lhs.Unit);
+        return new(lhs.Magnitude + convertedRhs.Magnitude, lhs.Unit);
+    }
+
+    public static ScalarTerm operator -(ScalarTerm lhs, ScalarTerm rhs)
+    {
+        var convertedRhs = rhs.ConvertUnitTo(lhs.Unit);
+        return new(lhs.Magnitude - convertedRhs.Magnitude, lhs.Unit);
+    }
 }

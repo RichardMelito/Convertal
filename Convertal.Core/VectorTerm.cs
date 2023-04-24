@@ -105,7 +105,69 @@ public record VectorTerm : Term, IVector<VectorTerm, ScalarTerm>
         return new(
             fund.I * otherFund.I + fund.J * otherFund.J + fund.K * otherFund.K,
             resQuantity.FundamentalUnit);
-        TODO
     }
-    public VectorTerm CrossP(VectorTerm other) => throw new NotImplementedException();
+    public VectorTerm CrossP(VectorTerm other)
+    {
+        var fund = ConvertUnitToFundamental();
+        var otherFund = other.ConvertUnitToFundamental();
+
+        var resQuantity = Quantity.CrossP(other.Quantity);
+        return new(
+            fund.J * otherFund.K - fund.K * otherFund.J,
+            fund.K * otherFund.I - fund.I * otherFund.K,
+            fund.I * otherFund.J - fund.J * otherFund.I,
+            resQuantity.FundamentalUnit);
+    }
+
+
+    public VectorTerm Multiply(ScalarTerm scalar) => scalar.Multiply(this);
+
+    public VectorTerm Divide(ScalarTerm scalar)
+    {
+        var fund = ConvertUnitToFundamental();
+        var scalarFund = scalar.ConvertUnitToFundamental();
+        var resQuantity = Quantity.Divide(scalar);
+        return new(
+            fund.I / scalarFund.Magnitude,
+            fund.J / scalarFund.Magnitude,
+            fund.K / scalarFund.Magnitude,
+            resQuantity.FundamentalUnit);
+    }
+
+    public override VectorTerm Multiply(decimal multiplier) => new(
+        I * multiplier,
+        J * multiplier,
+        K * multiplier,
+        Unit);
+
+    public override VectorTerm Divide(decimal divisor) => new(
+        I / divisor,
+        J / divisor,
+        K / divisor,
+        Unit);
+
+
+    public static VectorTerm operator *(VectorTerm term, decimal multiplier) => term.Multiply(multiplier);
+    public static VectorTerm operator *(decimal multiplier, VectorTerm term) => term.Multiply(multiplier);
+    public static VectorTerm operator /(VectorTerm term, decimal divisor) => term.Divide(divisor);
+
+    public static VectorTerm operator +(VectorTerm lhs, VectorTerm rhs)
+    {
+        var convertedRhs = rhs.ConvertUnitTo(lhs.Unit);
+        return new(
+            lhs.I + convertedRhs.I,
+            lhs.J + convertedRhs.J,
+            lhs.K + convertedRhs.K,
+            lhs.Unit);
+    }
+
+    public static VectorTerm operator -(VectorTerm lhs, VectorTerm rhs)
+    {
+        var convertedRhs = rhs.ConvertUnitTo(lhs.Unit);
+        return new(
+            lhs.I - convertedRhs.I,
+            lhs.J - convertedRhs.J,
+            lhs.K - convertedRhs.K,
+            lhs.Unit);
+    }
 }

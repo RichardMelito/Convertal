@@ -26,62 +26,8 @@ public abstract record Term : IVectorOrScalar
         return AmountString + " " + Unit.ToStringSymbol();
     }
 
-    public static Term operator *(decimal multiplier, Term term)
-        => new(multiplier * term.Magnitude, term.Unit);
-
-    public static Term operator *(Term term, decimal multiplier)
-        => new(multiplier * term.Magnitude, term.Unit);
-
-    public static Term operator /(Term term, decimal divisor)
-        => new(term.Magnitude / divisor, term.Unit);
-
-    public static Term operator /(decimal divisor, Term term)
-    {
-        var resMagnitude = divisor / term.ConvertUnitToFundamental().Magnitude;
-        var resQuantity = term.Quantity.Database.EmptyQuantity / term.Quantity;
-        return new(resMagnitude, resQuantity.FundamentalUnit);
-    }
-
-    public static Term MultiplyOrDivide(Term lhs, Term rhs, bool multiplication)
-    {
-        var fundLhs = lhs.ConvertUnitToFundamental();
-        var fundRhs = rhs.ConvertUnitToFundamental();
-
-        decimal resMagnitude;
-        if (multiplication)
-            resMagnitude = fundLhs.Magnitude * fundRhs.Magnitude;
-        else
-            resMagnitude = fundLhs.Magnitude / fundRhs.Magnitude;
-
-        var resQuantity = lhs.Quantity.MultiplyOrDivide(
-            lhs.Quantity,
-            rhs.Quantity,
-            multiplication: multiplication);
-
-        return new(resMagnitude, resQuantity.FundamentalUnit);
-    }
-
-    public static Term operator *(Term lhs, Term rhs)
-    {
-        return MultiplyOrDivide(lhs, rhs, multiplication: true);
-    }
-
-    public static Term operator /(Term lhs, Term rhs)
-    {
-        return MultiplyOrDivide(lhs, rhs, multiplication: false);
-    }
-
-    public static Term operator +(Term lhs, Term rhs)
-    {
-        var convertedRhs = rhs.ConvertUnitTo(lhs.Unit);
-        return new(lhs.Magnitude + convertedRhs.Magnitude, lhs.Unit);
-    }
-
-    public static Term operator -(Term lhs, Term rhs)
-    {
-        var convertedRhs = rhs.ConvertUnitTo(lhs.Unit);
-        return new(lhs.Magnitude - convertedRhs.Magnitude, lhs.Unit);
-    }
+    public abstract Term Multiply(decimal multiplier);
+    public abstract Term Divide(decimal divisor);
 
     /*  For vector stuff need:
      *      Flag on Quantity for whether it is a vector or scalar or either (example of either: distance (scalar) vs displacement (vector))
