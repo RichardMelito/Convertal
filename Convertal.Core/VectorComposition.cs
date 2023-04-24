@@ -35,7 +35,7 @@ public class VectorComposition<T> : NamedComposition<T>,
 
     }
 
-    public VectorComposition(T key)
+    public VectorComposition(T key) 
         : base(key)
     {
         
@@ -87,6 +87,37 @@ public class VectorComposition<T> : NamedComposition<T>,
 
         if (resultingComposition.Count == 0)
             return Empty;
+
+        return new VectorComposition<T>(resultingComposition.AsReadOnly());
+    }
+
+    // TODO these members really need to be cleaned up, they seem like they could get accidentally recursive
+    public VectorComposition<T> Multiply(ScalarComposition<T> scalar) => scalar * this;
+    public VectorComposition<T> Divide(ScalarComposition<T> scalar) => this / scalar;
+
+    public static VectorComposition<T> operator /(VectorComposition<T> vector, ScalarComposition<T> scalar)
+    {
+        SortedDictionary<T, decimal> resultingComposition = new();
+
+        var keysInBothSides = scalar.Keys.Intersect(vector.Keys);
+        foreach (var bothSidesKey in keysInBothSides)
+        {
+            var resultingPower = scalar[bothSidesKey] - vector[bothSidesKey];
+
+            if (resultingPower != 0.0m)
+                resultingComposition[bothSidesKey] = resultingPower;
+        }
+
+        var keysInLhs = scalar.Keys.Except(keysInBothSides);
+        foreach (var lhsKey in keysInLhs)
+            resultingComposition[lhsKey] = scalar[lhsKey];
+
+        var keysInRhs = vector.Keys.Except(keysInBothSides);
+        foreach (var rhsKey in keysInRhs)
+            resultingComposition[rhsKey] = -vector[rhsKey];
+
+        if (resultingComposition.Count == 0)
+            return VectorComposition<T>.Empty;
 
         return new VectorComposition<T>(resultingComposition.AsReadOnly());
     }

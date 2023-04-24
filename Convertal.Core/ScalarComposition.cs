@@ -87,6 +87,10 @@ public class ScalarComposition<T> : NamedComposition<T>,
         return new ScalarComposition<T>(resultingComposition.AsReadOnly());
     }
 
+    public ScalarComposition<T> Multiply(ScalarComposition<T> other) => this * other;
+    public VectorComposition<T> Multiply(VectorComposition<T> vector) => this * vector;
+    public ScalarComposition<T> Divide(ScalarComposition<T> other) => this / other;
+
     public static ScalarComposition<T> operator *(ScalarComposition<T> lhs, ScalarComposition<T> rhs)
     {
         return new(MultiplyOrDivide(lhs, rhs, true));
