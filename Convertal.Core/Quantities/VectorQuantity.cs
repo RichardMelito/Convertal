@@ -14,8 +14,7 @@ public abstract class VectorQuantity : Quantity, IVector<VectorQuantity, ScalarQ
 
     public override bool IsVector => true;
 
-    // TODO needs default generation
-    public abstract ScalarQuantity ScalarAnalog { get; }
+    public abstract ScalarQuantity? ScalarAnalog { get; }
 
     protected VectorQuantity(Database database, string? name, string? symbol)
         : base(database, name, symbol)
@@ -32,4 +31,16 @@ public abstract class VectorQuantity : Quantity, IVector<VectorQuantity, ScalarQ
         var resultingComposition = BaseQuantityComposition.CrossP(other.BaseQuantityComposition);
         return (ScalarQuantity)Database.GetFromBaseComposition(resultingComposition);
     }
+
+    public VectorQuantity Multiply(ScalarQuantity scalar) => scalar.Multiply(this);
+
+    public VectorQuantity Divide(ScalarQuantity scalar)
+    {
+        var resultingComposition = BaseQuantityComposition.Divide(scalar.BaseQuantityComposition);
+        return (VectorQuantity)Database.GetFromBaseComposition(resultingComposition);
+    }
+
+    public static VectorQuantity operator /(VectorQuantity left, ScalarQuantity right) => left.Divide(right);
+    public static ScalarQuantity operator *(VectorQuantity lhs, VectorQuantity rhs) => lhs.DotP(rhs);
+    public static VectorQuantity operator &(VectorQuantity lhs, VectorQuantity rhs) => lhs.CrossP(rhs);
 }

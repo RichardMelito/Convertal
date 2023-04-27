@@ -11,6 +11,8 @@ public sealed class ScalarEmptyQuantity : ScalarQuantity
 {
     public override ScalarEmptyUnit FundamentalUnit => Database.ScalarEmptyUnit;
 
+    public override VectorEmptyQuantity VectorAnalog => Database.VectorEmptyQuantity;
+
     internal ScalarEmptyQuantity(Database database)
         : base(database, null, null)
     {

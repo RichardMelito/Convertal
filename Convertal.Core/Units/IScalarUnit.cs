@@ -45,11 +45,11 @@ namespace Convertal.Core;
 
 public interface IScalarUnit : IUnit, IScalar<IScalarUnit, IVectorUnit>
 {
-    // TODO
-    static virtual IScalarUnit operator *(IScalarUnit left, IScalarUnit right) => throw new NotImplementedException();
-    static virtual IScalarUnit operator /(IScalarUnit left, IScalarUnit right) => throw new NotImplementedException();
+    //// TODO
+    //static virtual IScalarUnit operator *(IScalarUnit left, IScalarUnit right) => throw new NotImplementedException();
+    //static virtual IScalarUnit operator /(IScalarUnit left, IScalarUnit right) => throw new NotImplementedException();
 
-    static virtual IVectorUnit operator *(IScalarUnit scalar, IVectorUnit vector) => throw new NotImplementedException();
+    //static virtual IVectorUnit operator *(IScalarUnit scalar, IVectorUnit vector) => throw new NotImplementedException();
 
     decimal FundamentalOffset { get; }
     /*  K is fundamental
@@ -100,5 +100,28 @@ public interface IScalarUnit : IUnit, IScalar<IScalarUnit, IVectorUnit>
     ScalarTerm ConvertToFundamental(decimal magnitudeOfThis)
     {
         return ConvertToFundamental(this, magnitudeOfThis);
+    }
+
+    // TODO
+    IScalarUnit IScalar<IScalarUnit, IVectorUnit>.Multiply(IScalarUnit other) => Multiply(other);
+    new IScalarUnit Multiply(IScalarUnit other)
+    {
+
+    }
+
+    IVectorUnit IScalar<IScalarUnit, IVectorUnit>.Multiply(IVectorUnit other) => Multiply(other);
+    new IVectorUnit Multiply(IVectorUnit other) => throw new NotImplementedException();
+
+    IScalarUnit IScalar<IScalarUnit, IVectorUnit>.Divide(IScalarUnit other) => Divide(other);
+    new IScalarUnit Divide(IScalarUnit other) => throw new NotImplementedException();
+
+    static ScalarComposition<IUnit> MultiplyOrDivide(bool multiplication, params IUnit[] units)
+    {
+        var res = units[0].UnitComposition;
+        for (int i = 1; i < units.Length; ++i)
+        {
+            if (multiplication)
+                res *= units[i].UnitComposition;
+        }
     }
 }

@@ -8,7 +8,7 @@ public class VectorDerivedQuantity : VectorQuantity, IDerivedQuantity
 
     // TODO need default generation
     internal ScalarDerivedQuantity? SettableScalarAnalog { get; set; }
-    public override ScalarDerivedQuantity ScalarAnalog => SettableScalarAnalog!;
+    public override ScalarDerivedQuantity? ScalarAnalog => SettableScalarAnalog;
 
 
     /// <summary>

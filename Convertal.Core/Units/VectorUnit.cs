@@ -67,7 +67,7 @@ public abstract class VectorUnit : Unit, IVectorUnit
     {
     }
 
-    // TODO
-    public IScalarUnit DotP(IVectorUnit other) => throw new NotImplementedException();
-    public IVectorUnit CrossP(IVectorUnit other) => throw new NotImplementedException();
+    //// TODO
+    //public IScalarUnit DotP(IVectorUnit other) => throw new NotImplementedException();
+    //public IVectorUnit CrossP(IVectorUnit other) => throw new NotImplementedException();
 }

@@ -45,4 +45,17 @@ public interface IVectorUnit : IUnit, IVector<IVectorUnit, IScalarUnit>
     {
         return ConvertToFundamental(this, i, j, k);
     }
+
+    // TODO
+    IVectorUnit IVector<IVectorUnit, IScalarUnit>.Multiply(IScalarUnit scalar) => Multiply(scalar);
+    new IVectorUnit Multiply(IScalarUnit scalar) => throw new NotImplementedException();
+
+    IVectorUnit IVector<IVectorUnit, IScalarUnit>.Divide(IScalarUnit scalar) => Divide(scalar);
+    new IVectorUnit Divide(IScalarUnit scalar) => throw new NotImplementedException();
+
+    IScalarUnit IVector<IVectorUnit, IScalarUnit>.DotP(IVectorUnit other) => DotP(other);
+    new IScalarUnit DotP(IVectorUnit other) => throw new NotImplementedException();
+
+    IVectorUnit IVector<IVectorUnit, IScalarUnit>.CrossP(IVectorUnit other) => CrossP(other);
+    new IVectorUnit CrossP(IVectorUnit other) => throw new NotImplementedException();
 }

@@ -24,24 +24,30 @@ public abstract class ScalarQuantity : Quantity, IScalar<ScalarQuantity, VectorQ
     {
     }
 
-    public static ScalarQuantity operator *(ScalarQuantity left, ScalarQuantity right)
-    {
-        var resultingComposition = left.BaseQuantityComposition * right.BaseQuantityComposition;
-        return (ScalarQuantity)left.Database.GetFromBaseComposition(resultingComposition);
-    }
-    public static VectorQuantity operator *(ScalarQuantity scalar, VectorQuantity vector)
-    {
-        var resultingComposition = scalar.BaseQuantityComposition * vector.BaseQuantityComposition;
-        return (VectorQuantity)scalar.Database.GetFromBaseComposition(resultingComposition);
-    }
-    public static ScalarQuantity operator /(ScalarQuantity left, ScalarQuantity right)
-    {
-        var resultingComposition = left.BaseQuantityComposition / right.BaseQuantityComposition;
-        return (ScalarQuantity)left.Database.GetFromBaseComposition(resultingComposition);
-    }
-
     public ScalarQuantity Pow(decimal power)
     {
         return (ScalarQuantity)Database.GetFromBaseComposition(BaseQuantityComposition.Pow(power));
     }
+
+    public ScalarQuantity Multiply(ScalarQuantity other)
+    {
+        var resultingComposition = BaseQuantityComposition * other.BaseQuantityComposition;
+        return (ScalarQuantity)Database.GetFromBaseComposition(resultingComposition);
+    }
+    public VectorQuantity Multiply(VectorQuantity vector)
+    {
+        var resultingComposition = BaseQuantityComposition * vector.BaseQuantityComposition;
+        return (VectorQuantity)Database.GetFromBaseComposition(resultingComposition);
+    }
+    public ScalarQuantity Divide(ScalarQuantity other)
+    {
+        var resultingComposition = BaseQuantityComposition / other.BaseQuantityComposition;
+        return (ScalarQuantity)Database.GetFromBaseComposition(resultingComposition);
+    }
+
+    public static ScalarQuantity operator *(ScalarQuantity left, ScalarQuantity right) => left.Multiply(right);
+    public static ScalarQuantity operator /(ScalarQuantity left, ScalarQuantity right) => left.Divide(right);
+
+    public static VectorQuantity operator *(ScalarQuantity scalar, VectorQuantity vector) => scalar.Multiply(vector);
+    public static VectorQuantity operator *(VectorQuantity vector, ScalarQuantity scalar) => scalar.Multiply(vector);
 }
