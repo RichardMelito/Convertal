@@ -6,7 +6,10 @@ namespace Convertal.Core;
 
 public abstract class ScalarUnit : Unit, IScalarUnit
 {
+    public decimal FundamentalOffset { get; }
     public override bool IsVector => false;
+
+    public override ScalarQuantity Quantity => (ScalarQuantity)base.Quantity;
 
     public override ScalarComposition<IUnit> UnitComposition => (ScalarComposition<IUnit>)base.UnitComposition;
 
@@ -20,6 +23,7 @@ public abstract class ScalarUnit : Unit, IScalarUnit
         ScalarComposition<IUnit> composition)
         : base(database, name, composition)
     {
+        FundamentalOffset = 0;
     }
 
     // TODO fix method reference
@@ -35,6 +39,7 @@ public abstract class ScalarUnit : Unit, IScalarUnit
         string? symbol = null)
         : base(database, name, quantity, fundamentalMultiplier, composition, symbol)
     {
+        FundamentalOffset = 0;
     }
 
     // for defining from an existing IScalarUnit
@@ -45,8 +50,9 @@ public abstract class ScalarUnit : Unit, IScalarUnit
         decimal multiplier,
         decimal offset,
         string? symbol)
-        : base(database, name, otherUnit, multiplier, offset, symbol)
+        : base(database, name, otherUnit, multiplier, symbol)
     {
+        FundamentalOffset = (otherUnit.FundamentalOffset / multiplier) + offset;
     }
 
 
@@ -62,10 +68,22 @@ public abstract class ScalarUnit : Unit, IScalarUnit
         decimal fundamentalMultiplier,
         decimal fundamentalOffset,
         ScalarComposition<IUnit>? composition)
-        : base(database, name, symbol, quantity, fundamentalMultiplier, fundamentalOffset, composition)
+        : base(database, name, symbol, quantity, fundamentalMultiplier, composition)
     {
+        FundamentalOffset = fundamentalOffset;
     }
 
-    // TODO
-    public IScalarUnit Pow(decimal power) => throw new NotImplementedException();
+    public override UnitProto ToProto()
+    {
+        return new(
+            Name,
+            Symbol,
+            Quantity.ToString(),
+            FundamentalMultiplier,
+            FundamentalOffset,
+            OtherUnitComposition is null ? null : new(OtherUnitComposition.CompositionAsStringDictionary));
+    }
+
+    //// TODO
+    //public IScalarUnit Pow(decimal power) => throw new NotImplementedException();
 }

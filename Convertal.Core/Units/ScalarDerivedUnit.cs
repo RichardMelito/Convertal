@@ -4,6 +4,8 @@ namespace Convertal.Core;
 
 public class ScalarDerivedUnit : ScalarUnit, IScalarDerivedUnit
 {
+    public override ScalarDerivedQuantity Quantity => (ScalarDerivedQuantity)base.Quantity;
+
     internal IVectorDerivedUnit? SettableVectorAnalog { get; set; }
     public override IVectorDerivedUnit? VectorAnalog => SettableVectorAnalog;
 

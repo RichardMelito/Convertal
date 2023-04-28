@@ -13,7 +13,7 @@ public sealed class VectorEmptyUnit : IVectorUnit
 
     public decimal FundamentalOffset => 0;
 
-    public Quantity Quantity { get; }
+    public VectorQuantity Quantity { get; }
 
     public VectorComposition<IUnit> UnitComposition => VectorComposition<IUnit>.Empty;
 

@@ -1,6 +1,7 @@
 ﻿// Created by Richard Melito and licensed to you under The Clear BSD License.
 
 using System;
+using System.Numerics;
 
 namespace Convertal.Core;
 
@@ -51,6 +52,12 @@ public interface IScalarUnit : IUnit, IScalar<IScalarUnit, IVectorUnit>
 
     //static virtual IVectorUnit operator *(IScalarUnit scalar, IVectorUnit vector) => throw new NotImplementedException();
 
+    NamedComposition<IUnit> IUnit.UnitComposition => UnitComposition;
+    new ScalarComposition<IUnit> UnitComposition { get; }
+
+    Quantity IUnit.Quantity => Quantity;
+    new ScalarQuantity Quantity { get; }
+
     decimal FundamentalOffset { get; }
     /*  K is fundamental
      *  C = K - 273
@@ -89,39 +96,21 @@ public interface IScalarUnit : IUnit, IScalar<IScalarUnit, IVectorUnit>
             return new (magnitudeToConvert, toConvert);
 
         var magnitude = toConvert.FundamentalMultiplier * (magnitudeToConvert + toConvert.FundamentalOffset);
-        return new(magnitude, (IScalarUnit)toConvert.Quantity.FundamentalUnit);
+        return new(magnitude, toConvert.Quantity.FundamentalUnit);
     }
 
-    ScalarTerm ConvertTo(decimal magnitudeOfThis, IScalarUnit resultingIUnit)
-    {
-        return ConvertTo(this, magnitudeOfThis, resultingIUnit);
-    }
+    ScalarTerm ConvertTo(decimal magnitudeOfThis, IScalarUnit resultingIUnit) => ConvertTo(this, magnitudeOfThis, resultingIUnit);
 
-    ScalarTerm ConvertToFundamental(decimal magnitudeOfThis)
-    {
-        return ConvertToFundamental(this, magnitudeOfThis);
-    }
+    ScalarTerm ConvertToFundamental(decimal magnitudeOfThis) => ConvertToFundamental(this, magnitudeOfThis);
 
-    // TODO
-    IScalarUnit IScalar<IScalarUnit, IVectorUnit>.Multiply(IScalarUnit other) => Multiply(other);
-    new IScalarUnit Multiply(IScalarUnit other)
-    {
+    IScalarUnit IScalar<IScalarUnit, IVectorUnit>.Pow(decimal power) => Database.GetUnitFromBaseComposition(UnitComposition.Pow(power));
 
-    }
+    IScalarUnit IScalar<IScalarUnit, IVectorUnit>.Multiply(IScalarUnit other) => Database.GetUnitFromBaseComposition(UnitComposition * other.UnitComposition); //Multiply(other);
+    //new IScalarUnit Multiply(IScalarUnit other) => Database.GetUnitFromBaseComposition(UnitComposition * other.UnitComposition);
 
-    IVectorUnit IScalar<IScalarUnit, IVectorUnit>.Multiply(IVectorUnit other) => Multiply(other);
-    new IVectorUnit Multiply(IVectorUnit other) => throw new NotImplementedException();
+    IVectorUnit IScalar<IScalarUnit, IVectorUnit>.Multiply(IVectorUnit vector) => Database.GetUnitFromBaseComposition(UnitComposition * vector.UnitComposition); //Multiply(vector);
+    //new IVectorUnit Multiply(IVectorUnit vector) => Database.GetUnitFromBaseComposition(UnitComposition * vector.UnitComposition);
 
-    IScalarUnit IScalar<IScalarUnit, IVectorUnit>.Divide(IScalarUnit other) => Divide(other);
-    new IScalarUnit Divide(IScalarUnit other) => throw new NotImplementedException();
-
-    static ScalarComposition<IUnit> MultiplyOrDivide(bool multiplication, params IUnit[] units)
-    {
-        var res = units[0].UnitComposition;
-        for (int i = 1; i < units.Length; ++i)
-        {
-            if (multiplication)
-                res *= units[i].UnitComposition;
-        }
-    }
+    IScalarUnit IScalar<IScalarUnit, IVectorUnit>.Divide(IScalarUnit other) => Database.GetUnitFromBaseComposition(UnitComposition / other.UnitComposition); //Divide(other);
+    //new IScalarUnit Divide(IScalarUnit other) => Database.GetUnitFromBaseComposition(UnitComposition / other.UnitComposition);
 }

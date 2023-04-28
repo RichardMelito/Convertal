@@ -95,6 +95,9 @@ public class VectorComposition<T> : NamedComposition<T>,
     public VectorComposition<T> Multiply(ScalarComposition<T> scalar) => scalar * this;
     public VectorComposition<T> Divide(ScalarComposition<T> scalar) => this / scalar;
 
+    public static ScalarComposition<T> operator *(VectorComposition<T> left, VectorComposition<T> right) => left.DotP(right);
+    public static VectorComposition<T> operator &(VectorComposition<T> left, VectorComposition<T> right) => left.CrossP(right);
+
     public static VectorComposition<T> operator /(VectorComposition<T> vector, ScalarComposition<T> scalar)
     {
         SortedDictionary<T, decimal> resultingComposition = new();

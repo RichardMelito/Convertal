@@ -13,7 +13,7 @@ public sealed class ScalarEmptyUnit : IScalarUnit
 
     public decimal FundamentalOffset => 0;
 
-    public Quantity Quantity { get; }
+    public ScalarQuantity Quantity { get; }
 
     NamedComposition<IUnit> IUnit.UnitComposition => UnitComposition;
     public ScalarComposition<IUnit> UnitComposition => ScalarComposition<IUnit>.Empty;

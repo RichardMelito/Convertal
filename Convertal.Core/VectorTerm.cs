@@ -126,7 +126,7 @@ public record VectorTerm : Term, IVector<VectorTerm, ScalarTerm>
     {
         var fund = ConvertUnitToFundamental();
         var scalarFund = scalar.ConvertUnitToFundamental();
-        var resQuantity = Quantity.Divide(scalar);
+        var resQuantity = Quantity.Divide(scalar.Quantity);
         return new(
             fund.I / scalarFund.Magnitude,
             fund.J / scalarFund.Magnitude,

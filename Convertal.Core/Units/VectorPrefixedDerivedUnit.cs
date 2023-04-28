@@ -8,6 +8,7 @@ public class VectorPrefixedDerivedUnit : VectorPrefixedUnit, IVectorDerivedUnit
 
     internal ScalarPrefixedDerivedUnit? SettableScalarAnalog { get; set; }
     public override ScalarPrefixedDerivedUnit ScalarAnalog => SettableScalarAnalog!;
+    public override VectorDerivedQuantity Quantity => (VectorDerivedQuantity)base.Quantity;
 
     internal VectorPrefixedDerivedUnit(Database database, VectorDerivedUnit unit, Prefix prefix)
         : base(database, unit, prefix)

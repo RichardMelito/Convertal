@@ -24,12 +24,12 @@ public abstract class VectorQuantity : Quantity, IVector<VectorQuantity, ScalarQ
     public VectorQuantity CrossP(VectorQuantity other)
     {
         var resultingComposition = BaseQuantityComposition.CrossP(other.BaseQuantityComposition);
-        return (VectorQuantity)Database.GetFromBaseComposition(resultingComposition);
+        return (VectorQuantity)Database.GetQuantityFromBaseComposition(resultingComposition);
     }
     public ScalarQuantity DotP(VectorQuantity other)
     {
         var resultingComposition = BaseQuantityComposition.CrossP(other.BaseQuantityComposition);
-        return (ScalarQuantity)Database.GetFromBaseComposition(resultingComposition);
+        return (ScalarQuantity)Database.GetQuantityFromBaseComposition(resultingComposition);
     }
 
     public VectorQuantity Multiply(ScalarQuantity scalar) => scalar.Multiply(this);
@@ -37,7 +37,7 @@ public abstract class VectorQuantity : Quantity, IVector<VectorQuantity, ScalarQ
     public VectorQuantity Divide(ScalarQuantity scalar)
     {
         var resultingComposition = BaseQuantityComposition.Divide(scalar.BaseQuantityComposition);
-        return (VectorQuantity)Database.GetFromBaseComposition(resultingComposition);
+        return (VectorQuantity)Database.GetQuantityFromBaseComposition(resultingComposition);
     }
 
     public static VectorQuantity operator /(VectorQuantity left, ScalarQuantity right) => left.Divide(right);

@@ -8,6 +8,8 @@ namespace Convertal.Core;
 
 public class ScalarBaseUnit : ScalarUnit, IScalarBaseUnit
 {
+    public override ScalarBaseQuantity Quantity => (ScalarBaseQuantity)base.Quantity;
+
     // TODO interface or concretion?
     internal IVectorBaseUnit? SettableVectorAnalog { get; set; }
     public override IVectorBaseUnit? VectorAnalog => SettableVectorAnalog;

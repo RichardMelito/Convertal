@@ -12,6 +12,7 @@ public class ScalarPrefixedBaseUnit : ScalarPrefixedUnit, IScalarBaseUnit
 
     internal VectorPrefixedBaseUnit? SettableVectorAnalog { get; set; }
     public override VectorPrefixedBaseUnit? VectorAnalog => SettableVectorAnalog;
+    public override ScalarBaseQuantity Quantity => (ScalarBaseQuantity)base.Quantity;
 
     internal ScalarPrefixedBaseUnit(Database database, ScalarBaseUnit unit, Prefix prefix)
         : base(database, unit, prefix)

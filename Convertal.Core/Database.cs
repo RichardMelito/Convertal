@@ -509,9 +509,17 @@ public class Database
     }
 
 
+    public IScalarUnit GetUnitFromBaseComposition(ScalarComposition<IUnit> composition)
+    {
+        // TODO need a UnitsByComposition dictionary
+    }
 
+    public IVectorUnit GetUnitFromBaseComposition(VectorComposition<IUnit> composition)
+    {
+        // TODO need a UnitsByComposition dictionary
+    }
 
-    public Quantity GetFromBaseComposition(NamedComposition<IUnit> composition)
+    public Quantity GetQuantityFromBaseComposition(NamedComposition<IUnit> composition)
     {
         var resultingQuantComp = EmptyQuantity.BaseQuantityComposition;
         foreach (var (unit, power) in composition)
@@ -520,10 +528,10 @@ public class Database
             resultingQuantComp *= quantComp;
         }
 
-        return GetFromBaseComposition(resultingQuantComp);
+        return GetQuantityFromBaseComposition(resultingQuantComp);
     }
 
-    public Quantity GetFromBaseComposition(NamedComposition<IBaseQuantity> composition)
+    public Quantity GetQuantityFromBaseComposition(NamedComposition<IBaseQuantity> composition)
     {
         if (QuantitiesByComposition.TryGetValue(composition, out var res))
             return res;
@@ -533,7 +541,7 @@ public class Database
 
     public Unit DefineFromComposition(string name, NamedComposition<IUnit> composition)
     {
-        var quantity = GetFromBaseComposition(composition);
+        var quantity = GetQuantityFromBaseComposition(composition);
         if (quantity is BaseQuantity)
             return new BaseUnit(this, name, composition);
         else

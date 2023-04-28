@@ -101,6 +101,8 @@ public class ScalarComposition<T> : NamedComposition<T>,
         return new(MultiplyOrDivide(lhs, rhs, false));
     }
 
+    public static VectorComposition<T> operator *(VectorComposition<T> vector, ScalarComposition<T> scalar) => scalar * vector;
+
     public static VectorComposition<T> operator *(ScalarComposition<T> scalar, VectorComposition<T> vector)
     {
         SortedDictionary<T, decimal> resultingComposition = new();

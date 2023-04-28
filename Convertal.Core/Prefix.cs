@@ -45,7 +45,7 @@ public class Prefix : MaybeNamed, INamed
         Multiplier = multiplier;
     }
 
-    public PrefixedBaseUnit this[BaseUnit unit]
+    public ScalarPrefixedBaseUnit this[ScalarBaseUnit unit]
     {
         get
         {
@@ -53,7 +53,39 @@ public class Prefix : MaybeNamed, INamed
         }
     }
 
-    public PrefixedDerivedUnit this[DerivedUnit unit]
+    public VectorPrefixedBaseUnit this[VectorBaseUnit unit]
+    {
+        get
+        {
+            return Database.GetPrefixedUnit(unit, this);
+        }
+    }
+
+    public ScalarPrefixedDerivedUnit this[ScalarDerivedUnit unit]
+    {
+        get
+        {
+            return Database.GetPrefixedUnit(unit, this);
+        }
+    }
+
+    public VectorPrefixedDerivedUnit this[VectorDerivedUnit unit]
+    {
+        get
+        {
+            return Database.GetPrefixedUnit(unit, this);
+        }
+    }
+
+    public ScalarPrefixedUnit this[ScalarUnit unit]
+    {
+        get
+        {
+            return Database.GetPrefixedUnit(unit, this);
+        }
+    }
+
+    public VectorPrefixedUnit this[VectorUnit unit]
     {
         get
         {

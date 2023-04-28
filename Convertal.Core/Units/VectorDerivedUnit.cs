@@ -4,6 +4,8 @@ namespace Convertal.Core;
 
 public class VectorDerivedUnit : VectorUnit, IVectorDerivedUnit
 {
+    public override VectorDerivedQuantity Quantity => (VectorDerivedQuantity)base.Quantity;
+
     // TODO interface or concretion?
     // TODO default
     internal IScalarDerivedUnit? SettableScalarAnalog { get; set; }
@@ -38,9 +40,8 @@ public class VectorDerivedUnit : VectorUnit, IVectorDerivedUnit
         string name,
         IVectorDerivedUnit otherUnit,
         decimal multiplier,
-        decimal offset = 0,
         string? symbol = null)
-        : base(database, name, otherUnit, multiplier, offset, symbol: symbol)
+        : base(database, name, otherUnit, multiplier, symbol: symbol)
     {
     }
 
@@ -54,9 +55,8 @@ public class VectorDerivedUnit : VectorUnit, IVectorDerivedUnit
         string? symbol,
         VectorDerivedQuantity quantity,
         decimal fundamentalMultiplier,
-        decimal fundamentalOffset,
         VectorComposition<IUnit>? composition)
-        : base(database, name, symbol, quantity, fundamentalMultiplier, fundamentalOffset, composition)
+        : base(database, name, symbol, quantity, fundamentalMultiplier, composition)
     {
     }
 

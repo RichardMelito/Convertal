@@ -22,12 +22,9 @@ public abstract class Unit : MaybeNamed, IUnit
 {
     private bool _disposed = false;
 
-    // TODO make virtual?
-    public Quantity Quantity { get; }
+    public virtual Quantity Quantity { get; }
 
     public decimal FundamentalMultiplier { get; }
-
-    public decimal FundamentalOffset { get; }
 
     // TODO what even is this? I can't remember
     public NamedComposition<IUnit>? OtherUnitComposition => ((IUnit)this).GetOtherUnitComposition();
@@ -51,7 +48,6 @@ public abstract class Unit : MaybeNamed, IUnit
     {
         Quantity = quantity;
         FundamentalMultiplier = fundamentalMultiplier;
-        FundamentalOffset = 0;
         composition?.ThrowIfRecursive(this);
         UnitComposition = composition ?? NamedComposition<IUnit>.Make(this);
     }
@@ -61,13 +57,11 @@ public abstract class Unit : MaybeNamed, IUnit
         string? name,
         IUnit otherUnit,
         decimal multiplier,
-        decimal offset,
         string? symbol)
         : base(database, name, symbol)
     {
         Quantity = otherUnit.Quantity;
         FundamentalMultiplier = otherUnit.FundamentalMultiplier * multiplier;
-        FundamentalOffset = (otherUnit.FundamentalOffset / multiplier) + offset;
         UnitComposition = NamedComposition<IUnit>.Make(this);
     }
 
@@ -84,9 +78,8 @@ public abstract class Unit : MaybeNamed, IUnit
 
         composition.ThrowIfRecursive(this);
         UnitComposition = composition;
-        Quantity = Database.GetFromBaseComposition(UnitComposition);
+        Quantity = Database.GetQuantityFromBaseComposition(UnitComposition);
         FundamentalMultiplier = 1m;
-        FundamentalOffset = 0;
         foreach (var (unit, power) in UnitComposition)
         {
             var multiplier = DecimalEx.Pow(unit.FundamentalMultiplier, power);
@@ -95,16 +88,16 @@ public abstract class Unit : MaybeNamed, IUnit
     }
 
     // deserialization constructor
-    protected Unit(Database database, string? name, string? symbol, Quantity quantity, decimal fundamentalMultiplier, decimal fundamentalOffset, NamedComposition<IUnit>? composition)
+    protected Unit(Database database, string? name, string? symbol, Quantity quantity, decimal fundamentalMultiplier, NamedComposition<IUnit>? composition)
         : base(database, name, symbol)
     {
         Quantity = quantity;
         FundamentalMultiplier = fundamentalMultiplier;
-        FundamentalOffset = fundamentalOffset;
         composition?.ThrowIfRecursive(this);
         UnitComposition = composition ?? NamedComposition<IUnit>.Make(this);
     }
 
+    // TODO
     public override UnitProto ToProto()
     {
         return new(
@@ -112,39 +105,10 @@ public abstract class Unit : MaybeNamed, IUnit
             Symbol,
             Quantity.ToString(),
             FundamentalMultiplier,
-            FundamentalOffset,
+            0,
             OtherUnitComposition is null ? null : new(OtherUnitComposition.CompositionAsStringDictionary));
     }
     protected override Type GetDatabaseType() => typeof(Unit);
-
-    //public static NamedComposition<IUnit> Multiply(params IUnit[] units)
-    //{
-    //    return MultiplyOrDivide(true, units);
-    //}
-
-    //public static NamedComposition<IUnit> Divide(params IUnit[] units)
-    //{
-    //    return MultiplyOrDivide(false, units);
-    //}
-
-    //public static NamedComposition<IUnit> MultiplyOrDivide(bool multiplication, params IUnit[] units)
-    //{
-    //    var res = units[0].UnitComposition;
-    //    for (int i = 1; i < units.Length; ++i)
-    //        res = NamedComposition<IUnit>.MultiplyOrDivide(res, units[i].UnitComposition, multiplication);
-
-    //    return res;
-    //}
-
-    public Term ConvertTo(decimal magnitudeOfThis, IUnit resultingIUnit)
-    {
-        return IUnit.ConvertTo(this, magnitudeOfThis, resultingIUnit);
-    }
-
-    public Term ConvertToFundamental(decimal magnitudeOfThis)
-    {
-        return IUnit.ConvertToFundamental(this, magnitudeOfThis);
-    }
 
     public override IOrderedEnumerable<IMaybeNamed> GetAllDependents(ref IEnumerable<IMaybeNamed> toIgnore)
     {

@@ -9,7 +9,7 @@ namespace Convertal.Core;
 public abstract class VectorUnit : Unit, IVectorUnit
 {
     public override bool IsVector => true;
-
+    public override VectorQuantity Quantity => (VectorQuantity)base.Quantity;
     public override VectorComposition<IUnit> UnitComposition => (VectorComposition<IUnit>)base.UnitComposition;
 
     // TODO
@@ -45,9 +45,8 @@ public abstract class VectorUnit : Unit, IVectorUnit
         string? name,
         IVectorUnit otherUnit,
         decimal multiplier,
-        decimal offset,
         string? symbol)
-        : base(database, name, otherUnit, multiplier, offset, symbol)
+        : base(database, name, otherUnit, multiplier, symbol)
     {
     }
 
@@ -61,9 +60,8 @@ public abstract class VectorUnit : Unit, IVectorUnit
         string? symbol,
         VectorQuantity quantity,
         decimal fundamentalMultiplier,
-        decimal fundamentalOffset,
         VectorComposition<IUnit>? composition)
-        : base(database, name, symbol, quantity, fundamentalMultiplier, fundamentalOffset, composition)
+        : base(database, name, symbol, quantity, fundamentalMultiplier, composition)
     {
     }
 

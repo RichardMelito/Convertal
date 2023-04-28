@@ -19,7 +19,7 @@ public abstract class PrefixedUnit : IUnit, INamed
     private bool _disposedValue;
     public abstract bool IsVector { get; }
 
-    public Quantity Quantity => Unit.Quantity;
+    public virtual Quantity Quantity => Unit.Quantity;
 
     public string? Name => Prefix.Name! + "_" + Unit.Name!;
 
@@ -35,13 +35,12 @@ public abstract class PrefixedUnit : IUnit, INamed
     }
 
     public decimal FundamentalMultiplier => Unit.FundamentalMultiplier * Prefix.Multiplier;
-    public decimal FundamentalOffset => Unit.FundamentalOffset / Prefix.Multiplier;
 
     public virtual Unit Unit { get; }
 
     public Prefix Prefix { get; }
 
-    public NamedComposition<IUnit> UnitComposition { get; }
+    public virtual NamedComposition<IUnit> UnitComposition { get; }
 
     public override string ToString()
     {
@@ -73,22 +72,11 @@ public abstract class PrefixedUnit : IUnit, INamed
         UnitComposition = NamedComposition<IUnit>.Make(this);
     }
 
-    public PrefixedUnitProto ToProto()
+    public virtual PrefixedUnitProto ToProto()
     {
-        return new(Name!, Symbol, Quantity.ToString(), FundamentalMultiplier, FundamentalOffset);
+        return new(Name!, Symbol, Quantity.ToString(), FundamentalMultiplier, 0);
     }
     MaybeNamedProto IMaybeNamed.ToProto() => ToProto();
-
-
-    public Term ConvertTo(decimal magnitudeOfThis, IUnit resultingIUnit)
-    {
-        return IUnit.ConvertTo(this, magnitudeOfThis, resultingIUnit);
-    }
-
-    public Term ConvertToFundamental(decimal magnitudeOfThis)
-    {
-        return IUnit.ConvertToFundamental(this, magnitudeOfThis);
-    }
 
     public bool Equals(IUnit? other)
     {

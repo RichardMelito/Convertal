@@ -8,6 +8,7 @@ namespace Convertal.Core;
 
 public class VectorBaseUnit : VectorUnit, IVectorBaseUnit
 {
+    public override VectorBaseQuantity Quantity => (VectorBaseQuantity)base.Quantity;
     // TODO interface or concretion?
     // TODO default
     internal IScalarBaseUnit SettableScalarAnalog { get; set; } = null!;
@@ -42,9 +43,8 @@ public class VectorBaseUnit : VectorUnit, IVectorBaseUnit
         string name,
         IVectorBaseUnit otherUnit,
         decimal multiplier,
-        decimal offset = 0,
         string? symbol = null)
-        : base(database, name, otherUnit, multiplier, offset, symbol)
+        : base(database, name, otherUnit, multiplier, symbol)
     {
     }
 
@@ -58,9 +58,8 @@ public class VectorBaseUnit : VectorUnit, IVectorBaseUnit
         string? symbol,
         VectorBaseQuantity quantity,
         decimal fundamentalMultiplier,
-        decimal fundamentalOffset,
         VectorComposition<IUnit>? composition)
-        : base(database, name, symbol, quantity, fundamentalMultiplier, fundamentalOffset, composition)
+        : base(database, name, symbol, quantity, fundamentalMultiplier, composition)
     {
     }
 

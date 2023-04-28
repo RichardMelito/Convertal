@@ -26,23 +26,23 @@ public abstract class ScalarQuantity : Quantity, IScalar<ScalarQuantity, VectorQ
 
     public ScalarQuantity Pow(decimal power)
     {
-        return (ScalarQuantity)Database.GetFromBaseComposition(BaseQuantityComposition.Pow(power));
+        return (ScalarQuantity)Database.GetQuantityFromBaseComposition(BaseQuantityComposition.Pow(power));
     }
 
     public ScalarQuantity Multiply(ScalarQuantity other)
     {
         var resultingComposition = BaseQuantityComposition * other.BaseQuantityComposition;
-        return (ScalarQuantity)Database.GetFromBaseComposition(resultingComposition);
+        return (ScalarQuantity)Database.GetQuantityFromBaseComposition(resultingComposition);
     }
     public VectorQuantity Multiply(VectorQuantity vector)
     {
         var resultingComposition = BaseQuantityComposition * vector.BaseQuantityComposition;
-        return (VectorQuantity)Database.GetFromBaseComposition(resultingComposition);
+        return (VectorQuantity)Database.GetQuantityFromBaseComposition(resultingComposition);
     }
     public ScalarQuantity Divide(ScalarQuantity other)
     {
         var resultingComposition = BaseQuantityComposition / other.BaseQuantityComposition;
-        return (ScalarQuantity)Database.GetFromBaseComposition(resultingComposition);
+        return (ScalarQuantity)Database.GetQuantityFromBaseComposition(resultingComposition);
     }
 
     public static ScalarQuantity operator *(ScalarQuantity left, ScalarQuantity right) => left.Multiply(right);
