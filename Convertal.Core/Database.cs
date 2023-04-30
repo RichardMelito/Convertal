@@ -2,6 +2,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Collections.ObjectModel;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
@@ -16,20 +17,28 @@ public class Database
     private readonly List<PrefixedUnit> _prefixedUnits = new();
 
     public IEnumerable<Prefix> Prefixes => GetAllMaybeNameds<Prefix>();
-    public IEnumerable<BaseQuantity> BaseQuantitys => GetAllMaybeNameds<BaseQuantity>();
-    public IEnumerable<DerivedQuantity> DerivedQuantitys => GetAllMaybeNameds<DerivedQuantity>();
-    public IEnumerable<BaseUnit> BaseUnits => GetAllMaybeNameds<BaseUnit>();
-    public IEnumerable<PrefixedBaseUnit> PrefixedBaseUnits => _prefixedUnits.Where(x => x is PrefixedBaseUnit).Cast<PrefixedBaseUnit>();
-    public IEnumerable<DerivedUnit> DerivedUnits => GetAllMaybeNameds<DerivedUnit>();
-    public IEnumerable<PrefixedDerivedUnit> PrefixedDerivedUnits => _prefixedUnits.Where(x => x is PrefixedDerivedUnit).Cast<PrefixedDerivedUnit>();
+    public IEnumerable<ScalarBaseQuantity> ScalarBaseQuantitys => GetAllMaybeNameds<ScalarBaseQuantity>();
+    public IEnumerable<VectorBaseQuantity> VectorBaseQuantitys => GetAllMaybeNameds<VectorBaseQuantity>();
+    public IEnumerable<ScalarDerivedQuantity> ScalarDerivedQuantitys => GetAllMaybeNameds<ScalarDerivedQuantity>();
+    public IEnumerable<VectorDerivedQuantity> VectorDerivedQuantitys => GetAllMaybeNameds<VectorDerivedQuantity>();
+    public IEnumerable<ScalarBaseUnit> ScalarBaseUnits => GetAllMaybeNameds<ScalarBaseUnit>();
+    public IEnumerable<VectorBaseUnit> VectorBaseUnits => GetAllMaybeNameds<VectorBaseUnit>();
+    public IEnumerable<ScalarPrefixedBaseUnit> ScalarPrefixedBaseUnits => _prefixedUnits.Where(x => x is ScalarPrefixedBaseUnit).Cast<ScalarPrefixedBaseUnit>();
+    public IEnumerable<VectorPrefixedBaseUnit> VectorPrefixedBaseUnits => _prefixedUnits.Where(x => x is VectorPrefixedBaseUnit).Cast<VectorPrefixedBaseUnit>();
+    public IEnumerable<ScalarDerivedUnit> ScalarDerivedUnits => GetAllMaybeNameds<ScalarDerivedUnit>();
+    public IEnumerable<VectorDerivedUnit> VectorDerivedUnits => GetAllMaybeNameds<VectorDerivedUnit>();
+    public IEnumerable<ScalarPrefixedDerivedUnit> ScalarPrefixedDerivedUnits => _prefixedUnits.Where(x => x is ScalarPrefixedDerivedUnit).Cast<ScalarPrefixedDerivedUnit>();
+    public IEnumerable<VectorPrefixedDerivedUnit> VectorPrefixedDerivedUnits => _prefixedUnits.Where(x => x is VectorPrefixedDerivedUnit).Cast<VectorPrefixedDerivedUnit>();
     public IEnumerable<MeasurementSystem> MeasurementSystems => GetAllMaybeNameds<MeasurementSystem>();
 
     internal Dictionary<Type, List<MaybeNamed>> MaybeNamedsByType { get; } = new();
     internal Dictionary<NamedComposition<IBaseQuantity>, Quantity> QuantitiesByComposition { get; } = new();
 
-    public EmptyQuantity EmptyQuantity { get; }
+    public ScalarEmptyQuantity ScalarEmptyQuantity { get; }
+    public VectorEmptyQuantity VectorEmptyQuantity { get; }
 
-    public EmptyUnit EmptyUnit { get; }
+    public ScalarEmptyUnit ScalarEmptyUnit { get; }
+    public VectorEmptyUnit VectorEmptyUnit { get; }
 
     public IReadOnlyDictionary<NamedComposition<IBaseQuantity>, Quantity> CompositionAndQuantitiesDictionary { get; }
 
@@ -47,8 +56,10 @@ public class Database
         AddTypeToDictionary<Unit>();
 
         CompositionAndQuantitiesDictionary = QuantitiesByComposition.AsReadOnly();
-        EmptyQuantity = new(this);
-        EmptyUnit = new(this);
+        ScalarEmptyQuantity = new(this);
+        VectorEmptyQuantity = new(this);
+        ScalarEmptyUnit = new(this);
+        VectorEmptyUnit = new(this);
         PrefixedUnits = _prefixedUnits.AsReadOnly();
     }
 
@@ -58,42 +69,48 @@ public class Database
     public Prefix DefinePrefix(string name, decimal multiplier, string? symbol = null) => new(this, name, multiplier, symbol);
     internal Prefix DefinePrefix(PrefixProto proto) => new(this, proto.Name!, proto.Multiplier, proto.Symbol);
 
-    public PrefixedBaseUnit GetPrefixedUnit(BaseUnit unit, Prefix prefix)
+    public ScalarPrefixedBaseUnit GetPrefixedUnit(ScalarBaseUnit unit, Prefix prefix)
     {
-        return (PrefixedBaseUnit)GetPrefixedUnit((Unit)unit, prefix);
+        return (ScalarPrefixedBaseUnit)GetPrefixedUnit((Unit)unit, prefix);
     }
 
-    public PrefixedDerivedUnit GetPrefixedUnit(DerivedUnit unit, Prefix prefix)
+    public ScalarPrefixedDerivedUnit GetPrefixedUnit(ScalarDerivedUnit unit, Prefix prefix)
     {
-        return (PrefixedDerivedUnit)GetPrefixedUnit((Unit)unit, prefix);
+        return (ScalarPrefixedDerivedUnit)GetPrefixedUnit((Unit)unit, prefix);
+    }
+
+    public VectorPrefixedBaseUnit GetPrefixedUnit(VectorBaseUnit unit, Prefix prefix)
+    {
+        return (VectorPrefixedBaseUnit)GetPrefixedUnit((Unit)unit, prefix);
+    }
+
+    public VectorPrefixedDerivedUnit GetPrefixedUnit(VectorDerivedUnit unit, Prefix prefix)
+    {
+        return (VectorPrefixedDerivedUnit)GetPrefixedUnit((Unit)unit, prefix);
     }
 
     public PrefixedUnit GetPrefixedUnit(Unit unit, Prefix prefix)
     {
-        var existingPrefixedUnit =
-            from prefixedUnit in PrefixedUnits
+        var existingPrefixedUnits =
+            (from prefixedUnit in PrefixedUnits
             where prefixedUnit.Unit == unit &&
             prefixedUnit.Prefix == prefix
-            select prefixedUnit;
+            select prefixedUnit)
+            .ToImmutableArray();
 
-        switch (existingPrefixedUnit.Count())
+        if (existingPrefixedUnits.Length == 0)
         {
-            case 0:
-                if (unit is BaseUnit baseUnit)
-                    return new PrefixedBaseUnit(unit.Database, baseUnit, prefix);
-
-                else if (unit is DerivedUnit derivedUnit)
-                    return new PrefixedDerivedUnit(unit.Database, derivedUnit, prefix);
-
-                else
-                    throw new NotImplementedException();
-
-            case 1:
-                return existingPrefixedUnit.First();
-
-            default:
-                throw new ApplicationException(existingPrefixedUnit.Count().ToString());
+            return unit switch
+            {
+                ScalarBaseUnit u => new ScalarPrefixedBaseUnit(this, u, prefix),
+                VectorBaseUnit u => new VectorPrefixedBaseUnit(this, u, prefix),
+                ScalarDerivedUnit u => new ScalarPrefixedDerivedUnit(this, u, prefix),
+                VectorDerivedUnit u => new VectorPrefixedDerivedUnit(this, u, prefix),
+                _ => throw new NotImplementedException(),
+            };
         }
+
+        return existingPrefixedUnits.Single();
     }
 
     public IEnumerable<T> GetAllMaybeNameds<T>()
@@ -118,6 +135,7 @@ public class Database
             if (type.BaseType is null)
                 return null;
 
+            // TODO why is this commented out?
             //if (type.BaseType is null)
             //    throw new ArgumentException($"Neither type {originalType.Name} " +
             //        $"nor any of its base types are within the name lookup dictionary.");
@@ -314,16 +332,22 @@ public class Database
         return matches.Any();
     }
 
-    public BaseUnit DefineBaseUnit(
+    public ScalarBaseUnit DefineScalarBaseUnit(
         string name,
-        IBaseUnit otherUnit,
+        IScalarBaseUnit otherUnit,
         decimal multiplier,
         decimal offset = 0,
         string? symbol = null) => new(this, name, otherUnit, multiplier, offset, symbol);
 
-    internal BaseUnit DefineBaseUnit(UnitProto proto)
+    public VectorBaseUnit DefineVectorBaseUnit(
+        string name,
+        IVectorBaseUnit otherUnit,
+        decimal multiplier,
+        string? symbol = null) => new(this, name, otherUnit, multiplier, symbol);
+
+    internal ScalarBaseUnit DefineScalarBaseUnit(UnitProto proto)
     {
-        NamedComposition<IUnit>? composition = null;
+        ScalarComposition<IUnit>? composition = null;
         if (proto.OtherUnitComposition is not null)
         {
             composition = new(proto.OtherUnitComposition.ToDictionary(
@@ -332,7 +356,7 @@ public class Database
         }
 
         // True if this is a fundamental unit
-        if (proto.Name is not null && TryGetFromName<BaseUnit>(proto.Name, out var unit))
+        if (proto.Name is not null && TryGetFromName<ScalarBaseUnit>(proto.Name, out var unit))
         {
             if (proto.Symbol is not null)
                 unit.ChangeSymbol(proto.Symbol);
@@ -343,13 +367,44 @@ public class Database
             return unit;
         }
 
-        return new BaseUnit(
+        return new ScalarBaseUnit(
             this,
             proto.Name!,
             proto.Symbol,
-            GetFromName<BaseQuantity>(proto.Quantity),
+            GetFromName<ScalarBaseQuantity>(proto.Quantity),
             proto.FundamentalMultiplier,
             proto.FundamentalOffset,
+            composition);
+    }
+
+    internal VectorBaseUnit DefineVectorBaseUnit(UnitProto proto)
+    {
+        VectorComposition<IUnit>? composition = null;
+        if (proto.OtherUnitComposition is not null)
+        {
+            composition = new(proto.OtherUnitComposition.ToDictionary(
+                kvp => ParseIUnit(kvp.Key),
+                kvp => kvp.Value));
+        }
+
+        // True if this is a fundamental unit
+        if (proto.Name is not null && TryGetFromName<VectorBaseUnit>(proto.Name, out var unit))
+        {
+            if (proto.Symbol is not null)
+                unit.ChangeSymbol(proto.Symbol);
+
+            if (composition is not null)
+                unit.UnitComposition = composition;
+
+            return unit;
+        }
+
+        return new VectorBaseUnit(
+            this,
+            proto.Name!,
+            proto.Symbol,
+            GetFromName<VectorBaseQuantity>(proto.Quantity),
+            proto.FundamentalMultiplier,
             composition);
     }
 
@@ -373,17 +428,24 @@ public class Database
         }
     }
 
-    public DerivedUnit DefineDerivedUnit(
+    public ScalarDerivedUnit DefineScalarDerivedUnit(
         string name,
-        IDerivedUnit otherUnit,
+        IScalarDerivedUnit otherUnit,
         decimal multiplier,
         decimal offset = 0,
         string? symbol = null)
         => new(this, name, otherUnit, multiplier, offset, symbol);
 
-    internal DerivedUnit DefineDerivedUnit(UnitProto proto)
+    public VectorDerivedUnit DefineVectorDerivedUnit(
+        string name,
+        IVectorDerivedUnit otherUnit,
+        decimal multiplier,
+        string? symbol = null)
+        => new(this, name, otherUnit, multiplier, symbol);
+
+    internal ScalarDerivedUnit DefineScalarDerivedUnit(UnitProto proto)
     {
-        NamedComposition<IUnit>? composition = null;
+        ScalarComposition<IUnit>? composition = null;
         if (proto.OtherUnitComposition is not null)
         {
             composition = new(proto.OtherUnitComposition.ToDictionary(
@@ -392,7 +454,7 @@ public class Database
         }
 
         // True if this is a fundamental unit
-        if (proto.Name is not null && TryGetFromName<DerivedUnit>(proto.Name, out var unit))
+        if (proto.Name is not null && TryGetFromName<ScalarDerivedUnit>(proto.Name, out var unit))
         {
             if (proto.Symbol is not null)
                 unit.ChangeSymbol(proto.Symbol);
@@ -403,23 +465,55 @@ public class Database
             return unit;
         }
 
-        return new DerivedUnit(
+        return new ScalarDerivedUnit(
             this,
             proto.Name!,
             proto.Symbol,
-            GetFromName<DerivedQuantity>(proto.Quantity),
+            GetFromName<ScalarDerivedQuantity>(proto.Quantity),
             proto.FundamentalMultiplier,
             proto.FundamentalOffset,
             composition);
     }
 
-    public DerivedQuantity DefineDerivedQuantity(
+    internal VectorDerivedUnit DefineVectorDerivedUnit(UnitProto proto)
+    {
+        VectorComposition<IUnit>? composition = null;
+        if (proto.OtherUnitComposition is not null)
+        {
+            composition = new(proto.OtherUnitComposition.ToDictionary(
+                kvp => ParseIUnit(kvp.Key),
+                kvp => kvp.Value));
+        }
+
+        // True if this is a fundamental unit
+        if (proto.Name is not null && TryGetFromName<VectorDerivedUnit>(proto.Name, out var unit))
+        {
+            if (proto.Symbol is not null)
+                unit.ChangeSymbol(proto.Symbol);
+
+            if (composition is not null && unit.UnitComposition is null)
+                unit.UnitComposition = composition;
+
+            return unit;
+        }
+
+        return new VectorDerivedUnit(
+            this,
+            proto.Name!,
+            proto.Symbol,
+            GetFromName<VectorDerivedQuantity>(proto.Quantity),
+            proto.FundamentalMultiplier,
+            composition);
+    }
+
+    // TODO why did I make these?
+    public ScalarDerivedQuantity DefineScalarDerivedQuantity(
         Func<Quantity> quantityOperation,
         string quantityName,
         string? quantitySymbol = null)
     {
         var resultingQuantity = quantityOperation();
-        var res = resultingQuantity as DerivedQuantity;
+        var res = resultingQuantity as ScalarDerivedQuantity;
         if (res is null)
         {
             resultingQuantity.Dispose();
@@ -432,19 +526,50 @@ public class Database
         return res;
     }
 
-    internal DerivedQuantity DefineDerivedQuantity(DerivedQuantityProto proto)
+    public VectorDerivedQuantity DefineVectorDerivedQuantity(
+        Func<Quantity> quantityOperation,
+        string quantityName,
+        string? quantitySymbol = null)
     {
-        NamedComposition<BaseQuantity> composition = new(proto.BaseQuantityComposition
-            .ToDictionary(kvp => GetFromName<BaseQuantity>(kvp.Key), kvp => kvp.Value));
+        var resultingQuantity = quantityOperation();
+        var res = resultingQuantity as VectorDerivedQuantity;
+        if (res is null)
+        {
+            resultingQuantity.Dispose();
 
-        DerivedQuantity res = new(this, composition, proto.FundamentalUnit);
+            // TODO elaborate and maybe do some magic to write out the operation inputs.
+            throw new InvalidOperationException("The given quantity operation did not return a derived quantity.");
+        }
+
+        res.ChangeNameAndSymbol(quantityName, quantitySymbol);
+        return res;
+    }
+
+    internal ScalarDerivedQuantity DefineScalarDerivedQuantity(DerivedQuantityProto proto)
+    {
+        ScalarComposition<IBaseQuantity> composition = new(proto.BaseQuantityComposition
+            .ToDictionary(kvp => GetFromName<IBaseQuantity>(kvp.Key), kvp => kvp.Value));
+
+        ScalarDerivedQuantity res = new(this, composition, proto.FundamentalUnit);
         if (proto.Name is not null)
             res.ChangeNameAndSymbol(proto.Name, proto.Symbol);
 
         return res;
     }
 
-    public BaseQuantity DefineBaseQuantity(
+    internal VectorDerivedQuantity DefineDerivedQuantity(DerivedQuantityProto proto)
+    {
+        VectorComposition<IBaseQuantity> composition = new(proto.BaseQuantityComposition
+            .ToDictionary(kvp => GetFromName<IBaseQuantity>(kvp.Key), kvp => kvp.Value));
+
+        VectorDerivedQuantity res = new(this, composition, proto.FundamentalUnit);
+        if (proto.Name is not null)
+            res.ChangeNameAndSymbol(proto.Name, proto.Symbol);
+
+        return res;
+    }
+
+    public ScalarBaseQuantity DefineScalarBaseQuantity(
         string quantityName,
         string fundamentalUnitName,
         Prefix? unitPrefix = null,
@@ -454,34 +579,79 @@ public class Database
         ThrowIfNameNotValid<Unit>(fundamentalUnitName);
         ThrowIfNameNotValid<Quantity>(quantityName);
 
-        BaseQuantity quantity = new(this, quantityName, quantitySymbol);
+        ScalarBaseQuantity quantity = new(this, quantityName, quantitySymbol);
 
         if (unitPrefix is null)
         {
-            BaseUnit unit = new(this, fundamentalUnitName, quantity, 1m, unitSymbol);
+            ScalarBaseUnit unit = new(this, fundamentalUnitName, quantity, 1m, unitSymbol);
             quantity.SettableFundamentalUnit = unit;
         }
         else
         {
             var fundamentalMultiplier = 1m / unitPrefix.Multiplier;
-            BaseUnit unit = new(this, fundamentalUnitName, quantity, fundamentalMultiplier, unitSymbol);
-            quantity.SettableFundamentalUnit = new PrefixedBaseUnit(this, unit, unitPrefix);
+            ScalarBaseUnit unit = new(this, fundamentalUnitName, quantity, fundamentalMultiplier, unitSymbol);
+            quantity.SettableFundamentalUnit = new ScalarPrefixedBaseUnit(this, unit, unitPrefix);
         }
 
         return quantity;
     }
 
-    internal BaseQuantity DefineBaseQuantity(BaseQuantityProto proto)
+    public VectorBaseQuantity DefineVectorBaseQuantity(
+        string quantityName,
+        string fundamentalUnitName,
+        Prefix? unitPrefix = null,
+        string? quantitySymbol = null,
+        string? unitSymbol = null)
+    {
+        ThrowIfNameNotValid<Unit>(fundamentalUnitName);
+        ThrowIfNameNotValid<Quantity>(quantityName);
+
+        VectorBaseQuantity quantity = new(this, quantityName, quantitySymbol);
+
+        if (unitPrefix is null)
+        {
+            VectorBaseUnit unit = new(this, fundamentalUnitName, quantity, 1m, unitSymbol);
+            quantity.SettableFundamentalUnit = unit;
+        }
+        else
+        {
+            var fundamentalMultiplier = 1m / unitPrefix.Multiplier;
+            VectorBaseUnit unit = new(this, fundamentalUnitName, quantity, fundamentalMultiplier, unitSymbol);
+            quantity.SettableFundamentalUnit = new VectorPrefixedBaseUnit(this, unit, unitPrefix);
+        }
+
+        return quantity;
+    }
+
+    internal ScalarBaseQuantity DefineScalarBaseQuantity(BaseQuantityProto proto)
     {
         var splitFundamentalName = proto.FundamentalUnit.Split('_');
         if (splitFundamentalName.Length == 1)
         {
-            return DefineBaseQuantity(proto.Name!, splitFundamentalName[0], quantitySymbol: proto.Symbol);
+            return DefineScalarBaseQuantity(proto.Name!, splitFundamentalName[0], quantitySymbol: proto.Symbol);
         }
         else if (splitFundamentalName.Length == 2)
         {
             var prefix = GetFromName<Prefix>(splitFundamentalName[0]);
-            return DefineBaseQuantity(proto.Name!, splitFundamentalName[1], prefix, quantitySymbol: proto.Symbol);
+            return DefineScalarBaseQuantity(proto.Name!, splitFundamentalName[1], prefix, quantitySymbol: proto.Symbol);
+        }
+        else
+        {
+            throw new InvalidOperationException();
+        }
+    }
+
+    internal VectorBaseQuantity DefineVectorBaseQuantity(BaseQuantityProto proto)
+    {
+        var splitFundamentalName = proto.FundamentalUnit.Split('_');
+        if (splitFundamentalName.Length == 1)
+        {
+            return DefineVectorBaseQuantity(proto.Name!, splitFundamentalName[0], quantitySymbol: proto.Symbol);
+        }
+        else if (splitFundamentalName.Length == 2)
+        {
+            var prefix = GetFromName<Prefix>(splitFundamentalName[0]);
+            return DefineVectorBaseQuantity(proto.Name!, splitFundamentalName[1], prefix, quantitySymbol: proto.Symbol);
         }
         else
         {
@@ -491,19 +661,17 @@ public class Database
 
     public IEnumerable<IDerivedUnit> GetAllIDerivedUnitsComposedOf(IBaseUnit baseUnit)
     {
-        var allUnits = GetAllMaybeNameds<Unit>();
-
         IEnumerable<IDerivedUnit> unitsComposedOfGiven =
-            from unit in allUnits
-            where unit is DerivedUnit &&
+            from unit in GetAllMaybeNameds<Unit>()
+            where unit is IDerivedUnit &&
             unit.UnitComposition.ContainsKey(baseUnit)
-            select (DerivedUnit)unit;
+            select (IDerivedUnit)unit;
 
         IEnumerable<IDerivedUnit> prefixedUnitsComposedOfGiven =
             from prefixedUnit in PrefixedUnits
-            where prefixedUnit is PrefixedDerivedUnit &&
+            where prefixedUnit is IDerivedUnit &&
             prefixedUnit.UnitComposition.ContainsKey(baseUnit)
-            select (PrefixedDerivedUnit)prefixedUnit;
+            select (IDerivedUnit)prefixedUnit;
 
         return unitsComposedOfGiven.Union(prefixedUnitsComposedOfGiven);
     }
@@ -519,6 +687,46 @@ public class Database
         // TODO need a UnitsByComposition dictionary
     }
 
+    public ScalarQuantity GetQuantityFromBaseComposition(ScalarComposition<IUnit> composition)
+    {
+        var resultingQuantComp = ScalarEmptyQuantity.BaseQuantityComposition;
+        foreach (var (unit, power) in composition)
+        {
+            NamedComposition<IBaseQuantity> quantComp;
+            if (unit is IScalarUnit s)
+            {
+                quantComp = s.Quantity.BaseQuantityComposition.Pow(power);
+            }
+            else if (unit is IVectorUnit v)
+            {
+                if (power != 1)
+                    throw new InvalidOperationException();
+
+                quantComp = v.Quantity.BaseQuantityComposition;
+            }
+            else
+            {
+                throw new NotImplementedException();
+            }
+
+            resultingQuantComp = (resultingQuantComp * quantComp);
+        }
+
+        return GetQuantityFromBaseComposition(resultingQuantComp);
+    }
+
+    public VectorQuantity GetQuantityFromBaseComposition(VectorComposition<IUnit> composition)
+    {
+        var resultingQuantComp = VectorEmptyQuantity.BaseQuantityComposition;
+        foreach (var (unit, power) in composition)
+        {
+            var quantComp = unit.Quantity.BaseQuantityComposition.Pow(power);
+            resultingQuantComp *= quantComp;
+        }
+
+        return GetQuantityFromBaseComposition(resultingQuantComp);
+    }
+
     public Quantity GetQuantityFromBaseComposition(NamedComposition<IUnit> composition)
     {
         var resultingQuantComp = EmptyQuantity.BaseQuantityComposition;
@@ -531,12 +739,19 @@ public class Database
         return GetQuantityFromBaseComposition(resultingQuantComp);
     }
 
+    public ScalarQuantity GetScalarQuantityFromBaseComposition(ScalarComposition<IBaseQuantity> composition) => (ScalarQuantity)GetQuantityFromBaseComposition(composition);
+
+    public VectorQuantity GetVectorQuantityFromBaseComposition(VectorComposition<IBaseQuantity> composition) => (VectorQuantity)GetQuantityFromBaseComposition(composition);
+
     public Quantity GetQuantityFromBaseComposition(NamedComposition<IBaseQuantity> composition)
     {
         if (QuantitiesByComposition.TryGetValue(composition, out var res))
             return res;
 
-        return new DerivedQuantity(this, composition);
+        if (composition is ScalarComposition<IBaseQuantity> s)
+            return new ScalarDerivedQuantity(this, s);
+
+        return new VectorDerivedQuantity(this, (VectorComposition<IBaseQuantity>)composition);
     }
 
     public Unit DefineFromComposition(string name, NamedComposition<IUnit> composition)

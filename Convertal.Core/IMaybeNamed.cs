@@ -15,6 +15,7 @@ public interface IMaybeNamed : IDisposable, IComparable<IMaybeNamed>, IEquatable
     string ToStringSymbol();
     MaybeNamedProto ToProto();
 
+    // TODO include ScalarAnalog/VectorAnalog in this
     IOrderedEnumerable<IMaybeNamed> GetAllDependents(ref IEnumerable<IMaybeNamed> toIgnore);
 
     internal void DisposeThisAndDependents(bool disposeDependents);
@@ -40,11 +41,16 @@ public interface IMaybeNamed : IDisposable, IComparable<IMaybeNamed>, IEquatable
             return true;
 
         var type = GetType();
-        if (other is null || Database == other.Database || type != other.GetType())
+        if (other is null || Database != other.Database || type != other.GetType())
             return false;
 
-        if (type == typeof(EmptyUnit) || type == typeof(EmptyQuantity))
+        if (type == typeof(ScalarEmptyUnit) ||
+            type == typeof(VectorEmptyUnit) ||
+            type == typeof(ScalarEmptyQuantity) ||
+            type == typeof(VectorEmptyQuantity))
+        {
             return true;
+        }
 
         return ToProto() == other.ToProto();
     }
