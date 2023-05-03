@@ -362,7 +362,7 @@ public class Database
                 unit.ChangeSymbol(proto.Symbol);
 
             if (composition is not null)
-                unit.UnitComposition = composition;
+                unit.SetUnitComposition(composition);
 
             return unit;
         }
@@ -394,7 +394,7 @@ public class Database
                 unit.ChangeSymbol(proto.Symbol);
 
             if (composition is not null)
-                unit.UnitComposition = composition;
+                unit.SetUnitComposition(composition);
 
             return unit;
         }
@@ -460,7 +460,7 @@ public class Database
                 unit.ChangeSymbol(proto.Symbol);
 
             if (composition is not null && unit.UnitComposition is null)
-                unit.UnitComposition = composition;
+                unit.SetUnitComposition(composition);
 
             return unit;
         }
@@ -492,7 +492,7 @@ public class Database
                 unit.ChangeSymbol(proto.Symbol);
 
             if (composition is not null && unit.UnitComposition is null)
-                unit.UnitComposition = composition;
+                unit.SetUnitComposition(composition);
 
             return unit;
         }
@@ -727,17 +727,17 @@ public class Database
     //    return GetQuantityFromBaseComposition(resultingQuantComp);
     //}
 
-    //public Quantity GetQuantityFromBaseComposition(NamedComposition<IUnit> composition)
-    //{
-    //    var resultingQuantComp = EmptyQuantity.BaseQuantityComposition;
-    //    foreach (var (unit, power) in composition)
-    //    {
-    //        var quantComp = unit.Quantity.BaseQuantityComposition.Pow(power);
-    //        resultingQuantComp *= quantComp;
-    //    }
+    public Quantity GetQuantityFromBaseComposition(NamedComposition<IUnit> composition)
+    {
+        var resultingQuantComp = ScalarEmptyQuantity.BaseQuantityComposition;
+        foreach (var (unit, power) in composition)
+        {
+            var quantComp = unit.Quantity.BaseQuantityComposition.Pow(power);
+            resultingQuantComp *= quantComp;
+        }
 
-    //    return GetQuantityFromBaseComposition(resultingQuantComp);
-    //}
+        return GetQuantityFromBaseComposition(resultingQuantComp);
+    }
 
     public ScalarQuantity GetScalarQuantityFromBaseComposition(ScalarComposition<IBaseQuantity> composition) => (ScalarQuantity)GetQuantityFromBaseComposition(composition);
 

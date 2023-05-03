@@ -29,7 +29,7 @@ public abstract class Unit : MaybeNamed, IUnit
     // TODO what even is this? I can't remember
     public NamedComposition<IUnit>? OtherUnitComposition => ((IUnit)this).GetOtherUnitComposition();
 
-    public virtual NamedComposition<IUnit> UnitComposition { get; }
+    public virtual NamedComposition<IUnit> UnitComposition { get; private set; }
 
     public NamedComposition<IUnit> UC => UnitComposition;   // just shorthand. TODO delete this
 
@@ -94,7 +94,22 @@ public abstract class Unit : MaybeNamed, IUnit
         Quantity = quantity;
         FundamentalMultiplier = fundamentalMultiplier;
         composition?.ThrowIfRecursive(this);
-        UnitComposition = composition ?? NamedComposition<IUnit>.Make(this);
+        UnitComposition = composition!; // May be null, which indicates that it must be set later from the SetUnitComposition method.
+    }
+
+    /// To be called only from <see cref="Database.DefineVectorBaseUnit(UnitProto)"/>,
+    /// <see cref="Database.DefineScalarBaseUnit(UnitProto)"/>,
+    /// <see cref="Database.DefineVectorDerivedUnit(UnitProto)"/>, and
+    /// <see cref="Database.DefineScalarDerivedUnit(UnitProto)"/>.
+    internal void SetUnitComposition(NamedComposition<IUnit> unitComposition)
+    {
+        if (!UnitComposition.IsComposedOfOne(this))
+            throw new InvalidOperationException();
+
+        if (IsVector != unitComposition.IsVector)
+            throw new InvalidOperationException();
+
+        UnitComposition = unitComposition;
     }
 
     // TODO
