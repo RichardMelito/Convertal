@@ -677,67 +677,67 @@ public class Database
     }
 
 
-    public IScalarUnit GetUnitFromBaseComposition(ScalarComposition<IUnit> composition)
-    {
-        // TODO need a UnitsByComposition dictionary
-    }
+    //public IScalarUnit GetUnitFromBaseComposition(ScalarComposition<IUnit> composition)
+    //{
+    //    // TODO need a UnitsByComposition dictionary
+    //}
 
-    public IVectorUnit GetUnitFromBaseComposition(VectorComposition<IUnit> composition)
-    {
-        // TODO need a UnitsByComposition dictionary
-    }
+    //public IVectorUnit GetUnitFromBaseComposition(VectorComposition<IUnit> composition)
+    //{
+    //    // TODO need a UnitsByComposition dictionary
+    ////}
 
-    public ScalarQuantity GetQuantityFromBaseComposition(ScalarComposition<IUnit> composition)
-    {
-        var resultingQuantComp = ScalarEmptyQuantity.BaseQuantityComposition;
-        foreach (var (unit, power) in composition)
-        {
-            NamedComposition<IBaseQuantity> quantComp;
-            if (unit is IScalarUnit s)
-            {
-                quantComp = s.Quantity.BaseQuantityComposition.Pow(power);
-            }
-            else if (unit is IVectorUnit v)
-            {
-                if (power != 1)
-                    throw new InvalidOperationException();
+    //public ScalarQuantity GetQuantityFromBaseComposition(ScalarComposition<IUnit> composition)
+    //{
+    //    var resultingQuantComp = ScalarEmptyQuantity.BaseQuantityComposition;
+    //    foreach (var (unit, power) in composition)
+    //    {
+    //        NamedComposition<IBaseQuantity> quantComp;
+    //        if (unit is IScalarUnit s)
+    //        {
+    //            quantComp = s.Quantity.BaseQuantityComposition.Pow(power);
+    //        }
+    //        else if (unit is IVectorUnit v)
+    //        {
+    //            if (power != 1)
+    //                throw new InvalidOperationException();
 
-                quantComp = v.Quantity.BaseQuantityComposition;
-            }
-            else
-            {
-                throw new NotImplementedException();
-            }
+    //            quantComp = v.Quantity.BaseQuantityComposition;
+    //        }
+    //        else
+    //        {
+    //            throw new NotImplementedException();
+    //        }
 
-            resultingQuantComp = (resultingQuantComp * quantComp);
-        }
+    //        resultingQuantComp = (resultingQuantComp * quantComp);
+    //    }
 
-        return GetQuantityFromBaseComposition(resultingQuantComp);
-    }
+    //    return GetQuantityFromBaseComposition(resultingQuantComp);
+    //}
 
-    public VectorQuantity GetQuantityFromBaseComposition(VectorComposition<IUnit> composition)
-    {
-        var resultingQuantComp = VectorEmptyQuantity.BaseQuantityComposition;
-        foreach (var (unit, power) in composition)
-        {
-            var quantComp = unit.Quantity.BaseQuantityComposition.Pow(power);
-            resultingQuantComp *= quantComp;
-        }
+    //public VectorQuantity GetQuantityFromBaseComposition(VectorComposition<IUnit> composition)
+    //{
+    //    var resultingQuantComp = VectorEmptyQuantity.BaseQuantityComposition;
+    //    foreach (var (unit, power) in composition)
+    //    {
+    //        var quantComp = unit.Quantity.BaseQuantityComposition.Pow(power);
+    //        resultingQuantComp *= quantComp;
+    //    }
 
-        return GetQuantityFromBaseComposition(resultingQuantComp);
-    }
+    //    return GetQuantityFromBaseComposition(resultingQuantComp);
+    //}
 
-    public Quantity GetQuantityFromBaseComposition(NamedComposition<IUnit> composition)
-    {
-        var resultingQuantComp = EmptyQuantity.BaseQuantityComposition;
-        foreach (var (unit, power) in composition)
-        {
-            var quantComp = unit.Quantity.BaseQuantityComposition.Pow(power);
-            resultingQuantComp *= quantComp;
-        }
+    //public Quantity GetQuantityFromBaseComposition(NamedComposition<IUnit> composition)
+    //{
+    //    var resultingQuantComp = EmptyQuantity.BaseQuantityComposition;
+    //    foreach (var (unit, power) in composition)
+    //    {
+    //        var quantComp = unit.Quantity.BaseQuantityComposition.Pow(power);
+    //        resultingQuantComp *= quantComp;
+    //    }
 
-        return GetQuantityFromBaseComposition(resultingQuantComp);
-    }
+    //    return GetQuantityFromBaseComposition(resultingQuantComp);
+    //}
 
     public ScalarQuantity GetScalarQuantityFromBaseComposition(ScalarComposition<IBaseQuantity> composition) => (ScalarQuantity)GetQuantityFromBaseComposition(composition);
 
@@ -754,12 +754,12 @@ public class Database
         return new VectorDerivedQuantity(this, (VectorComposition<IBaseQuantity>)composition);
     }
 
-    public Unit DefineFromComposition(string name, NamedComposition<IUnit> composition)
-    {
-        var quantity = GetQuantityFromBaseComposition(composition);
-        if (quantity is BaseQuantity)
-            return new BaseUnit(this, name, composition);
-        else
-            return new DerivedUnit(this, name, composition);
-    }
+    //public Unit DefineFromComposition(string name, NamedComposition<IUnit> composition)
+    //{
+    //    var quantity = GetQuantityFromBaseComposition(composition);
+    //    if (quantity is BaseQuantity)
+    //        return new BaseUnit(this, name, composition);
+    //    else
+    //        return new DerivedUnit(this, name, composition);
+    //}
 }

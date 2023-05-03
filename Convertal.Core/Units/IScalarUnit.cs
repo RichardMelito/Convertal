@@ -103,14 +103,22 @@ public interface IScalarUnit : IUnit, IScalar<IScalarUnit, IVectorUnit>
 
     ScalarTerm ConvertToFundamental(decimal magnitudeOfThis) => ConvertToFundamental(this, magnitudeOfThis);
 
-    IScalarUnit IScalar<IScalarUnit, IVectorUnit>.Pow(decimal power) => Database.GetUnitFromBaseComposition(UnitComposition.Pow(power));
+    IScalarUnit IScalar<IScalarUnit, IVectorUnit>.Pow(decimal power) =>
+        Database.GetScalarQuantityFromBaseComposition(Quantity.BaseQuantityComposition.Pow(power)).FundamentalUnit;
+    //IScalarUnit IScalar<IScalarUnit, IVectorUnit>.Pow(decimal power) => Database.GetUnitFromBaseComposition(UnitComposition.Pow(power));
 
-    IScalarUnit IScalar<IScalarUnit, IVectorUnit>.Multiply(IScalarUnit other) => Database.GetUnitFromBaseComposition(UnitComposition * other.UnitComposition); //Multiply(other);
+    IScalarUnit IScalar<IScalarUnit, IVectorUnit>.Multiply(IScalarUnit other) =>
+        Database.GetScalarQuantityFromBaseComposition(Quantity.BaseQuantityComposition * other.Quantity.BaseQuantityComposition).FundamentalUnit;
+    //IScalarUnit IScalar<IScalarUnit, IVectorUnit>.Multiply(IScalarUnit other) => Database.GetUnitFromBaseComposition(UnitComposition * other.UnitComposition); //Multiply(other);
     //new IScalarUnit Multiply(IScalarUnit other) => Database.GetUnitFromBaseComposition(UnitComposition * other.UnitComposition);
 
-    IVectorUnit IScalar<IScalarUnit, IVectorUnit>.Multiply(IVectorUnit vector) => Database.GetUnitFromBaseComposition(UnitComposition * vector.UnitComposition); //Multiply(vector);
+    IVectorUnit IScalar<IScalarUnit, IVectorUnit>.Multiply(IVectorUnit vector) =>
+        Database.GetVectorQuantityFromBaseComposition(Quantity.BaseQuantityComposition * vector.Quantity.BaseQuantityComposition).FundamentalUnit;
+    //IVectorUnit IScalar<IScalarUnit, IVectorUnit>.Multiply(IVectorUnit vector) => Database.GetUnitFromBaseComposition(UnitComposition * vector.UnitComposition); //Multiply(vector);
     //new IVectorUnit Multiply(IVectorUnit vector) => Database.GetUnitFromBaseComposition(UnitComposition * vector.UnitComposition);
 
-    IScalarUnit IScalar<IScalarUnit, IVectorUnit>.Divide(IScalarUnit other) => Database.GetUnitFromBaseComposition(UnitComposition / other.UnitComposition); //Divide(other);
+    IScalarUnit IScalar<IScalarUnit, IVectorUnit>.Divide(IScalarUnit other) =>
+        Database.GetScalarQuantityFromBaseComposition(Quantity.BaseQuantityComposition / other.Quantity.BaseQuantityComposition).FundamentalUnit;
+    //IScalarUnit IScalar<IScalarUnit, IVectorUnit>.Divide(IScalarUnit other) => Database.GetUnitFromBaseComposition(UnitComposition / other.UnitComposition); //Divide(other);
     //new IScalarUnit Divide(IScalarUnit other) => Database.GetUnitFromBaseComposition(UnitComposition / other.UnitComposition);
 }
