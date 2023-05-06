@@ -6,4 +6,6 @@ public interface IVectorOrScalar
 {
     bool IsVector { get; }
     bool IsScalar => !IsVector;
+    IVectorOrScalar ToScalar();
+    static abstract IVectorOrScalar GetEmpty(bool vector);
 }

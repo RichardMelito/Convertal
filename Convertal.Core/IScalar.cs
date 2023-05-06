@@ -22,4 +22,7 @@ public interface IScalar<TScalar, TVector> : IVectorOrScalar
     TScalar Divide(TScalar other);
 
     TScalar Pow(decimal power);
+
+    IVectorOrScalar IVectorOrScalar.ToScalar() => this;
+    new TScalar ToScalar() => (TScalar)this;
 }

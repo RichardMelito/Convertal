@@ -16,26 +16,35 @@ public class ScalarComposition<T> : NamedComposition<T>,
 {
     public static readonly ScalarComposition<T> Empty;
 
-    public VectorComposition<T>? VectorAnalog { get; internal set; }
+    public VectorComposition<T>? VectorAnalog
+    {
+        get
+        {
+            if (this == Empty)
+                return VectorComposition<T>.Empty;
+
+            var emptyKvp = new KeyValuePair<T, decimal>((T)T.GetEmpty(true), 1m);
+            return new(
+                this
+                .Append(emptyKvp)
+                .ToDictionary(kvp => kvp.Key, kvp => kvp.Value));
+        }
+    }
 
     public override bool IsVector => false;
 
     static ScalarComposition()
     {
-        Empty = new ScalarComposition<T>(
-            new Dictionary<T, decimal>().ToImmutableDictionary())
-        {
-            VectorAnalog = VectorComposition<T>.Empty,
-        };
+        Empty = new ScalarComposition<T>(new Dictionary<T, decimal>().ToImmutableDictionary());
     }
 
     internal ScalarComposition(IReadOnlyDictionary<T, decimal> composition)
-        : base(composition)
+        : base(MakeAllInDictScalar(composition))
     {
     }
 
     public ScalarComposition(T key)
-        : base(key)
+        : base(key.IsVector ? key : throw new InvalidOperationException())
     {
     }
 

@@ -16,29 +16,46 @@ public class VectorComposition<T> : NamedComposition<T>,
 {
     public static readonly VectorComposition<T> Empty;
 
-    public ScalarComposition<T> ScalarAnalog { get; internal set; }
+    public ScalarComposition<T> ScalarAnalog
+    {
+        get
+        {
+            if (this == Empty)
+                return ScalarComposition<T>.Empty;
+
+            return new(MakeAllInDictScalar(this));
+        }
+    }
 
     public override bool IsVector => true;
 
     static VectorComposition()
     {
-        Empty = new VectorComposition<T>(
-            new Dictionary<T, decimal>().ToImmutableDictionary())
-        {
-            ScalarAnalog = ScalarComposition<T>.Empty,
-        };
+        Empty = new VectorComposition<T>(new Dictionary<T, decimal>().ToImmutableDictionary());
     }
 
     internal VectorComposition(IReadOnlyDictionary<T, decimal> composition)
-        : base(composition)
+        : base(ThrowIfDictInvalid(composition))
     {
-
+        
     }
 
     public VectorComposition(T key) 
-        : base(key)
+        : base(key.IsScalar ? key : throw new InvalidOperationException())
     {
         
+    }
+
+    private static IReadOnlyDictionary<T, decimal> ThrowIfDictInvalid(IReadOnlyDictionary<T, decimal> composition)
+    {
+        var vectorKvps = composition.Where(kvp => kvp.Key.IsVector);
+        if (!vectorKvps.Any())
+            throw new InvalidOperationException();
+
+        if (vectorKvps.Any(kvp => kvp.Value < 1m))
+            throw new InvalidOperationException();
+
+        return composition;
     }
 
     //public (ScalarComposition<T> ScalarComponent, VectorComposition<T> VectorComponent) GetComponents()
@@ -55,7 +72,7 @@ public class VectorComposition<T> : NamedComposition<T>,
 
     //    return (new (scalarDict), new(vectorDict));
     //}
-    
+
     public ScalarComposition<T> DotP(VectorComposition<T> other)
     {
         // Is this really sufficient?

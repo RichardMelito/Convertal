@@ -10,8 +10,8 @@ public interface IVector<TVector, TScalar> : IVectorOrScalar
 {
     bool IVectorOrScalar.IsVector => true;
 
-    // TODO make things nullable
-    TScalar? ScalarAnalog { get;}
+    // TODO make things non-nullable again and do default generation
+    TScalar ScalarAnalog { get;}
 
     static virtual TVector operator /(TVector left, TScalar right) => left.Divide(right);
 
@@ -23,4 +23,7 @@ public interface IVector<TVector, TScalar> : IVectorOrScalar
 
     TScalar DotP(TVector other);
     TVector CrossP(TVector other);
+
+    IVectorOrScalar IVectorOrScalar.ToScalar() => ScalarAnalog;
+    new TScalar ToScalar() => ScalarAnalog;
 }

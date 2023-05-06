@@ -126,7 +126,7 @@ public abstract class NamedComposition<T> : IVectorOrScalar, IReadOnlyDictionary
 
             return lhsScalar * ((ScalarComposition<T>)rhs);
         }
-        
+
     }
 
     public bool Equals(NamedComposition<T>? other)
@@ -205,4 +205,24 @@ public abstract class NamedComposition<T> : IVectorOrScalar, IReadOnlyDictionary
     {
         return ((IEnumerable)_innerDictionary).GetEnumerator();
     }
+
+    protected static IReadOnlyDictionary<T, decimal> MakeAllInDictScalar(
+        IReadOnlyDictionary<T, decimal> composition) =>
+        composition.ToDictionary(kvp => (T)kvp.Key.ToScalar(), kvp => kvp.Value);
+
+    //protected static IReadOnlyDictionary<T, decimal> MakeAllButOneInDictScalar(
+    //    IReadOnlyDictionary<T, decimal> composition)
+    //{
+    //    var currentVectors = composition.Where(kvp => kvp.Key.IsVector).ToImmutableArray();
+    //    var scalars = composition
+    //        .Where(kvp => kvp.Key.IsScalar)
+    //        .Concat(currentVectors.SkipLast(1));
+    //}
+
+    static IVectorOrScalar IVectorOrScalar.GetEmpty(bool vector) => GetEmpty(vector);
+
+    public static NamedComposition<T> GetEmpty(bool vector) =>
+        vector ? VectorComposition<T>.Empty : ScalarComposition<T>.Empty;
+
+    public IVectorOrScalar ToScalar() => throw new NotImplementedException();
 }
