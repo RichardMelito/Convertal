@@ -219,10 +219,27 @@ public abstract class NamedComposition<T> : IVectorOrScalar, IReadOnlyDictionary
     //        .Concat(currentVectors.SkipLast(1));
     //}
 
-    static IVectorOrScalar IVectorOrScalar.GetEmpty(bool vector) => GetEmpty(vector);
+    //static IVectorOrScalar IVectorOrScalar.GetEmpty(bool vector) => GetEmpty(vector);
 
-    public static NamedComposition<T> GetEmpty(bool vector) =>
-        vector ? VectorComposition<T>.Empty : ScalarComposition<T>.Empty;
+    //public static NamedComposition<T> GetEmpty(bool vector) =>
+    //    vector ? VectorComposition<T>.Empty : ScalarComposition<T>.Empty;
 
-    public IVectorOrScalar ToScalar() => throw new NotImplementedException();
+    IVectorOrScalar IVectorOrScalar.ToScalar() => ToScalar();
+    IVectorOrScalar? IVectorOrScalar.ToVector() => ToVector();
+
+    public ScalarComposition<T> ToScalar()
+    {
+        if (IsVector)
+            return ((VectorComposition<T>)this).ScalarAnalog;
+
+        return (ScalarComposition<T>)this;
+    }
+
+    public VectorComposition<T>? ToVector()
+    {
+        if (IsVector)
+            return (VectorComposition<T>)this;
+
+        return ((ScalarComposition<T>)this).VectorAnalog;
+    }
 }

@@ -23,11 +23,33 @@ public class ScalarComposition<T> : NamedComposition<T>,
             if (this == Empty)
                 return VectorComposition<T>.Empty;
 
-            var emptyKvp = new KeyValuePair<T, decimal>((T)T.GetEmpty(true), 1m);
-            return new(
-                this
-                .Append(emptyKvp)
-                .ToDictionary(kvp => kvp.Key, kvp => kvp.Value));
+            var nullableVectorElem = this
+                .Select(kvp => new KeyValuePair<T?, decimal>((T?)kvp.Key.ToVector(), kvp.Value))
+                .Where(kvp => kvp.Value >= 1m && kvp.Key is not null)
+                .Select(kvp => new KeyValuePair<T, decimal>((T)kvp.Key!.ToVector()!, kvp.Value))
+                .OrderBy(kvp => kvp.Value % 1m)
+                .ThenBy(kvp => kvp.Value)
+                .Cast<KeyValuePair<T, decimal>?>()
+                .FirstOrDefault();
+
+            if (nullableVectorElem == null)
+                return null;
+
+            var vectorKvp = nullableVectorElem.Value;
+            var scalarKey = (T)vectorKvp.Key.ToScalar();
+            var copyDict = this.ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
+            if (vectorKvp.Value == 1m)
+            {
+                copyDict.Remove(scalarKey);
+                copyDict.Add(vectorKvp.Key, 1m);
+            }
+            else
+            {
+                copyDict[scalarKey] -= 1m;
+                copyDict.Add(vectorKvp.Key, 1m);
+            }
+
+            return new(copyDict);
         }
     }
 
@@ -110,7 +132,8 @@ public class ScalarComposition<T> : NamedComposition<T>,
         return new(MultiplyOrDivide(lhs, rhs, false));
     }
 
-    public static VectorComposition<T> operator *(VectorComposition<T> vector, ScalarComposition<T> scalar) => scalar * vector;
+    public static VectorComposition<T> operator *(VectorComposition<T> vector, ScalarComposition<T> scalar)
+        => scalar * vector;
 
     public static VectorComposition<T> operator *(ScalarComposition<T> scalar, VectorComposition<T> vector)
     {
