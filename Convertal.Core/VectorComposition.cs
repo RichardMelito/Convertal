@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
+using System.Numerics;
 using System.Text;
 using Convertal.Core.Extensions;
 
@@ -35,7 +36,7 @@ public class VectorComposition<T> : NamedComposition<T>,
     }
 
     internal VectorComposition(IReadOnlyDictionary<T, decimal> composition)
-        : base(ThrowIfDictInvalid(composition))
+        : base(/*ThrowIfDictInvalid(composition)*/composition)
     {
         
     }
@@ -46,17 +47,17 @@ public class VectorComposition<T> : NamedComposition<T>,
         
     }
 
-    private static IReadOnlyDictionary<T, decimal> ThrowIfDictInvalid(IReadOnlyDictionary<T, decimal> composition)
-    {
-        var vectorKvps = composition.Where(kvp => kvp.Key.IsVector);
-        if (!vectorKvps.Any())
-            throw new InvalidOperationException();
+    //private static IReadOnlyDictionary<T, decimal> ThrowIfDictInvalid(IReadOnlyDictionary<T, decimal> composition)
+    //{
+    //    var vectorKvps = composition.Where(kvp => kvp.Key.IsVector);
+    //    if (!vectorKvps.Any())
+    //        throw new InvalidOperationException();
 
-        if (vectorKvps.Any(kvp => kvp.Value < 1m))
-            throw new InvalidOperationException();
+    //    if (vectorKvps.Any(kvp => kvp.Value < 1m))
+    //        throw new InvalidOperationException();
 
-        return composition;
-    }
+    //    return composition;
+    //}
 
     //public (ScalarComposition<T> ScalarComponent, VectorComposition<T> VectorComponent) GetComponents()
     //{
@@ -73,42 +74,36 @@ public class VectorComposition<T> : NamedComposition<T>,
     //    return (new (scalarDict), new(vectorDict));
     //}
 
-    public ScalarComposition<T> DotP(VectorComposition<T> other)
-    {
-        // Is this really sufficient?
-        return ScalarAnalog * other.ScalarAnalog;
-    }
+    public ScalarComposition<T> DotP(VectorComposition<T> other) => ScalarAnalog * other.ScalarAnalog;
 
     public VectorComposition<T> CrossP(VectorComposition<T> other)
-    {
-        // Just a copy-paste from ScalarComposition
-        // Is this really sufficient???
-        SortedDictionary<T, decimal> resultingComposition = new();
+        => VectorMultiplyOrDivide(
+            ScalarAnalog,
+            other.ScalarAnalog,
+            true,
+            Keys.Concat(other.Keys).Where(key => key.IsVector));
+    //{
+    //    var resultingComposition = MultiplyOrDivide(ScalarAnalog, other.ScalarAnalog, true);
+    //    foreach (var vectorElem in this.Concat(other).Where(kvp => kvp.Key.IsVector))
+    //    {
+    //        var scalarKey = (T)vectorElem.Key.ToScalar();
+    //        if (resultingComposition.TryGetValue(scalarKey, out var resultingPower))
+    //        {
+    //            if (resultingPower == 1m)
+    //            {
+    //                resultingComposition.Remove(scalarKey);
+    //                resultingComposition.Add(vectorElem.Key, 1m);
+    //            }
+    //            else if (resultingPower > 1m)
+    //            {
+    //                resultingComposition[scalarKey] -= 1m;
+    //                resultingComposition.Add(vectorElem.Key, 1m);
+    //            }
+    //        }
+    //    }
+    //    return new(resultingComposition);
+    //}
 
-        var keysInBothSides = Keys.Intersect(other.Keys);
-        foreach (var bothSidesKey in keysInBothSides)
-        {
-            var resultingPower = this[bothSidesKey] + other[bothSidesKey];
-
-            if (resultingPower != 0.0m)
-                resultingComposition[bothSidesKey] = resultingPower;
-        }
-
-        var keysInthis = Keys.Except(keysInBothSides);
-        foreach (var thisKey in keysInthis)
-            resultingComposition[thisKey] = this[thisKey];
-
-        var keysInother = other.Keys.Except(keysInBothSides);
-        foreach (var otherKey in keysInother)
-            resultingComposition[otherKey] = other[otherKey];
-
-        if (resultingComposition.Count == 0)
-            return Empty;
-
-        return new VectorComposition<T>(resultingComposition.AsReadOnly());
-    }
-
-    // TODO these members really need to be cleaned up, they seem like they could get accidentally recursive
     public VectorComposition<T> Multiply(ScalarComposition<T> scalar) => scalar * this;
     public VectorComposition<T> Divide(ScalarComposition<T> scalar) => this / scalar;
 
@@ -116,29 +111,36 @@ public class VectorComposition<T> : NamedComposition<T>,
     public static VectorComposition<T> operator &(VectorComposition<T> left, VectorComposition<T> right) => left.CrossP(right);
 
     public static VectorComposition<T> operator /(VectorComposition<T> vector, ScalarComposition<T> scalar)
-    {
-        SortedDictionary<T, decimal> resultingComposition = new();
+        => VectorMultiplyOrDivide(
+            vector.ScalarAnalog,
+            scalar,
+            false,
+            vector.Keys.Where(key => key.IsVector));
+    //{
 
-        var keysInBothSides = scalar.Keys.Intersect(vector.Keys);
-        foreach (var bothSidesKey in keysInBothSides)
-        {
-            var resultingPower = scalar[bothSidesKey] - vector[bothSidesKey];
 
-            if (resultingPower != 0.0m)
-                resultingComposition[bothSidesKey] = resultingPower;
-        }
+    //    SortedDictionary<T, decimal> resultingComposition = new();
 
-        var keysInLhs = scalar.Keys.Except(keysInBothSides);
-        foreach (var lhsKey in keysInLhs)
-            resultingComposition[lhsKey] = scalar[lhsKey];
+    //    var keysInBothSides = scalar.Keys.Intersect(vector.Keys);
+    //    foreach (var bothSidesKey in keysInBothSides)
+    //    {
+    //        var resultingPower = scalar[bothSidesKey] - vector[bothSidesKey];
 
-        var keysInRhs = vector.Keys.Except(keysInBothSides);
-        foreach (var rhsKey in keysInRhs)
-            resultingComposition[rhsKey] = -vector[rhsKey];
+    //        if (resultingPower != 0.0m)
+    //            resultingComposition[bothSidesKey] = resultingPower;
+    //    }
 
-        if (resultingComposition.Count == 0)
-            return VectorComposition<T>.Empty;
+    //    var keysInLhs = scalar.Keys.Except(keysInBothSides);
+    //    foreach (var lhsKey in keysInLhs)
+    //        resultingComposition[lhsKey] = scalar[lhsKey];
 
-        return new VectorComposition<T>(resultingComposition.AsReadOnly());
-    }
+    //    var keysInRhs = vector.Keys.Except(keysInBothSides);
+    //    foreach (var rhsKey in keysInRhs)
+    //        resultingComposition[rhsKey] = -vector[rhsKey];
+
+    //    if (resultingComposition.Count == 0)
+    //        return VectorComposition<T>.Empty;
+
+    //    return new VectorComposition<T>(resultingComposition.AsReadOnly());
+    //}
 }

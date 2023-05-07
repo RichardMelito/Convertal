@@ -26,4 +26,7 @@ public interface IVector<TVector, TScalar> : IVectorOrScalar
 
     IVectorOrScalar IVectorOrScalar.ToScalar() => ScalarAnalog;
     new TScalar ToScalar() => ScalarAnalog;
+
+    IVectorOrScalar? IVectorOrScalar.ToVector() => this;
+    new TVector? ToVector() => (TVector)this;
 }

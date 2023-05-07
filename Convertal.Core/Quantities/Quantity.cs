@@ -112,4 +112,22 @@ public abstract class Quantity : MaybeNamed, IQuantity
         _disposed = true;
         base.DisposeBody(disposeDependents);
     }
+
+    IVectorOrScalar IVectorOrScalar.ToScalar() => ToScalar();
+    public ScalarQuantity ToScalar()
+    {
+        if (IsVector)
+            return ((VectorQuantity)this).ScalarAnalog;
+
+        return (ScalarQuantity) this;
+    }
+
+    IVectorOrScalar? IVectorOrScalar.ToVector() => ToVector();
+    public VectorQuantity? ToVector()
+    {
+        if (IsVector)
+            return (VectorQuantity)this;
+
+        return ((ScalarQuantity)this).VectorAnalog;
+    }
 }

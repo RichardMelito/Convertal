@@ -14,7 +14,7 @@ public abstract class VectorQuantity : Quantity, IVector<VectorQuantity, ScalarQ
 
     public override bool IsVector => true;
 
-    public abstract ScalarQuantity? ScalarAnalog { get; }
+    public abstract ScalarQuantity ScalarAnalog { get; }
 
     protected VectorQuantity(Database database, string? name, string? symbol)
         : base(database, name, symbol)

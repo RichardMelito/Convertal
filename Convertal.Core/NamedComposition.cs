@@ -6,6 +6,8 @@ using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
+using System.Numerics;
+using System.Runtime.Intrinsics;
 using System.Text;
 using Convertal.Core.Extensions;
 
@@ -208,7 +210,8 @@ public abstract class NamedComposition<T> : IVectorOrScalar, IReadOnlyDictionary
 
     protected static IReadOnlyDictionary<T, decimal> MakeAllInDictScalar(
         IReadOnlyDictionary<T, decimal> composition) =>
-        composition.ToDictionary(kvp => (T)kvp.Key.ToScalar(), kvp => kvp.Value);
+        new SortedDictionary<T, decimal>(composition
+            .ToDictionary(kvp => (T)kvp.Key.ToScalar(), kvp => kvp.Value));
 
     //protected static IReadOnlyDictionary<T, decimal> MakeAllButOneInDictScalar(
     //    IReadOnlyDictionary<T, decimal> composition)
@@ -241,5 +244,65 @@ public abstract class NamedComposition<T> : IVectorOrScalar, IReadOnlyDictionary
             return (VectorComposition<T>)this;
 
         return ((ScalarComposition<T>)this).VectorAnalog;
+    }
+
+    internal static SortedDictionary<T, decimal> MultiplyOrDivide(
+        ScalarComposition<T> lhs,
+        ScalarComposition<T> rhs,
+        bool multiplication)
+    {
+        var multiplyFactor = multiplication ? 1.0m : -1.0m;
+        SortedDictionary<T, decimal> resultingComposition = new();
+
+        var keysInBothSides = lhs.Keys.Intersect(rhs.Keys);
+        foreach (var bothSidesKey in keysInBothSides)
+        {
+            var resultingPower = lhs[bothSidesKey] +
+                (multiplyFactor * rhs[bothSidesKey]);
+
+            if (resultingPower != 0.0m)
+                resultingComposition[bothSidesKey] = resultingPower;
+        }
+
+        var keysInLhs = lhs.Keys.Except(keysInBothSides);
+        foreach (var lhsKey in keysInLhs)
+            resultingComposition[lhsKey] = lhs[lhsKey];
+
+        var keysInRhs = rhs.Keys.Except(keysInBothSides);
+        foreach (var rhsKey in keysInRhs)
+            resultingComposition[rhsKey] = rhs[rhsKey] * multiplyFactor;
+
+        return resultingComposition;
+    }
+
+    internal static VectorComposition<T> VectorMultiplyOrDivide(
+        ScalarComposition<T> lhs,
+        ScalarComposition<T> rhs,
+        bool multiplication,
+        IEnumerable<T> vectorElements)
+    {
+        var resultingComposition = MultiplyOrDivide(lhs, rhs, multiplication);
+        if (resultingComposition.Count == 0)
+            return VectorComposition<T>.Empty;
+
+        foreach (var vectorElem in vectorElements)
+        {
+            var scalarKey = (T)vectorElem.ToScalar();
+            if (resultingComposition.TryGetValue(scalarKey, out var resultingPower))
+            {
+                if (resultingPower == 1m)
+                {
+                    resultingComposition.Remove(scalarKey);
+                    resultingComposition.Add(vectorElem, 1m);
+                }
+                else if (resultingPower > 1m)
+                {
+                    resultingComposition[scalarKey] -= 1m;
+                    resultingComposition.Add(vectorElem, 1m);
+                }
+            }
+        }
+
+        return new(resultingComposition);
     }
 }
