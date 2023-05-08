@@ -57,7 +57,7 @@ public record VectorTerm : Term, IVector<VectorTerm, ScalarTerm>
     protected override string AmountString => $"[{I}_i, {J}_j, {K}_k]";
 
     // TODO ensure that unit's analogs always have same fundamental multiplier
-    public ScalarTerm? ScalarAnalog => Unit.ScalarAnalog?.ToTerm(Magnitude);
+    public ScalarTerm ScalarAnalog => Unit.ScalarAnalog.ToTerm(Magnitude);
 
     public VectorTerm(decimal magnitude, IVectorUnit unit)
         : base(unit)

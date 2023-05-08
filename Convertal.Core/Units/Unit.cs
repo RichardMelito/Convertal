@@ -169,4 +169,7 @@ public abstract class Unit : MaybeNamed, IUnit
         _disposed = true;
         base.DisposeBody(disposeDependents);
     }
+
+    //public abstract IVectorOrScalar ToScalar();
+    //public abstract IVectorOrScalar? ToVector();
 }

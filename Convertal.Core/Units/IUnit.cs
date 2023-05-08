@@ -63,4 +63,20 @@ public interface IUnit : IVectorOrScalar, IMaybeNamed, IEquatable<IUnit>, ICompa
     {
         return MaybeNamed.MaybeNameComparer.PerformCompare(this, other);
     }
+
+    IVectorOrScalar IVectorOrScalar.ToScalar()
+    {
+        if (IsScalar)
+            return this;
+
+        return ((IVectorUnit)this).ScalarAnalog;
+    }
+
+    IVectorOrScalar? IVectorOrScalar.ToVector()
+    {
+        if (IsVector)
+            return this;
+
+        return ((IScalarUnit)this).VectorAnalog;
+    }
 }

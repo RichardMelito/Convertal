@@ -23,9 +23,9 @@ public interface IScalar<TScalar, TVector> : IVectorOrScalar
 
     TScalar Pow(decimal power);
 
-    IVectorOrScalar IVectorOrScalar.ToScalar() => this;
-    new TScalar ToScalar() => (TScalar)this;
+    //IVectorOrScalar IVectorOrScalar.ToScalar() => this;
+    //new TScalar ToScalar() => (TScalar)this;
 
-    IVectorOrScalar? IVectorOrScalar.ToVector() => VectorAnalog;
-    new TVector? ToVector() => VectorAnalog;
+    //IVectorOrScalar? IVectorOrScalar.ToVector() => VectorAnalog;
+    //new TVector? ToVector() => VectorAnalog;
 }

@@ -26,6 +26,22 @@ public abstract record Term : IVectorOrScalar
         return AmountString + " " + Unit.ToStringSymbol();
     }
 
+    IVectorOrScalar IVectorOrScalar.ToScalar()
+    {
+        if (!IsVector)
+            return this;
+
+        return ((VectorTerm)this).ScalarAnalog;
+    }
+
+    IVectorOrScalar? IVectorOrScalar.ToVector()
+    {
+        if (IsVector)
+            return this;
+
+        return ((ScalarTerm)this).VectorAnalog;
+    }
+
     public abstract Term Multiply(decimal multiplier);
     public abstract Term Divide(decimal divisor);
 

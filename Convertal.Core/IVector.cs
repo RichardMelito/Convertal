@@ -24,9 +24,9 @@ public interface IVector<TVector, TScalar> : IVectorOrScalar
     TScalar DotP(TVector other);
     TVector CrossP(TVector other);
 
-    IVectorOrScalar IVectorOrScalar.ToScalar() => ScalarAnalog;
-    new TScalar ToScalar() => ScalarAnalog;
+    //IVectorOrScalar IVectorOrScalar.ToScalar() => ScalarAnalog;
+    //new TScalar ToScalar() => ScalarAnalog;
 
-    IVectorOrScalar? IVectorOrScalar.ToVector() => this;
-    new TVector? ToVector() => (TVector)this;
+    //IVectorOrScalar? IVectorOrScalar.ToVector() => this;
+    //new TVector? ToVector() => (TVector)this;
 }

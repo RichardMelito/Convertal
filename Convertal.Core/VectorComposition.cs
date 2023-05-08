@@ -143,4 +143,21 @@ public class VectorComposition<T> : NamedComposition<T>,
 
     //    return new VectorComposition<T>(resultingComposition.AsReadOnly());
     //}
+
+
+    public static VectorComposition<T> CreateFromExistingBaseComposition<TExistingBase>(
+        VectorComposition<TExistingBase> existingBaseComposition,
+        Func<TExistingBase, T> convertor)
+
+        where TExistingBase : IBase, IComparable<TExistingBase>, IEquatable<TExistingBase>
+    {
+        SortedDictionary<T, decimal> convertedComposition = new();
+        foreach (var (existingBase, power) in existingBaseComposition)
+        {
+            var convertedBase = convertor(existingBase);
+            convertedComposition.Add(convertedBase, power);
+        }
+
+        return new VectorComposition<T>(convertedComposition);
+    }
 }

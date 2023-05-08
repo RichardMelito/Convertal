@@ -116,4 +116,23 @@ public class ScalarComposition<T> : NamedComposition<T>,
             vector.ScalarAnalog,
             true,
             vector.Keys.Where(key => key.IsVector));
+
+
+    internal static ScalarComposition<T> CreateFromExistingBaseComposition<TExistingBase>(
+        ScalarComposition<TExistingBase> existingBaseComposition,
+        Func<TExistingBase, T> convertor)
+
+        where TExistingBase : IBase, IComparable<TExistingBase>, IEquatable<TExistingBase>
+    {
+        // TODO might need to store whether the multiplies are dots or crosses in the composition
+
+        SortedDictionary<T, decimal> convertedComposition = new();
+        foreach (var (existingBase, power) in existingBaseComposition)
+        {
+            var convertedBase = convertor(existingBase);
+            convertedComposition.Add(convertedBase, power);
+        }
+
+        return new ScalarComposition<T>(convertedComposition);
+    }
 }
