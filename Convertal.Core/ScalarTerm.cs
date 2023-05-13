@@ -79,7 +79,7 @@ public record ScalarTerm : Term, IScalar<ScalarTerm, VectorTerm>
     public static ScalarTerm operator /(decimal numerator, ScalarTerm term)
     {
         var resMagnitude = numerator / term.ConvertUnitToFundamental().Magnitude;
-        var resQuantity = term.Quantity.Database.EmptyQuantity / term.Quantity;
+        var resQuantity = term.Quantity.Database.ScalarEmptyQuantity / term.Quantity;
         return new(resMagnitude, resQuantity.FundamentalUnit);
     }
 

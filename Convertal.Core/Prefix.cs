@@ -45,59 +45,17 @@ public class Prefix : MaybeNamed, INamed
         Multiplier = multiplier;
     }
 
-    public ScalarPrefixedBaseUnit this[ScalarBaseUnit unit]
-    {
-        get
-        {
-            return Database.GetPrefixedUnit(unit, this);
-        }
-    }
+    public ScalarPrefixedBaseUnit this[ScalarBaseUnit unit] => Database.GetPrefixedUnit(unit, this);
 
-    public VectorPrefixedBaseUnit this[VectorBaseUnit unit]
-    {
-        get
-        {
-            return Database.GetPrefixedUnit(unit, this);
-        }
-    }
+    public VectorPrefixedBaseUnit this[VectorBaseUnit unit] => Database.GetPrefixedUnit(unit, this);
 
-    public ScalarPrefixedDerivedUnit this[ScalarDerivedUnit unit]
-    {
-        get
-        {
-            return Database.GetPrefixedUnit(unit, this);
-        }
-    }
+    public ScalarPrefixedDerivedUnit this[ScalarDerivedUnit unit] => Database.GetPrefixedUnit(unit, this);
 
-    public VectorPrefixedDerivedUnit this[VectorDerivedUnit unit]
-    {
-        get
-        {
-            return Database.GetPrefixedUnit(unit, this);
-        }
-    }
+    public VectorPrefixedDerivedUnit this[VectorDerivedUnit unit] => Database.GetPrefixedUnit(unit, this);
 
-    public ScalarPrefixedUnit this[ScalarUnit unit]
-    {
-        get
-        {
-            return Database.GetPrefixedUnit(unit, this);
-        }
-    }
+    public ScalarPrefixedUnit this[ScalarUnit unit] => (ScalarPrefixedUnit)Database.GetPrefixedUnit(unit, this);
 
-    public VectorPrefixedUnit this[VectorUnit unit]
-    {
-        get
-        {
-            return Database.GetPrefixedUnit(unit, this);
-        }
-    }
+    public VectorPrefixedUnit this[VectorUnit unit] => (VectorPrefixedUnit)Database.GetPrefixedUnit(unit, this);
 
-    public PrefixedUnit this[Unit unit]
-    {
-        get
-        {
-            return Database.GetPrefixedUnit(unit, this);
-        }
-    }
+    public PrefixedUnit this[Unit unit] => Database.GetPrefixedUnit(unit, this);
 }

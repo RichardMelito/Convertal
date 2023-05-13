@@ -44,8 +44,8 @@ public static class Extensions
         {
             return x switch
             {
-                BaseQuantity => 300,
-                DerivedQuantity => 200,
+                IBaseQuantity => 300,
+                IDerivedQuantity => 200,
                 IBaseUnit { IsFundamental: true } => 100,
                 IDerivedUnit { IsFundamental: true } => 80,
                 IBaseUnit => 50,

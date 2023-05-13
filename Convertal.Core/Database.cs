@@ -261,7 +261,14 @@ public class Database
             $"{typeof(T).Name} with {(isSymbol ? "symbol" : "name")} {name}.");
     }
 
+    public MaybeNamed GetFromName(string name, Type type, bool isSymbol = false)
+    {
+        if (TryGetFromName(name, type, out var named, isSymbol))
+            return named;
 
+        throw new InvalidOperationException($"No instances of " +
+            $"{type.Name} with {(isSymbol ? "symbol" : "name")} {name}.");
+    }
 
     public void ThrowIfNameNotValid<T>(string name, bool isSymbol = false)
         where T : MaybeNamed
@@ -548,7 +555,7 @@ public class Database
     internal ScalarDerivedQuantity DefineScalarDerivedQuantity(DerivedQuantityProto proto)
     {
         ScalarComposition<IBaseQuantity> composition = new(proto.BaseQuantityComposition
-            .ToDictionary(kvp => GetFromName<IBaseQuantity>(kvp.Key), kvp => kvp.Value));
+            .ToDictionary(kvp => (IBaseQuantity)GetFromName<Quantity>(kvp.Key), kvp => kvp.Value));
 
         ScalarDerivedQuantity res = new(this, composition, proto.FundamentalUnit);
         if (proto.Name is not null)
@@ -557,10 +564,10 @@ public class Database
         return res;
     }
 
-    internal VectorDerivedQuantity DefineDerivedQuantity(DerivedQuantityProto proto)
+    internal VectorDerivedQuantity DefineVectorDerivedQuantity(DerivedQuantityProto proto)
     {
         VectorComposition<IBaseQuantity> composition = new(proto.BaseQuantityComposition
-            .ToDictionary(kvp => GetFromName<IBaseQuantity>(kvp.Key), kvp => kvp.Value));
+            .ToDictionary(kvp => (IBaseQuantity)GetFromName<Quantity>(kvp.Key), kvp => kvp.Value));
 
         VectorDerivedQuantity res = new(this, composition, proto.FundamentalUnit);
         if (proto.Name is not null)
@@ -729,10 +736,13 @@ public class Database
 
     public Quantity GetQuantityFromBaseComposition(NamedComposition<IUnit> composition)
     {
-        var resultingQuantComp = ScalarEmptyQuantity.BaseQuantityComposition;
+        var resultingQuantComp = (NamedComposition<IBaseQuantity>)ScalarEmptyQuantity.BaseQuantityComposition;
         foreach (var (unit, power) in composition)
         {
-            var quantComp = unit.Quantity.BaseQuantityComposition.Pow(power);
+            var quantComp = unit.Quantity.BaseQuantityComposition;
+            if (power != 1m)
+                quantComp = ((ScalarComposition<IBaseQuantity>)quantComp).Pow(power);
+
             resultingQuantComp *= quantComp;
         }
 
