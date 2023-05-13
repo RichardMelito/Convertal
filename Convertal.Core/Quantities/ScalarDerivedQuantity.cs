@@ -6,8 +6,7 @@ public class ScalarDerivedQuantity : ScalarQuantity, IDerivedQuantity
 {
     public override IScalarDerivedUnit FundamentalUnit { get; }
 
-    internal VectorDerivedQuantity? SettableVectorAnalog { get; set; }
-    public override VectorDerivedQuantity? VectorAnalog => SettableVectorAnalog;
+    public override VectorDerivedQuantity? VectorAnalog => (VectorDerivedQuantity?)base.VectorAnalog;
 
     /// <summary>
     /// To be called only from <see cref="Quantity.GetFromBaseComposition(NamedComposition{BaseQuantity})"/>
@@ -16,9 +15,8 @@ public class ScalarDerivedQuantity : ScalarQuantity, IDerivedQuantity
         Database database,
         ScalarComposition<IBaseQuantity> composition,
         string? fundamentalUnitName = null)
-        : base(database, null, null)
+        : base(database, composition, null, null)
     {
-        SettableBaseQuantityComposition = composition;
         FundamentalUnit = new ScalarDerivedUnit(database, this, fundamentalUnitName);
         Init();
     }

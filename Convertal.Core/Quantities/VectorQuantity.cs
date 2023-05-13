@@ -5,20 +5,39 @@ namespace Convertal.Core;
 
 public abstract class VectorQuantity : Quantity, IVector<VectorQuantity, ScalarQuantity>
 {
+    private readonly ScalarQuantity _scalarAnalog;
+
     // Must be implemented by derived types
     public override IVectorUnit FundamentalUnit => throw new NotImplementedException();
 
-    // Must be set at construciton by derived types
-    protected VectorComposition<IBaseQuantity> SettableBaseQuantityComposition { get; init; } = null!;
-    public override VectorComposition<IBaseQuantity> BaseQuantityComposition => SettableBaseQuantityComposition;
+    public override VectorComposition<IBaseQuantity> BaseQuantityComposition { get; }
 
     public override bool IsVector => true;
 
-    public abstract ScalarQuantity ScalarAnalog { get; }
+    public virtual ScalarQuantity ScalarAnalog => _scalarAnalog;
 
-    protected VectorQuantity(Database database, string? name, string? symbol)
-        : base(database, name, symbol)
+    protected VectorQuantity(
+        ScalarQuantity scalarAnalog,
+        VectorComposition<IBaseQuantity>? composition,
+        string? name,
+        string? symbol)
+        : base(scalarAnalog.Database, name, symbol)
     {
+        _scalarAnalog = scalarAnalog;
+        _scalarAnalog.SetVectorAnalog(this);
+
+        BaseQuantityComposition = composition ?? new((IBaseQuantity)this);
+        if (BaseQuantityComposition.ScalarAnalog != scalarAnalog.BaseQuantityComposition)
+        {
+            try
+            {
+                throw new InvalidOperationException();
+            }
+            finally
+            {
+                _scalarAnalog.SetVectorAnalog(null);
+            }
+        }
     }
 
     public VectorQuantity CrossP(VectorQuantity other)

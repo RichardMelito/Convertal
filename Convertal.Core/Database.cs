@@ -57,7 +57,7 @@ public class Database
 
         CompositionAndQuantitiesDictionary = QuantitiesByComposition.AsReadOnly();
         ScalarEmptyQuantity = new(this);
-        VectorEmptyQuantity = new(this);
+        VectorEmptyQuantity = new(ScalarEmptyQuantity);
         ScalarEmptyUnit = new(this);
         VectorEmptyUnit = new(this);
         PrefixedUnits = _prefixedUnits.AsReadOnly();

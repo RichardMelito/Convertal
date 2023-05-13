@@ -10,18 +10,29 @@ public abstract class ScalarQuantity : Quantity, IScalar<ScalarQuantity, VectorQ
     // Must be implemented by derived types
     public override IScalarUnit FundamentalUnit => throw new NotImplementedException();
 
-    // Must be set at construction by derived types
-    protected ScalarComposition<IBaseQuantity> SettableBaseQuantityComposition { get; init; } = null!;
-    public override ScalarComposition<IBaseQuantity> BaseQuantityComposition => SettableBaseQuantityComposition;
-
+    public override ScalarComposition<IBaseQuantity> BaseQuantityComposition { get; }
 
     public override bool IsVector => false;
+    public virtual VectorQuantity? VectorAnalog { get; private set; }
 
-    public abstract VectorQuantity? VectorAnalog { get; }
-
-    protected ScalarQuantity(Database database, string? name, string? symbol)
+    protected ScalarQuantity(
+        Database database,
+        ScalarComposition<IBaseQuantity>? composition,
+        string? name,
+        string? symbol)
         : base(database, name, symbol)
     {
+        BaseQuantityComposition = composition ?? new((IBaseQuantity)this);
+    }
+
+    internal void SetVectorAnalog(VectorQuantity? analog)
+    {
+        // analog = null means that we hit an exception in the VectorQuantity constructor
+        // so we're clearing this property to clean up
+        if (analog is not null && VectorAnalog is not null)
+            throw new InvalidOperationException();
+
+        VectorAnalog = analog;
     }
 
     public ScalarQuantity Pow(decimal power)

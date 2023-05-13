@@ -11,10 +11,10 @@ public sealed class VectorEmptyQuantity : VectorQuantity
 {
     public override VectorEmptyUnit FundamentalUnit => Database.VectorEmptyUnit;
 
-    public override ScalarEmptyQuantity ScalarAnalog => Database.ScalarEmptyQuantity;
+    public override ScalarEmptyQuantity ScalarAnalog => (ScalarEmptyQuantity)base.ScalarAnalog;
 
-    internal VectorEmptyQuantity(Database database)
-        : base(database, null, null)
+    internal VectorEmptyQuantity(ScalarEmptyQuantity scalarAnalog)
+        : base(scalarAnalog, null, null)
     {
         SettableBaseQuantityComposition = VectorComposition<IBaseQuantity>.Empty;
         Init();

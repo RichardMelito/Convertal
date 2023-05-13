@@ -14,9 +14,8 @@ public sealed class ScalarEmptyQuantity : ScalarQuantity
     public override VectorEmptyQuantity VectorAnalog => Database.VectorEmptyQuantity;
 
     internal ScalarEmptyQuantity(Database database)
-        : base(database, null, null)
+        : base(database, ScalarComposition<IBaseQuantity>.Empty, null, null)
     {
-        SettableBaseQuantityComposition = ScalarComposition<IBaseQuantity>.Empty;
         Init();
     }
 

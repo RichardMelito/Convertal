@@ -11,13 +11,11 @@ public class ScalarBaseQuantity : ScalarQuantity, IBaseQuantity
     internal IScalarBaseUnit? SettableFundamentalUnit { get; set; }
     public override IScalarBaseUnit FundamentalUnit => SettableFundamentalUnit!;
 
-    internal VectorBaseQuantity? SettableVectorAnalog { get; set; }
-    public override VectorBaseQuantity? VectorAnalog => SettableVectorAnalog;
+    public override VectorBaseQuantity? VectorAnalog => (VectorBaseQuantity?)base.VectorAnalog;
 
     internal ScalarBaseQuantity(Database database, string? name, string? symbol)
-        : base(database, name, symbol)
+        : base(database, null, name, symbol)
     {
-        SettableBaseQuantityComposition = new(this);
         Init();
     }
 
