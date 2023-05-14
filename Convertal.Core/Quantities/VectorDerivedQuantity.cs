@@ -8,7 +8,6 @@ public class VectorDerivedQuantity : VectorQuantity, IDerivedQuantity
 
     public override ScalarDerivedQuantity ScalarAnalog => (ScalarDerivedQuantity)base.ScalarAnalog;
 
-
     /// <summary>
     /// To be called only from <see cref="Quantity.GetFromBaseComposition(NamedComposition{BaseQuantity})"/>
     /// </summary>
@@ -22,13 +21,13 @@ public class VectorDerivedQuantity : VectorQuantity, IDerivedQuantity
         Init();
     }
 
-    // TODO
-    public override DerivedQuantityProto ToProto()
+    public override VectorDerivedQuantityProto ToProto()
     {
         return new(
             Name,
             Symbol,
             FundamentalUnit.Name,
+            ScalarAnalog.Name,
             new(BaseQuantityComposition.CompositionAsStringDictionary));
     }
 }

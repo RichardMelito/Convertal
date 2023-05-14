@@ -21,13 +21,13 @@ public class ScalarDerivedQuantity : ScalarQuantity, IDerivedQuantity
         Init();
     }
 
-    // TODO
-    public override DerivedQuantityProto ToProto()
+    public override ScalarDerivedQuantityProto ToProto()
     {
         return new(
             Name,
             Symbol,
             FundamentalUnit.Name,
+            VectorAnalog?.Name,
             new(BaseQuantityComposition.CompositionAsStringDictionary));
     }
 }

@@ -19,10 +19,9 @@ public class VectorBaseQuantity : VectorQuantity, IBaseQuantity
         Init();
     }
 
-    // TODO
-    public override BaseQuantityProto ToProto()
+    public override VectorBaseQuantityProto ToProto()
     {
-        return new(Name!, Symbol, FundamentalUnit.Name!);
+        return new(Name!, Symbol, FundamentalUnit.Name!, ScalarAnalog.Name!);
     }
 
     // TODO copy-paste of ScalarBaseQuantity's implementation

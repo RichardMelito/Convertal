@@ -19,10 +19,9 @@ public class ScalarBaseQuantity : ScalarQuantity, IBaseQuantity
         Init();
     }
 
-    // TODO
-    public override BaseQuantityProto ToProto()
+    public override ScalarBaseQuantityProto ToProto()
     {
-        return new(Name!, Symbol, FundamentalUnit.Name!);
+        return new(Name!, Symbol, FundamentalUnit.Name!, VectorAnalog?.Name);
     }
 
     public override IOrderedEnumerable<IMaybeNamed> GetAllDependents(ref IEnumerable<IMaybeNamed> toIgnore)
