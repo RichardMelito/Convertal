@@ -16,7 +16,7 @@ public abstract class VectorUnit : Unit, IVectorUnit
     public abstract IScalarUnit ScalarAnalog { get; }
 
     // for defining from a chain of operations
-    internal VectorUnit(
+    protected VectorUnit(
         Database database,
         string name,
         VectorComposition<IUnit> composition)
@@ -28,7 +28,7 @@ public abstract class VectorUnit : Unit, IVectorUnit
     /// <summary>
     /// Only to be called from <see cref="BaseQuantity.DefineNewBaseQuantity(string, string, Prefix?)"/>
     /// </summary>
-    internal VectorUnit(
+    protected VectorUnit(
         Database database,
         string? name,
         VectorQuantity quantity,
@@ -40,7 +40,7 @@ public abstract class VectorUnit : Unit, IVectorUnit
     }
 
     // for defining from an existing IVectorUnit
-    internal VectorUnit(
+    protected VectorUnit(
         Database database,
         string? name,
         IVectorUnit otherUnit,
@@ -54,7 +54,7 @@ public abstract class VectorUnit : Unit, IVectorUnit
     /// <summary>
     /// To be called only from <see cref="Database.DefineBaseUnit(UnitProto)"/>
     /// </summary>
-    internal VectorUnit(
+    protected VectorUnit(
         Database database,
         string? name,
         string? symbol,

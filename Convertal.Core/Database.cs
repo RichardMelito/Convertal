@@ -552,7 +552,7 @@ public class Database
         return res;
     }
 
-    internal ScalarDerivedQuantity DefineScalarDerivedQuantity(DerivedQuantityProto proto)
+    internal ScalarDerivedQuantity DefineScalarDerivedQuantity(ScalarDerivedQuantityProto proto)
     {
         ScalarComposition<IBaseQuantity> composition = new(proto.BaseQuantityComposition
             .ToDictionary(kvp => (IBaseQuantity)GetFromName<Quantity>(kvp.Key), kvp => kvp.Value));
@@ -564,12 +564,13 @@ public class Database
         return res;
     }
 
-    internal VectorDerivedQuantity DefineVectorDerivedQuantity(DerivedQuantityProto proto)
+    internal VectorDerivedQuantity DefineVectorDerivedQuantity(VectorDerivedQuantityProto proto)
     {
         VectorComposition<IBaseQuantity> composition = new(proto.BaseQuantityComposition
             .ToDictionary(kvp => (IBaseQuantity)GetFromName<Quantity>(kvp.Key), kvp => kvp.Value));
 
-        VectorDerivedQuantity res = new(this, composition, proto.FundamentalUnit);
+        var scalarAnalog = GetScalarDerivedQuantityFromBaseComposition(composition.ScalarAnalog);
+        VectorDerivedQuantity res = new(scalarAnalog, composition, proto.FundamentalUnit);
         if (proto.Name is not null)
             res.ChangeNameAndSymbol(proto.Name, proto.Symbol);
 
@@ -750,8 +751,12 @@ public class Database
     }
 
     public ScalarQuantity GetScalarQuantityFromBaseComposition(ScalarComposition<IBaseQuantity> composition) => (ScalarQuantity)GetQuantityFromBaseComposition(composition);
+    public ScalarBaseQuantity GetScalarBaseQuantityFromBaseComposition(ScalarComposition<IBaseQuantity> composition) => (ScalarBaseQuantity)GetQuantityFromBaseComposition(composition);
+    public ScalarDerivedQuantity GetScalarDerivedQuantityFromBaseComposition(ScalarComposition<IBaseQuantity> composition) => (ScalarDerivedQuantity)GetQuantityFromBaseComposition(composition);
 
     public VectorQuantity GetVectorQuantityFromBaseComposition(VectorComposition<IBaseQuantity> composition) => (VectorQuantity)GetQuantityFromBaseComposition(composition);
+    public VectorBaseQuantity GetVectorBaseQuantityFromBaseComposition(VectorComposition<IBaseQuantity> composition) => (VectorBaseQuantity)GetQuantityFromBaseComposition(composition);
+    public VectorDerivedQuantity GetVectorDerivedQuantityFromBaseComposition(VectorComposition<IBaseQuantity> composition) => (VectorDerivedQuantity)GetQuantityFromBaseComposition(composition);
 
     public Quantity GetQuantityFromBaseComposition(NamedComposition<IBaseQuantity> composition)
     {

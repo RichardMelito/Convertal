@@ -31,8 +31,6 @@ public abstract class Unit : MaybeNamed, IUnit
 
     public virtual NamedComposition<IUnit> UnitComposition { get; private set; }
 
-    public NamedComposition<IUnit> UC => UnitComposition;   // just shorthand. TODO delete this
-
     public abstract bool IsVector { get; }
 
     // only to be called when defining fundamental units for new
