@@ -8,8 +8,7 @@ namespace Convertal.Core;
 
 public class VectorBaseQuantity : VectorQuantity, IBaseQuantity
 {
-    internal IVectorBaseUnit? SettableFundamentalUnit { get; set; }
-    public override IVectorBaseUnit FundamentalUnit => SettableFundamentalUnit!;
+    public override IVectorBaseUnit FundamentalUnit => (IVectorBaseUnit)base.FundamentalUnit;
 
     public override ScalarBaseQuantity ScalarAnalog => (ScalarBaseQuantity)base.ScalarAnalog;
 
@@ -21,7 +20,7 @@ public class VectorBaseQuantity : VectorQuantity, IBaseQuantity
 
     public override VectorBaseQuantityProto ToProto()
     {
-        return new(Name!, Symbol, FundamentalUnit.Name!, ScalarAnalog.Name!);
+        return new(Name!, Symbol, ScalarAnalog.Name!);
     }
 
     // TODO copy-paste of ScalarBaseQuantity's implementation

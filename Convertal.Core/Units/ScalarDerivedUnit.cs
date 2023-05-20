@@ -6,8 +6,7 @@ public class ScalarDerivedUnit : ScalarUnit, IScalarDerivedUnit
 {
     public override ScalarDerivedQuantity Quantity => (ScalarDerivedQuantity)base.Quantity;
 
-    internal IVectorDerivedUnit? SettableVectorAnalog { get; set; }
-    public override IVectorDerivedUnit? VectorAnalog => SettableVectorAnalog;
+    public override VectorDerivedUnit? VectorAnalog => (VectorDerivedUnit?)base.VectorAnalog;
 
     // for defining from a chain of operations
     internal ScalarDerivedUnit(
@@ -44,7 +43,7 @@ public class ScalarDerivedUnit : ScalarUnit, IScalarDerivedUnit
 
     // TODO fix method reference
     /// <summary>
-    /// To be called only from <see cref="Database.DefineDerivedUnit(UnitProto)"/>
+    /// To be called only from <see cref="Database.DefineDerivedUnit(ScalarUnitProto)"/>
     /// </summary>
     internal ScalarDerivedUnit(
         Database database,
@@ -57,6 +56,8 @@ public class ScalarDerivedUnit : ScalarUnit, IScalarDerivedUnit
         : base(database, name, symbol, quantity, fundamentalMultiplier, fundamentalOffset, composition)
     {
     }
+
+    protected override VectorDerivedUnit MakeVectorAnalog() => new(this);
 
     private static ScalarComposition<IUnit> GetComposition(ScalarDerivedQuantity quant)
     {

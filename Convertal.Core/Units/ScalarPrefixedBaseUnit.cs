@@ -9,13 +9,11 @@ namespace Convertal.Core;
 public class ScalarPrefixedBaseUnit : ScalarPrefixedUnit, IScalarBaseUnit
 {
     public override ScalarBaseUnit Unit => (ScalarBaseUnit)base.Unit;
-
-    internal VectorPrefixedBaseUnit? SettableVectorAnalog { get; set; }
-    public override VectorPrefixedBaseUnit? VectorAnalog => SettableVectorAnalog;
+    public override VectorPrefixedBaseUnit? VectorAnalog => (VectorPrefixedBaseUnit?)base.VectorAnalog;
     public override ScalarBaseQuantity Quantity => (ScalarBaseQuantity)base.Quantity;
 
-    internal ScalarPrefixedBaseUnit(Database database, ScalarBaseUnit unit, Prefix prefix)
-        : base(database, unit, prefix)
+    internal ScalarPrefixedBaseUnit(ScalarBaseUnit unit, Prefix prefix)
+        : base(unit, prefix)
     {
     }
 

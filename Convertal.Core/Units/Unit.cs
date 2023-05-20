@@ -9,15 +9,6 @@ using DecimalMath;
 
 namespace Convertal.Core;
 
-public record UnitProto(
-    string? Name,
-    string? Symbol,
-    [property: JsonPropertyOrder(2)] string Quantity,
-    [property: JsonPropertyOrder(3)] decimal FundamentalMultiplier,
-    [property: JsonPropertyOrder(4), JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)] decimal FundamentalOffset,
-    [property: JsonPropertyOrder(5)] ValueEqualityDictionary<string, decimal>? OtherUnitComposition)
-    : MaybeNamedProto(Name, Symbol);
-
 public abstract class Unit : MaybeNamed, IUnit
 {
     private bool _disposed = false;
@@ -44,6 +35,8 @@ public abstract class Unit : MaybeNamed, IUnit
         string? symbol = null)
         : base(database, name, symbol)
     {
+        ArgumentNullException.ThrowIfNull(quantity);
+
         Quantity = quantity;
         FundamentalMultiplier = fundamentalMultiplier;
         composition?.ThrowIfRecursive(this);
@@ -95,10 +88,10 @@ public abstract class Unit : MaybeNamed, IUnit
         UnitComposition = composition!; // May be null, which indicates that it must be set later from the SetUnitComposition method.
     }
 
-    /// To be called only from <see cref="Database.DefineVectorBaseUnit(UnitProto)"/>,
-    /// <see cref="Database.DefineScalarBaseUnit(UnitProto)"/>,
-    /// <see cref="Database.DefineVectorDerivedUnit(UnitProto)"/>, and
-    /// <see cref="Database.DefineScalarDerivedUnit(UnitProto)"/>.
+    /// To be called only from <see cref="Database.DefineVectorBaseUnit(ScalarUnitProto)"/>,
+    /// <see cref="Database.DefineScalarBaseUnit(ScalarUnitProto)"/>,
+    /// <see cref="Database.DefineVectorDerivedUnit(ScalarUnitProto)"/>, and
+    /// <see cref="Database.DefineScalarDerivedUnit(ScalarUnitProto)"/>.
     internal void SetUnitComposition(NamedComposition<IUnit> unitComposition)
     {
         if (!UnitComposition.IsComposedOfOne(this))
@@ -108,18 +101,6 @@ public abstract class Unit : MaybeNamed, IUnit
             throw new InvalidOperationException();
 
         UnitComposition = unitComposition;
-    }
-
-    // TODO
-    public override UnitProto ToProto()
-    {
-        return new(
-            Name,
-            Symbol,
-            Quantity.ToString(),
-            FundamentalMultiplier,
-            0,
-            OtherUnitComposition is null ? null : new(OtherUnitComposition.CompositionAsStringDictionary));
     }
     protected override Type GetDatabaseType() => typeof(Unit);
 

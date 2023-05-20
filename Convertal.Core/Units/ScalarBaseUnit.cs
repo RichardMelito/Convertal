@@ -10,9 +10,7 @@ public class ScalarBaseUnit : ScalarUnit, IScalarBaseUnit
 {
     public override ScalarBaseQuantity Quantity => (ScalarBaseQuantity)base.Quantity;
 
-    // TODO interface or concretion?
-    internal IVectorBaseUnit? SettableVectorAnalog { get; set; }
-    public override IVectorBaseUnit? VectorAnalog => SettableVectorAnalog;
+    public override VectorBaseUnit? VectorAnalog => (VectorBaseUnit?)base.VectorAnalog;
 
     // for defining from a chain of operations
     internal ScalarBaseUnit(
@@ -51,7 +49,7 @@ public class ScalarBaseUnit : ScalarUnit, IScalarBaseUnit
 
     // TODO fix method reference
     /// <summary>
-    /// To be called only from <see cref="Database.DefineBaseUnit(UnitProto)"/>
+    /// To be called only from <see cref="Database.DefineBaseUnit(ScalarUnitProto)"/>
     /// </summary>
     internal ScalarBaseUnit(
         Database database,
@@ -65,6 +63,7 @@ public class ScalarBaseUnit : ScalarUnit, IScalarBaseUnit
     {
     }
 
+    protected override VectorBaseUnit MakeVectorAnalog() => new(this);
 
     public override IOrderedEnumerable<IMaybeNamed> GetAllDependents(ref IEnumerable<IMaybeNamed> toIgnore)
     {

@@ -85,6 +85,11 @@ public class ScalarComposition<T> : NamedComposition<T>,
         return new ScalarComposition<T>(newDict);
     }
 
+    public VectorComposition<T> ToSimpleVectorComposition()
+    {
+        return new VectorComposition<T>(this.ToImmutableSortedDictionary());
+    }
+
     public ScalarComposition<T> Multiply(ScalarComposition<T> other) => this * other;
     public VectorComposition<T> Multiply(VectorComposition<T> vector) => this * vector;
     public ScalarComposition<T> Divide(ScalarComposition<T> other) => this / other;

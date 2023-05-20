@@ -6,13 +6,17 @@ using Convertal.Core.Extensions;
 
 namespace Convertal.Core;
 
+//public record PrefixedUnitProto(
+//    string Name,
+//    string? Symbol,
+//    string Quantity,
+//    decimal FundamentalMultiplier,
+//    decimal FundamentalOffset)
+//    : ScalarUnitProto(Name, Symbol, Quantity, FundamentalMultiplier, FundamentalOffset, null);
 public record PrefixedUnitProto(
-    string Name,
-    string? Symbol,
-    string Quantity,
-    decimal FundamentalMultiplier,
-    decimal FundamentalOffset)
-    : UnitProto(Name, Symbol, Quantity, FundamentalMultiplier, FundamentalOffset, null);
+    string Prefix,
+    string Unit)
+    : MaybeNamedProto(null, null);
 
 public abstract class PrefixedUnit : IUnit, INamed
 {
@@ -52,20 +56,18 @@ public abstract class PrefixedUnit : IUnit, INamed
         return Prefix.ToStringSymbol() + "_" + Unit.ToStringSymbol();
     }
 
-    public Database Database { get; }
+    public Database Database => Unit.Database;
 
-    protected PrefixedUnit(Database database, Unit unit, Prefix prefix)
+    protected PrefixedUnit(Unit unit, Prefix prefix)
     {
-        Database = database;
-
         if (unit.Name is null)
             throw new ArgumentNullException(
                 nameof(unit),
                 "Unit in PrefixedUnit must have a name.");
 
+        Unit = unit;
         Prefix = prefix;
         Database.AddToPrefixedUnitsList(this);
-        Unit = unit;
 
         // TODO reevaluate. Does this make sense?
         // Makes OtherUnitComposition always null

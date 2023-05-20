@@ -58,12 +58,12 @@ public class DatabaseConverter : JsonConverter<Database>
             reader.ReadThrowIfFalse();
         }
 
-        List<UnitProto> selfComposedScalarBaseUnits = new();
-        LinkedList<UnitProto> otherComposedScalarBaseUnits = new();
+        List<ScalarUnitProto> selfComposedScalarBaseUnits = new();
+        LinkedList<ScalarUnitProto> otherComposedScalarBaseUnits = new();
         reader.ReadStartOfArrayProperty(nameof(Database.ScalarBaseUnits));
         while (reader.TokenType != JsonTokenType.EndArray)
         {
-            var proto = JsonSerializer.Deserialize<UnitProto>(ref reader, options)!;
+            var proto = JsonSerializer.Deserialize<ScalarUnitProto>(ref reader, options)!;
             if (proto.OtherUnitComposition is null)
                 selfComposedScalarBaseUnits.Add(proto);
             else
@@ -71,12 +71,12 @@ public class DatabaseConverter : JsonConverter<Database>
             reader.ReadThrowIfFalse();
         }
 
-        List<UnitProto> selfComposedVectorBaseUnits = new();
-        LinkedList<UnitProto> otherComposedVectorBaseUnits = new();
+        List<ScalarUnitProto> selfComposedVectorBaseUnits = new();
+        LinkedList<ScalarUnitProto> otherComposedVectorBaseUnits = new();
         reader.ReadStartOfArrayProperty(nameof(Database.VectorBaseUnits));
         while (reader.TokenType != JsonTokenType.EndArray)
         {
-            var proto = JsonSerializer.Deserialize<UnitProto>(ref reader, options)!;
+            var proto = JsonSerializer.Deserialize<ScalarUnitProto>(ref reader, options)!;
             if (proto.OtherUnitComposition is null)
                 selfComposedVectorBaseUnits.Add(proto);
             else
@@ -84,12 +84,12 @@ public class DatabaseConverter : JsonConverter<Database>
             reader.ReadThrowIfFalse();
         }
 
-        List<UnitProto> selfComposedScalarDerivedUnits = new();
-        LinkedList<UnitProto> otherComposedScalarDerivedUnits = new();
+        List<ScalarUnitProto> selfComposedScalarDerivedUnits = new();
+        LinkedList<ScalarUnitProto> otherComposedScalarDerivedUnits = new();
         reader.ReadStartOfArrayProperty(nameof(Database.ScalarDerivedUnits));
         while (reader.TokenType != JsonTokenType.EndArray)
         {
-            var proto = JsonSerializer.Deserialize<UnitProto>(ref reader, options)!;
+            var proto = JsonSerializer.Deserialize<ScalarUnitProto>(ref reader, options)!;
             if (proto.OtherUnitComposition is null)
                 selfComposedScalarDerivedUnits.Add(proto);
             else
@@ -97,12 +97,12 @@ public class DatabaseConverter : JsonConverter<Database>
             reader.ReadThrowIfFalse();
         }
 
-        List<UnitProto> selfComposedVectorDerivedUnits = new();
-        LinkedList<UnitProto> otherComposedVectorDerivedUnits = new();
+        List<ScalarUnitProto> selfComposedVectorDerivedUnits = new();
+        LinkedList<ScalarUnitProto> otherComposedVectorDerivedUnits = new();
         reader.ReadStartOfArrayProperty(nameof(Database.VectorDerivedUnits));
         while (reader.TokenType != JsonTokenType.EndArray)
         {
-            var proto = JsonSerializer.Deserialize<UnitProto>(ref reader, options)!;
+            var proto = JsonSerializer.Deserialize<ScalarUnitProto>(ref reader, options)!;
             if (proto.OtherUnitComposition is null)
                 selfComposedVectorDerivedUnits.Add(proto);
             else

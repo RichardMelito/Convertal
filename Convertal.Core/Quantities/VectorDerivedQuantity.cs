@@ -4,20 +4,15 @@ namespace Convertal.Core;
 
 public class VectorDerivedQuantity : VectorQuantity, IDerivedQuantity
 {
-    public override IVectorDerivedUnit FundamentalUnit { get; }
+    public override IVectorDerivedUnit FundamentalUnit => (IVectorDerivedUnit)base.FundamentalUnit;
 
     public override ScalarDerivedQuantity ScalarAnalog => (ScalarDerivedQuantity)base.ScalarAnalog;
 
-    /// <summary>
-    /// To be called only from <see cref="Quantity.GetFromBaseComposition(NamedComposition{BaseQuantity})"/>
-    /// </summary>
     internal VectorDerivedQuantity(
         ScalarDerivedQuantity scalarAnalog,
-        VectorComposition<IBaseQuantity> composition,
-        string? fundamentalUnitName = null)
+        VectorComposition<IBaseQuantity> composition)
         : base(scalarAnalog, composition, null, null)
     {
-        FundamentalUnit = new VectorDerivedUnit(Database, this, fundamentalUnitName);
         Init();
     }
 
@@ -26,7 +21,6 @@ public class VectorDerivedQuantity : VectorQuantity, IDerivedQuantity
         return new(
             Name,
             Symbol,
-            FundamentalUnit.Name,
             ScalarAnalog.Name,
             new(BaseQuantityComposition.CompositionAsStringDictionary));
     }

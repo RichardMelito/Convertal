@@ -13,8 +13,7 @@ public record ScalarBaseQuantityProto(
 public record VectorBaseQuantityProto(
     string Name,
     string? Symbol,
-    [property: JsonPropertyOrder(2)] string FundamentalUnit,
-    [property: JsonPropertyOrder(3)] string ScalarAnalog) : MaybeNamedProto(Name, Symbol);
+    [property: JsonPropertyOrder(2)] string ScalarAnalog) : MaybeNamedProto(Name, Symbol);
 
 public record ScalarDerivedQuantityProto(
     string? Name,
@@ -27,7 +26,6 @@ public record ScalarDerivedQuantityProto(
 public record VectorDerivedQuantityProto(
     string? Name,
     string? Symbol,
-    [property: JsonPropertyOrder(2)] string? FundamentalUnit,
-    [property: JsonPropertyOrder(3)] string? ScalarAnalog,
-    [property: JsonPropertyOrder(4)] ValueEqualityDictionary<string, decimal> BaseQuantityComposition)
+    [property: JsonPropertyOrder(2)] string? ScalarAnalog,
+    [property: JsonPropertyOrder(3)] ValueEqualityDictionary<string, decimal> BaseQuantityComposition)
     : MaybeNamedProto(Name, Symbol);

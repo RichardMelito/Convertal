@@ -1,11 +1,24 @@
 ﻿// Created by Richard Melito and licensed to you under The Clear BSD License.
 
 using System;
+using System.Text.Json.Serialization;
 
 namespace Convertal.Core;
 
+public record ScalarUnitProto(
+    string? Name,
+    string? Symbol,
+    [property: JsonPropertyOrder(2)] string Quantity,
+    [property: JsonPropertyOrder(3)] bool HasVectorAnalog,
+    [property: JsonPropertyOrder(4)] decimal FundamentalMultiplier,
+    [property: JsonPropertyOrder(5), JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)] decimal FundamentalOffset,
+    [property: JsonPropertyOrder(6)] ValueEqualityDictionary<string, decimal>? OtherUnitComposition)
+    : MaybeNamedProto(Name, Symbol);
+
 public abstract class ScalarUnit : Unit, IScalarUnit
 {
+    private VectorUnit? _vectorAnalog;
+
     public decimal FundamentalOffset { get; }
     public override bool IsVector => false;
 
@@ -13,8 +26,9 @@ public abstract class ScalarUnit : Unit, IScalarUnit
 
     public override ScalarComposition<IUnit> UnitComposition => (ScalarComposition<IUnit>)base.UnitComposition;
 
-    // TODO consider using generics for this sort of this
-    public abstract IVectorUnit? VectorAnalog { get; }
+    public virtual VectorUnit? VectorAnalog => _vectorAnalog ??= (Quantity.VectorAnalog is null ? null : MakeVectorAnalog());
+
+    IVectorUnit? IScalar<IScalarUnit, IVectorUnit>.VectorAnalog => VectorAnalog;
 
     // for defining from a chain of operations
     internal ScalarUnit(
@@ -58,7 +72,7 @@ public abstract class ScalarUnit : Unit, IScalarUnit
 
     // TODO fix method reference
     /// <summary>
-    /// To be called only from <see cref="Database.DefineBaseUnit(UnitProto)"/>
+    /// To be called only from <see cref="Database.DefineBaseUnit(ScalarUnitProto)"/>
     /// </summary>
     internal ScalarUnit(
         Database database,
@@ -73,17 +87,30 @@ public abstract class ScalarUnit : Unit, IScalarUnit
         FundamentalOffset = fundamentalOffset;
     }
 
-    public override UnitProto ToProto()
+    protected abstract VectorUnit MakeVectorAnalog();
+
+    //internal void SetVectorAnalog(VectorUnit analog)
+    //{
+    //    if (VectorAnalog is not null)
+    //        throw new InvalidOperationException();
+
+    //    if (analog.Quantity.ScalarAnalog != Quantity)
+    //        throw new InvalidOperationException();
+
+    //    VectorAnalog = analog;
+    //}
+
+    protected override Type GetDatabaseType() => typeof(ScalarUnit);
+
+    public override ScalarUnitProto ToProto()
     {
         return new(
             Name,
             Symbol,
             Quantity.ToString(),
+            _vectorAnalog is not null,
             FundamentalMultiplier,
             FundamentalOffset,
             OtherUnitComposition is null ? null : new(OtherUnitComposition.CompositionAsStringDictionary));
     }
-
-    //// TODO
-    //public IScalarUnit Pow(decimal power) => throw new NotImplementedException();
 }

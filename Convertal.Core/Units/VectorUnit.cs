@@ -12,60 +12,24 @@ public abstract class VectorUnit : Unit, IVectorUnit
     public override VectorQuantity Quantity => (VectorQuantity)base.Quantity;
     public override VectorComposition<IUnit> UnitComposition => (VectorComposition<IUnit>)base.UnitComposition;
 
-    // TODO
-    public abstract IScalarUnit ScalarAnalog { get; }
+    public virtual ScalarUnit ScalarAnalog { get; }
 
-    // for defining from a chain of operations
-    protected VectorUnit(
-        Database database,
-        string name,
-        VectorComposition<IUnit> composition)
-        : base(database, name, composition)
+    IScalarUnit IVector<IVectorUnit, IScalarUnit>.ScalarAnalog => ScalarAnalog;
+
+    internal VectorUnit(ScalarUnit scalarAnalog)
+        : base(
+            scalarAnalog.Database,
+            scalarAnalog.Name,
+            scalarAnalog.Quantity.VectorAnalog!,
+            scalarAnalog.FundamentalMultiplier,
+            scalarAnalog.UnitComposition.ToSimpleVectorComposition(),
+            scalarAnalog.Symbol)
     {
+        ScalarAnalog = scalarAnalog;
+        //ScalarAnalog.SetVectorAnalog(this);
     }
 
-    // TODO fix method reference
-    /// <summary>
-    /// Only to be called from <see cref="BaseQuantity.DefineNewBaseQuantity(string, string, Prefix?)"/>
-    /// </summary>
-    protected VectorUnit(
-        Database database,
-        string? name,
-        VectorQuantity quantity,
-        decimal fundamentalMultiplier,
-        VectorComposition<IUnit>? composition = null,
-        string? symbol = null)
-        : base(database, name, quantity, fundamentalMultiplier, composition, symbol)
-    {
-    }
+    public override ScalarUnitProto ToProto() => throw new InvalidOperationException();
 
-    // for defining from an existing IVectorUnit
-    protected VectorUnit(
-        Database database,
-        string? name,
-        IVectorUnit otherUnit,
-        decimal multiplier,
-        string? symbol)
-        : base(database, name, otherUnit, multiplier, symbol)
-    {
-    }
-
-    // TODO fix method reference
-    /// <summary>
-    /// To be called only from <see cref="Database.DefineBaseUnit(UnitProto)"/>
-    /// </summary>
-    protected VectorUnit(
-        Database database,
-        string? name,
-        string? symbol,
-        VectorQuantity quantity,
-        decimal fundamentalMultiplier,
-        VectorComposition<IUnit>? composition)
-        : base(database, name, symbol, quantity, fundamentalMultiplier, composition)
-    {
-    }
-
-    //// TODO
-    //public IScalarUnit DotP(IVectorUnit other) => throw new NotImplementedException();
-    //public IVectorUnit CrossP(IVectorUnit other) => throw new NotImplementedException();
+    protected override Type GetDatabaseType() => typeof(VectorUnit);
 }

@@ -8,7 +8,7 @@ public abstract class VectorQuantity : Quantity, IVector<VectorQuantity, ScalarQ
     private readonly ScalarQuantity _scalarAnalog;
 
     // Must be implemented by derived types
-    public override IVectorUnit FundamentalUnit => throw new NotImplementedException();
+    public override IVectorUnit FundamentalUnit => ScalarAnalog.FundamentalUnit.VectorAnalog!;
 
     public override VectorComposition<IBaseQuantity> BaseQuantityComposition { get; }
 
