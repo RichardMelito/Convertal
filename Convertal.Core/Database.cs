@@ -370,18 +370,23 @@ public class Database
 
             if (composition is not null)
                 unit.SetUnitComposition(composition);
-
-            return unit;
+        }
+        else
+        {
+            unit = new ScalarBaseUnit(
+                this,
+                proto.Name!,
+                proto.Symbol,
+                GetFromName<ScalarBaseQuantity>(proto.Quantity),
+                proto.FundamentalMultiplier,
+                proto.FundamentalOffset,
+                composition);
         }
 
-        return new ScalarBaseUnit(
-            this,
-            proto.Name!,
-            proto.Symbol,
-            GetFromName<ScalarBaseQuantity>(proto.Quantity),
-            proto.FundamentalMultiplier,
-            proto.FundamentalOffset,
-            composition);
+        if (proto.HasVectorAnalog)
+            _ = new VectorBaseUnit(unit);
+
+        return unit;
     }
 
     //internal VectorBaseUnit DefineVectorBaseUnit(UnitProto proto)
@@ -468,18 +473,23 @@ public class Database
 
             if (composition is not null && unit.UnitComposition is null)
                 unit.SetUnitComposition(composition);
-
-            return unit;
+        }
+        else
+        {
+            unit = new ScalarDerivedUnit(
+                this,
+                proto.Name!,
+                proto.Symbol,
+                GetFromName<ScalarDerivedQuantity>(proto.Quantity),
+                proto.FundamentalMultiplier,
+                proto.FundamentalOffset,
+                composition);
         }
 
-        return new ScalarDerivedUnit(
-            this,
-            proto.Name!,
-            proto.Symbol,
-            GetFromName<ScalarDerivedQuantity>(proto.Quantity),
-            proto.FundamentalMultiplier,
-            proto.FundamentalOffset,
-            composition);
+        if (proto.HasVectorAnalog)
+            _ = new VectorDerivedUnit(unit);
+
+        return unit;
     }
 
     //internal VectorDerivedUnit DefineVectorDerivedUnit(ScalarUnitProto proto)

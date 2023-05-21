@@ -29,7 +29,7 @@ public class DatabaseConverter : JsonConverter<Database>
         reader.ReadStartOfArrayProperty(nameof(Database.ScalarBaseQuantitys));
         while (reader.TokenType != JsonTokenType.EndArray)
         {
-            var proto = JsonSerializer.Deserialize<BaseQuantityProto>(ref reader, options)!;
+            var proto = JsonSerializer.Deserialize<ScalarBaseQuantityProto>(ref reader, options)!;
             database.DefineScalarBaseQuantity(proto);
             reader.ReadThrowIfFalse();
         }
@@ -37,7 +37,7 @@ public class DatabaseConverter : JsonConverter<Database>
         reader.ReadStartOfArrayProperty(nameof(Database.VectorBaseQuantitys));
         while (reader.TokenType != JsonTokenType.EndArray)
         {
-            var proto = JsonSerializer.Deserialize<BaseQuantityProto>(ref reader, options)!;
+            var proto = JsonSerializer.Deserialize<VectorBaseQuantityProto>(ref reader, options)!;
             database.DefineVectorBaseQuantity(proto);
             reader.ReadThrowIfFalse();
         }
@@ -45,7 +45,7 @@ public class DatabaseConverter : JsonConverter<Database>
         reader.ReadStartOfArrayProperty(nameof(Database.ScalarDerivedQuantitys));
         while (reader.TokenType != JsonTokenType.EndArray)
         {
-            var proto = JsonSerializer.Deserialize<DerivedQuantityProto>(ref reader, options)!;
+            var proto = JsonSerializer.Deserialize<ScalarDerivedQuantityProto>(ref reader, options)!;
             database.DefineScalarDerivedQuantity(proto);
             reader.ReadThrowIfFalse();
         }
@@ -53,7 +53,7 @@ public class DatabaseConverter : JsonConverter<Database>
         reader.ReadStartOfArrayProperty(nameof(Database.VectorDerivedQuantitys));
         while (reader.TokenType != JsonTokenType.EndArray)
         {
-            var proto = JsonSerializer.Deserialize<DerivedQuantityProto>(ref reader, options)!;
+            var proto = JsonSerializer.Deserialize<VectorDerivedQuantityProto>(ref reader, options)!;
             database.DefineVectorDerivedQuantity(proto);
             reader.ReadThrowIfFalse();
         }
@@ -71,18 +71,18 @@ public class DatabaseConverter : JsonConverter<Database>
             reader.ReadThrowIfFalse();
         }
 
-        List<ScalarUnitProto> selfComposedVectorBaseUnits = new();
-        LinkedList<ScalarUnitProto> otherComposedVectorBaseUnits = new();
-        reader.ReadStartOfArrayProperty(nameof(Database.VectorBaseUnits));
-        while (reader.TokenType != JsonTokenType.EndArray)
-        {
-            var proto = JsonSerializer.Deserialize<ScalarUnitProto>(ref reader, options)!;
-            if (proto.OtherUnitComposition is null)
-                selfComposedVectorBaseUnits.Add(proto);
-            else
-                otherComposedVectorBaseUnits.AddLast(proto);
-            reader.ReadThrowIfFalse();
-        }
+        //List<ScalarUnitProto> selfComposedVectorBaseUnits = new();
+        //LinkedList<ScalarUnitProto> otherComposedVectorBaseUnits = new();
+        //reader.ReadStartOfArrayProperty(nameof(Database.VectorBaseUnits));
+        //while (reader.TokenType != JsonTokenType.EndArray)
+        //{
+        //    var proto = JsonSerializer.Deserialize<ScalarUnitProto>(ref reader, options)!;
+        //    if (proto.OtherUnitComposition is null)
+        //        selfComposedVectorBaseUnits.Add(proto);
+        //    else
+        //        otherComposedVectorBaseUnits.AddLast(proto);
+        //    reader.ReadThrowIfFalse();
+        //}
 
         List<ScalarUnitProto> selfComposedScalarDerivedUnits = new();
         LinkedList<ScalarUnitProto> otherComposedScalarDerivedUnits = new();
@@ -97,41 +97,45 @@ public class DatabaseConverter : JsonConverter<Database>
             reader.ReadThrowIfFalse();
         }
 
-        List<ScalarUnitProto> selfComposedVectorDerivedUnits = new();
-        LinkedList<ScalarUnitProto> otherComposedVectorDerivedUnits = new();
-        reader.ReadStartOfArrayProperty(nameof(Database.VectorDerivedUnits));
-        while (reader.TokenType != JsonTokenType.EndArray)
-        {
-            var proto = JsonSerializer.Deserialize<ScalarUnitProto>(ref reader, options)!;
-            if (proto.OtherUnitComposition is null)
-                selfComposedVectorDerivedUnits.Add(proto);
-            else
-                otherComposedVectorDerivedUnits.AddLast(proto);
-            reader.ReadThrowIfFalse();
-        }
+        //List<ScalarUnitProto> selfComposedVectorDerivedUnits = new();
+        //LinkedList<ScalarUnitProto> otherComposedVectorDerivedUnits = new();
+        //reader.ReadStartOfArrayProperty(nameof(Database.VectorDerivedUnits));
+        //while (reader.TokenType != JsonTokenType.EndArray)
+        //{
+        //    var proto = JsonSerializer.Deserialize<ScalarUnitProto>(ref reader, options)!;
+        //    if (proto.OtherUnitComposition is null)
+        //        selfComposedVectorDerivedUnits.Add(proto);
+        //    else
+        //        otherComposedVectorDerivedUnits.AddLast(proto);
+        //    reader.ReadThrowIfFalse();
+        //}
 
         foreach (var proto in selfComposedScalarBaseUnits)
             database.DefineScalarBaseUnit(proto);
 
-        foreach (var proto in selfComposedVectorBaseUnits)
-            database.DefineVectorBaseUnit(proto);
+        //foreach (var proto in selfComposedVectorBaseUnits)
+        //    database.DefineVectorBaseUnit(proto);
 
         foreach (var proto in selfComposedScalarDerivedUnits)
             database.DefineScalarDerivedUnit(proto);
 
-        foreach (var proto in selfComposedVectorDerivedUnits)
-            database.DefineVectorDerivedUnit(proto);
+        //foreach (var proto in selfComposedVectorDerivedUnits)
+        //    database.DefineVectorDerivedUnit(proto);
 
         while (
             otherComposedScalarBaseUnits.Count > 0 ||
-            otherComposedScalarDerivedUnits.Count > 0 ||
-            otherComposedVectorBaseUnits.Count > 0 ||
-            otherComposedVectorDerivedUnits.Count > 0)
+            otherComposedScalarDerivedUnits.Count > 0
+            //||
+            //otherComposedVectorBaseUnits.Count > 0 ||
+            //otherComposedVectorDerivedUnits.Count > 0
+            )
         {
             var countAtStartOfLoop = otherComposedScalarBaseUnits.Count +
-                otherComposedScalarDerivedUnits.Count +
-                otherComposedVectorBaseUnits.Count +
-                otherComposedVectorDerivedUnits.Count;
+                otherComposedScalarDerivedUnits.Count
+                //+
+                //otherComposedVectorBaseUnits.Count +
+                //otherComposedVectorDerivedUnits.Count
+                ;
 
 
             var node = otherComposedScalarBaseUnits.First;
@@ -148,19 +152,19 @@ public class DatabaseConverter : JsonConverter<Database>
                 }
             }
 
-            node = otherComposedVectorBaseUnits.First;
-            while (node != null)
-            {
-                var canParseComposition = _DatabaseCanParseComposition();
-                var oldNode = node;
-                node = node.Next;
+            //node = otherComposedVectorBaseUnits.First;
+            //while (node != null)
+            //{
+            //    var canParseComposition = _DatabaseCanParseComposition();
+            //    var oldNode = node;
+            //    node = node.Next;
 
-                if (canParseComposition)
-                {
-                    database.DefineVectorBaseUnit(oldNode.Value);
-                    otherComposedVectorBaseUnits.Remove(oldNode);
-                }
-            }
+            //    if (canParseComposition)
+            //    {
+            //        database.DefineVectorBaseUnit(oldNode.Value);
+            //        otherComposedVectorBaseUnits.Remove(oldNode);
+            //    }
+            //}
 
             node = otherComposedScalarDerivedUnits.First;
             while (node != null)
@@ -176,19 +180,19 @@ public class DatabaseConverter : JsonConverter<Database>
                 }
             }
 
-            node = otherComposedVectorDerivedUnits.First;
-            while (node != null)
-            {
-                var canParseComposition = _DatabaseCanParseComposition();
-                var oldNode = node;
-                node = node.Next;
+            //node = otherComposedVectorDerivedUnits.First;
+            //while (node != null)
+            //{
+            //    var canParseComposition = _DatabaseCanParseComposition();
+            //    var oldNode = node;
+            //    node = node.Next;
 
-                if (canParseComposition)
-                {
-                    database.DefineVectorDerivedUnit(oldNode.Value);
-                    otherComposedVectorDerivedUnits.Remove(oldNode);
-                }
-            }
+            //    if (canParseComposition)
+            //    {
+            //        database.DefineVectorDerivedUnit(oldNode.Value);
+            //        otherComposedVectorDerivedUnits.Remove(oldNode);
+            //    }
+            //}
 
             bool _DatabaseCanParseComposition()
             {
@@ -208,9 +212,11 @@ public class DatabaseConverter : JsonConverter<Database>
             }
 
             var countAtEndOfLoop = otherComposedScalarBaseUnits.Count +
-                otherComposedScalarDerivedUnits.Count +
-                otherComposedVectorBaseUnits.Count +
-                otherComposedVectorDerivedUnits.Count;
+                otherComposedScalarDerivedUnits.Count
+                //+
+                //otherComposedVectorBaseUnits.Count +
+                //otherComposedVectorDerivedUnits.Count
+                ;
 
             if (countAtEndOfLoop == countAtStartOfLoop)
                 throw new InvalidOperationException("Infinite loop detected. Check the JSON file for circular or orphan unit composition references.");
@@ -258,13 +264,13 @@ public class DatabaseConverter : JsonConverter<Database>
 
         writer.WritePropertyName(nameof(Database.ScalarBaseUnits));
         JsonSerializer.Serialize(writer, value.ScalarBaseUnits.Select(q => q.ToProto()), options);
-        writer.WritePropertyName(nameof(Database.VectorBaseUnits));
-        JsonSerializer.Serialize(writer, value.VectorBaseUnits.Select(q => q.ToProto()), options);
+        //writer.WritePropertyName(nameof(Database.VectorBaseUnits));
+        //JsonSerializer.Serialize(writer, value.VectorBaseUnits.Select(q => q.ToProto()), options);
 
         writer.WritePropertyName(nameof(Database.ScalarDerivedUnits));
         JsonSerializer.Serialize(writer, value.ScalarDerivedUnits.Select(q => q.ToProto()), options);
-        writer.WritePropertyName(nameof(Database.VectorDerivedUnits));
-        JsonSerializer.Serialize(writer, value.VectorDerivedUnits.Select(q => q.ToProto()), options);
+        //writer.WritePropertyName(nameof(Database.VectorDerivedUnits));
+        //JsonSerializer.Serialize(writer, value.VectorDerivedUnits.Select(q => q.ToProto()), options);
 
         writer.WritePropertyName(nameof(Database.MeasurementSystems));
         JsonSerializer.Serialize(writer, value.MeasurementSystems.Select(q => q.ToProto()), options);

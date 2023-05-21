@@ -76,7 +76,8 @@ public abstract class PrefixedUnit : IUnit, INamed
 
     public virtual PrefixedUnitProto ToProto()
     {
-        return new(Name!, Symbol, Quantity.ToString(), FundamentalMultiplier, 0);
+        return new(Prefix.Name!, Unit.ToString());
+        //return new(Name!, Symbol, Quantity.ToString(), FundamentalMultiplier, 0);
     }
     MaybeNamedProto IMaybeNamed.ToProto() => ToProto();
 
