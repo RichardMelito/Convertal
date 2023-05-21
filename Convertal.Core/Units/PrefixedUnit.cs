@@ -115,7 +115,6 @@ public abstract class PrefixedUnit : IUnit, INamed
                     $" fundamental unit {this} without first disposing of " +
                     $"quantity {Quantity}.");
 
-            // TODO: dispose managed state (managed objects)
             if (!Database.RemoveFromPrefixedUnitsList(this))
                 throw new ApplicationException($"Could not remove {this} from " +
                     $"the PrefixedUnit dictionary.");
@@ -133,8 +132,6 @@ public abstract class PrefixedUnit : IUnit, INamed
             foreach (var system in allSystems)
                 system.RemoveUnit(this);
 
-            // TODO: free unmanaged resources (unmanaged objects) and override finalizer
-            // TODO: set large fields to null
             _disposedValue = true;
         }
     }
@@ -146,7 +143,6 @@ public abstract class PrefixedUnit : IUnit, INamed
             DisposeBody(disposeDependents);
     }
 
-    // // TODO: override finalizer only if 'Dispose(bool disposing)' has code to free unmanaged resources
     // ~PrefixedUnit()
     // {
     //     // Do not change this code. Put cleanup code in 'Dispose(bool disposing)' method

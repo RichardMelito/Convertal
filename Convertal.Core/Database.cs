@@ -523,44 +523,44 @@ public class Database
     //        composition);
     //}
 
-    // TODO why did I make these?
-    public ScalarDerivedQuantity DefineScalarDerivedQuantity(
-        Func<Quantity> quantityOperation,
-        string quantityName,
-        string? quantitySymbol = null)
-    {
-        var resultingQuantity = quantityOperation();
-        var res = resultingQuantity as ScalarDerivedQuantity;
-        if (res is null)
-        {
-            resultingQuantity.Dispose();
+    //// TODO why did I make these?
+    //public ScalarDerivedQuantity DefineScalarDerivedQuantity(
+    //    Func<Quantity> quantityOperation,
+    //    string quantityName,
+    //    string? quantitySymbol = null)
+    //{
+    //    var resultingQuantity = quantityOperation();
+    //    var res = resultingQuantity as ScalarDerivedQuantity;
+    //    if (res is null)
+    //    {
+    //        resultingQuantity.Dispose();
 
-            // TODO elaborate and maybe do some magic to write out the operation inputs.
-            throw new InvalidOperationException("The given quantity operation did not return a derived quantity.");
-        }
+    //        // TODO elaborate and maybe do some magic to write out the operation inputs.
+    //        throw new InvalidOperationException("The given quantity operation did not return a derived quantity.");
+    //    }
 
-        res.ChangeNameAndSymbol(quantityName, quantitySymbol);
-        return res;
-    }
+    //    res.ChangeNameAndSymbol(quantityName, quantitySymbol);
+    //    return res;
+    //}
 
-    public VectorDerivedQuantity DefineVectorDerivedQuantity(
-        Func<Quantity> quantityOperation,
-        string quantityName,
-        string? quantitySymbol = null)
-    {
-        var resultingQuantity = quantityOperation();
-        var res = resultingQuantity as VectorDerivedQuantity;
-        if (res is null)
-        {
-            resultingQuantity.Dispose();
+    //public VectorDerivedQuantity DefineVectorDerivedQuantity(
+    //    Func<Quantity> quantityOperation,
+    //    string quantityName,
+    //    string? quantitySymbol = null)
+    //{
+    //    var resultingQuantity = quantityOperation();
+    //    var res = resultingQuantity as VectorDerivedQuantity;
+    //    if (res is null)
+    //    {
+    //        resultingQuantity.Dispose();
 
-            // TODO elaborate and maybe do some magic to write out the operation inputs.
-            throw new InvalidOperationException("The given quantity operation did not return a derived quantity.");
-        }
+    //        // TODO elaborate and maybe do some magic to write out the operation inputs.
+    //        throw new InvalidOperationException("The given quantity operation did not return a derived quantity.");
+    //    }
 
-        res.ChangeNameAndSymbol(quantityName, quantitySymbol);
-        return res;
-    }
+    //    res.ChangeNameAndSymbol(quantityName, quantitySymbol);
+    //    return res;
+    //}
 
     internal ScalarDerivedQuantity DefineScalarDerivedQuantity(ScalarDerivedQuantityProto proto)
     {

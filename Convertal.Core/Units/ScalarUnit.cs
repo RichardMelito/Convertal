@@ -40,10 +40,6 @@ public abstract class ScalarUnit : Unit, IScalarUnit
         FundamentalOffset = 0;
     }
 
-    // TODO fix method reference
-    /// <summary>
-    /// Only to be called from <see cref="BaseQuantity.DefineNewBaseQuantity(string, string, Prefix?)"/>
-    /// </summary>
     internal ScalarUnit(
         Database database,
         string? name,
@@ -70,10 +66,6 @@ public abstract class ScalarUnit : Unit, IScalarUnit
     }
 
 
-    // TODO fix method reference
-    /// <summary>
-    /// To be called only from <see cref="Database.DefineBaseUnit(ScalarUnitProto)"/>
-    /// </summary>
     internal ScalarUnit(
         Database database,
         string? name,
