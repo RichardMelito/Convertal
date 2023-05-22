@@ -12,23 +12,27 @@ public class TestDatabase : BaseTestClass
     public readonly Prefix Milli;
     public readonly Prefix Kilo;
 
-    public readonly BaseQuantity Length;
-    public readonly BaseQuantity Time;
-    public readonly BaseQuantity Mass;
+    public readonly ScalarBaseQuantity Length;
+    public readonly ScalarBaseQuantity Time;
+    public readonly ScalarBaseQuantity Mass;
 
-    public readonly BaseUnit Meter;
-    public readonly BaseUnit Second;
-    public readonly BaseUnit Hour;
-    public readonly BaseUnit Foot;
+    public readonly ScalarBaseUnit Meter;
+    public readonly ScalarBaseUnit Second;
+    public readonly ScalarBaseUnit Hour;
+    public readonly ScalarBaseUnit Foot;
 
-    public readonly PrefixedBaseUnit KiloGram;
+    public readonly ScalarPrefixedBaseUnit KiloGram;
 
-    public readonly DerivedQuantity Velocity;
-    public readonly DerivedQuantity Acceleration;
-    public readonly DerivedQuantity Force;
+    public readonly ScalarDerivedQuantity Speed;
+    public readonly ScalarDerivedQuantity SAcceleration;
+    public readonly ScalarDerivedQuantity Tension;
 
-    public readonly DerivedUnit Newton;
-    public readonly DerivedUnit PoundForce;
+    public readonly VectorDerivedQuantity Velocity;
+    public readonly VectorDerivedQuantity VAcceleration;
+    public readonly VectorDerivedQuantity Force;
+
+    public readonly ScalarDerivedUnit Newton;
+    public readonly ScalarDerivedUnit PoundForce;
 
     public readonly Unit FeetPerSecond;
 
@@ -40,16 +44,20 @@ public class TestDatabase : BaseTestClass
         Milli = Database.DefinePrefix("milli", 1e-3m, "m");
         Kilo = Database.DefinePrefix("kilo", 1e3m, "k");
 
-        Length = Database.DefineBaseQuantity(nameof(Length), "Meter", quantitySymbol: "l", unitSymbol: "m");
-        Time = Database.DefineBaseQuantity(nameof(Time), "Second", quantitySymbol: "t", unitSymbol: "s");
-        Mass = Database.DefineBaseQuantity(nameof(Mass), "Gram", unitPrefix: Kilo, quantitySymbol: "m", unitSymbol: "g");
+        Length = Database.DefineScalarBaseQuantity(nameof(Length), "Meter", quantitySymbol: "l", unitSymbol: "m");
+        Time = Database.DefineScalarBaseQuantity(nameof(Time), "Second", quantitySymbol: "t", unitSymbol: "s");
+        Mass = Database.DefineScalarBaseQuantity(nameof(Mass), "Gram", unitPrefix: Kilo, quantitySymbol: "m", unitSymbol: "g");
 
-        Meter = (BaseUnit)Length.FundamentalUnit;
-        Second = (BaseUnit)Time.FundamentalUnit;
-        KiloGram = (PrefixedBaseUnit)Mass.FundamentalUnit;
-        Foot = Database.DefineBaseUnit(nameof(Foot), Meter, 0.3048m);
+        Meter = (ScalarBaseUnit)Length.FundamentalUnit;
+        Second = (ScalarBaseUnit)Time.FundamentalUnit;
+        KiloGram = (ScalarPrefixedBaseUnit)Mass.FundamentalUnit;
+        Foot = Database.DefineScalarBaseUnit(nameof(Foot), Meter, 0.3048m);
 
-        Hour = Database.DefineBaseUnit(nameof(Hour), Second, 3600m, symbol: "h");
+        Hour = Database.DefineScalarBaseUnit(nameof(Hour), Second, 3600m, symbol: "h");
+
+        Database.DefineScalarDerivedQuantity(() => Length / Time, out Speed, "v");
+        SAcceleration = Database.DefineScalarDerivedQuantity(() => Speed / Time, "acceleration", "a");
+        Database.DefineScalarDerivedQuantity(() => Mass * SAcceleration, out Tension, "F");
 
         Velocity = Database.DefineDerivedQuantity(() => Length / Time, nameof(Velocity), "v");
         Acceleration = Database.DefineDerivedQuantity(() => Velocity / Time, nameof(Acceleration), "a");
