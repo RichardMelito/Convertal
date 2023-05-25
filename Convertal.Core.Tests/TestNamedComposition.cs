@@ -13,6 +13,8 @@ public class TestNamedComposition : BaseTestClass
 
         public int Id { get; }
 
+        public bool IsVector => false;
+
         public SimBase(Database database)
             : base(database, "SimBase" + (++s_id))
         {
@@ -30,9 +32,9 @@ public class TestNamedComposition : BaseTestClass
             return Array.Empty<IMaybeNamed>().SortByTypeAndName();
         }
 
-        public NamedComposition<SimBase> MakeComposition()
+        public ScalarComposition<SimBase> MakeComposition()
         {
-            return new NamedComposition<SimBase>(this);
+            return new ScalarComposition<SimBase>(this);
         }
 
         public bool Equals(SimBase? other)
@@ -54,13 +56,16 @@ public class TestNamedComposition : BaseTestClass
         {
             throw new NotImplementedException();
         }
+
+        public IVectorOrScalar ToScalar() => this;
+        public IVectorOrScalar? ToVector() => throw new NotImplementedException();
     }
 
     [Fact]
     public void TestConstruction()
     {
         SimBase simBase = new(Database);
-        NamedComposition<SimBase> toTest = new(simBase);
+        ScalarComposition<SimBase> toTest = new(simBase);
         Assert.Equal(1, toTest.Count);
         Assert.True(toTest.ContainsKey(simBase));
         Assert.Equal(1m, toTest[simBase]);
@@ -136,7 +141,7 @@ public class TestNamedComposition : BaseTestClass
 
         quotient /= quotient;
         Assert.Equal(0, quotient.Count);
-        Assert.Same(NamedComposition<SimBase>.Empty, quotient);
+        Assert.Same(ScalarComposition<SimBase>.Empty, quotient);
     }
 
     [Fact]
@@ -157,7 +162,7 @@ public class TestNamedComposition : BaseTestClass
     [Fact]
     public void TestEmptyOperations()
     {
-        var empty = NamedComposition<SimBase>.Empty;
+        var empty = ScalarComposition<SimBase>.Empty;
         var product = empty * empty;
         Assert.Same(empty, product);
 
@@ -190,7 +195,7 @@ public class TestNamedComposition : BaseTestClass
 
         var sameResult1 = lhs * lhs / rhs;
         var sameResult2 = lhs / rhs * lhs;
-        var sameResult3 = (NamedComposition<SimBase>.Empty / rhs) * lhs * lhs;
+        var sameResult3 = (ScalarComposition<SimBase>.Empty / rhs) * lhs * lhs;
         Assert.NotSame(sameResult1, sameResult2);
         Assert.NotSame(sameResult2, sameResult3);
         Assert.NotSame(sameResult1, sameResult3);

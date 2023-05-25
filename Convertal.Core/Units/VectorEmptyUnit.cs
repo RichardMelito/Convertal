@@ -13,11 +13,11 @@ public sealed class VectorEmptyUnit : IVectorUnit
 
     public decimal FundamentalOffset => 0;
 
-    public VectorQuantity Quantity { get; }
+    public VectorQuantity Quantity => Database.VectorEmptyQuantity;
 
     public VectorComposition<IUnit> UnitComposition => VectorComposition<IUnit>.Empty;
 
-    public Database Database => Quantity.Database;
+    public Database Database { get; }
 
     public string? Name => null;
 
@@ -31,7 +31,7 @@ public sealed class VectorEmptyUnit : IVectorUnit
 
     internal VectorEmptyUnit(Database database)
     {
-        Quantity = Database.VectorEmptyQuantity;
+        Database = database;
     }
 
     public void Dispose()

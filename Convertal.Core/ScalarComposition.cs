@@ -66,7 +66,7 @@ public class ScalarComposition<T> : NamedComposition<T>,
     }
 
     public ScalarComposition(T key)
-        : base(key.IsVector ? key : throw new InvalidOperationException())
+        : base(key.IsScalar ? key : throw new InvalidOperationException())
     {
     }
 

@@ -13,12 +13,12 @@ public sealed class ScalarEmptyUnit : IScalarUnit
 
     public decimal FundamentalOffset => 0;
 
-    public ScalarQuantity Quantity { get; }
+    public ScalarQuantity Quantity => Database.ScalarEmptyQuantity;
 
     NamedComposition<IUnit> IUnit.UnitComposition => UnitComposition;
     public ScalarComposition<IUnit> UnitComposition => ScalarComposition<IUnit>.Empty;
 
-    public Database Database => Quantity.Database;
+    public Database Database { get; }
 
     public string? Name => null;
 
@@ -30,7 +30,7 @@ public sealed class ScalarEmptyUnit : IScalarUnit
 
     internal ScalarEmptyUnit(Database database)
     {
-        Quantity = Database.ScalarEmptyQuantity;
+        Database = database;
     }
 
     public void Dispose()

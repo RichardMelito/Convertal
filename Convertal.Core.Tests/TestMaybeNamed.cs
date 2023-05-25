@@ -21,7 +21,7 @@ public class TestMaybeNamed : BaseTestClass
 
         public override MaybeNamedProto ToProto()
         {
-            throw new NotImplementedException();
+            return new(Name, Symbol);
         }
     }
 

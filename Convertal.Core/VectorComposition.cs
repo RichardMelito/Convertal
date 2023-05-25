@@ -42,7 +42,7 @@ public class VectorComposition<T> : NamedComposition<T>,
     }
 
     public VectorComposition(T key) 
-        : base(key.IsScalar ? key : throw new InvalidOperationException())
+        : base(key.IsVector ? key : throw new InvalidOperationException())
     {
         
     }
