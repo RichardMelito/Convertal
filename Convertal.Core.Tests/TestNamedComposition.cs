@@ -1,27 +1,27 @@
 // Created by Richard Melito and licensed to you under The Clear BSD License.
 
 using Convertal.Core.Extensions;
+using FluentAssertions;
 using Xunit;
 
 namespace Convertal.Core.Tests;
 
 public class TestNamedComposition : BaseTestClass
 {
-    class SimBase : MaybeNamed, IBase, IEquatable<SimBase>
+    abstract class AbstractSimBase : MaybeNamed, IBase, IEquatable<AbstractSimBase>
     {
         private static int s_id = -1;
 
         public int Id { get; }
+        public abstract bool IsVector { get; }
 
-        public bool IsVector => false;
-
-        public SimBase(Database database)
+        public AbstractSimBase(Database database)
             : base(database, "SimBase" + (++s_id))
         {
             Id = s_id;
         }
 
-        public SimBase(Database database, string name)
+        public AbstractSimBase(Database database, string name)
             : base(database, name)
         {
             Id = ++s_id;
@@ -32,19 +32,19 @@ public class TestNamedComposition : BaseTestClass
             return Array.Empty<IMaybeNamed>().SortByTypeAndName();
         }
 
-        public ScalarComposition<SimBase> MakeComposition()
-        {
-            return new ScalarComposition<SimBase>(this);
-        }
+        //public ScalarComposition<AbstractSimBase> MakeComposition()
+        //{
+        //    return new ScalarComposition<AbstractSimBase>(this);
+        //}
 
-        public bool Equals(SimBase? other)
+        public bool Equals(AbstractSimBase? other)
         {
             return base.Equals(other);
         }
 
         public override bool Equals(object? obj)
         {
-            return Equals(obj as SimBase);
+            return Equals(obj as AbstractSimBase);
         }
 
         public override int GetHashCode()
@@ -57,25 +57,57 @@ public class TestNamedComposition : BaseTestClass
             throw new NotImplementedException();
         }
 
-        public IVectorOrScalar ToScalar() => this;
-        public IVectorOrScalar? ToVector() => throw new NotImplementedException();
+        public abstract IVectorOrScalar ToScalar();
+        public abstract IVectorOrScalar? ToVector();
+    }
+
+    class ScalarSimBase : AbstractSimBase
+    {
+        public VectorSimBase? VectorAnalog { get; set; }
+        public ScalarSimBase(Database database) : base(database)
+        {
+        }
+
+        public ScalarSimBase(Database database, string name) : base(database, name)
+        {
+        }
+
+        public override bool IsVector => false;
+
+        public override IVectorOrScalar ToScalar() => this;
+        public override IVectorOrScalar? ToVector() => VectorAnalog;
+    }
+
+    class VectorSimBase : AbstractSimBase
+    {
+        public ScalarSimBase ScalarAnalog { get; }
+        public VectorSimBase(ScalarSimBase scalarAnalog) : base(scalarAnalog.Database)
+        {
+            ScalarAnalog = scalarAnalog;
+            ScalarAnalog.VectorAnalog = this;
+        }
+
+        public override bool IsVector => true;
+
+        public override IVectorOrScalar ToScalar() => ScalarAnalog;
+        public override IVectorOrScalar? ToVector() => this;
     }
 
     [Fact]
     public void TestConstruction()
     {
-        SimBase simBase = new(Database);
-        ScalarComposition<SimBase> toTest = new(simBase);
-        Assert.Equal(1, toTest.Count);
-        Assert.True(toTest.ContainsKey(simBase));
-        Assert.Equal(1m, toTest[simBase]);
+        AbstractSimBase simBase = new(Database);
+        ScalarComposition<AbstractSimBase> toTest = new(simBase);
+        toTest.Count.Should().Be(1);
+        toTest.Should().ContainKey(simBase);
+        toTest[simBase].Should().Be(1m);
     }
 
     [Fact]
     public void TestMultiplication()
     {
-        SimBase lhsBase = new(Database);
-        SimBase rhsBase = new(Database);
+        AbstractSimBase lhsBase = new(Database);
+        AbstractSimBase rhsBase = new(Database);
 
         var lhs = lhsBase.MakeComposition();
         var rhs = rhsBase.MakeComposition();
@@ -95,7 +127,7 @@ public class TestNamedComposition : BaseTestClass
         Assert.Equal(4m, product[lhsBase]);
         Assert.Equal(2m, product[rhsBase]);
 
-        SimBase thirdBase = new(Database);
+        AbstractSimBase thirdBase = new(Database);
         var thirdFactor = thirdBase.MakeComposition();
         product *= thirdFactor;
         Assert.Equal(3, product.Count);
@@ -107,8 +139,8 @@ public class TestNamedComposition : BaseTestClass
     [Fact]
     public void TestDivision()
     {
-        SimBase lhsBase = new(Database);
-        SimBase rhsBase = new(Database);
+        AbstractSimBase lhsBase = new(Database);
+        AbstractSimBase rhsBase = new(Database);
 
         var lhs = lhsBase.MakeComposition();
         var rhs = rhsBase.MakeComposition();
@@ -119,11 +151,11 @@ public class TestNamedComposition : BaseTestClass
         Assert.Equal(-1m, quotient[rhsBase]);
 
         quotient /= lhs;
-        Assert.Equal(1, quotient.Count);
+        Assert.Single(quotient);
         Assert.Equal(-1m, quotient[rhsBase]);
 
         quotient /= rhs;
-        Assert.Equal(1, quotient.Count);
+        Assert.Single(quotient);
         Assert.Equal(-2m, quotient[rhsBase]);
 
         quotient /= lhs;
@@ -131,7 +163,7 @@ public class TestNamedComposition : BaseTestClass
         Assert.Equal(-1m, quotient[lhsBase]);
         Assert.Equal(-2m, quotient[rhsBase]);
 
-        SimBase thirdBase = new(Database);
+        AbstractSimBase thirdBase = new(Database);
         var thirdFactor = thirdBase.MakeComposition();
         quotient /= thirdFactor;
         Assert.Equal(3, quotient.Count);
@@ -140,15 +172,15 @@ public class TestNamedComposition : BaseTestClass
         Assert.Equal(-1m, quotient[thirdBase]);
 
         quotient /= quotient;
-        Assert.Equal(0, quotient.Count);
-        Assert.Same(ScalarComposition<SimBase>.Empty, quotient);
+        Assert.Empty(quotient);
+        Assert.Same(ScalarComposition<AbstractSimBase>.Empty, quotient);
     }
 
     [Fact]
     public void TestMultiplicationAndDivision()
     {
-        SimBase lhsBase = new(Database);
-        SimBase rhsBase = new(Database);
+        AbstractSimBase lhsBase = new(Database);
+        AbstractSimBase rhsBase = new(Database);
 
         var lhs = lhsBase.MakeComposition();
         var rhs = rhsBase.MakeComposition();
@@ -162,14 +194,14 @@ public class TestNamedComposition : BaseTestClass
     [Fact]
     public void TestEmptyOperations()
     {
-        var empty = ScalarComposition<SimBase>.Empty;
+        var empty = ScalarComposition<AbstractSimBase>.Empty;
         var product = empty * empty;
         Assert.Same(empty, product);
 
         var quotient = empty / empty;
         Assert.Same(empty, quotient);
 
-        SimBase notEmptyBase = new(Database);
+        AbstractSimBase notEmptyBase = new(Database);
         var notEmpty = notEmptyBase.MakeComposition();
 
         product = notEmpty * empty;
@@ -180,22 +212,22 @@ public class TestNamedComposition : BaseTestClass
         quotient = notEmpty / empty;
         Assert.Equal(notEmpty, quotient);
         quotient = empty / notEmpty;
-        Assert.Equal(1, quotient.Count);
+        Assert.Single(quotient);
         Assert.Equal(-1m, quotient[notEmptyBase]);
     }
 
     [Fact]
     public void TestEquality()
     {
-        SimBase lhsBase = new(Database);
-        SimBase rhsBase = new(Database);
+        AbstractSimBase lhsBase = new(Database);
+        AbstractSimBase rhsBase = new(Database);
 
         var lhs = lhsBase.MakeComposition();
         var rhs = rhsBase.MakeComposition();
 
         var sameResult1 = lhs * lhs / rhs;
         var sameResult2 = lhs / rhs * lhs;
-        var sameResult3 = (ScalarComposition<SimBase>.Empty / rhs) * lhs * lhs;
+        var sameResult3 = (ScalarComposition<AbstractSimBase>.Empty / rhs) * lhs * lhs;
         Assert.NotSame(sameResult1, sameResult2);
         Assert.NotSame(sameResult2, sameResult3);
         Assert.NotSame(sameResult1, sameResult3);
@@ -216,8 +248,8 @@ public class TestNamedComposition : BaseTestClass
     [Fact]
     public void TestPow()
     {
-        SimBase lhsBase = new(Database);
-        SimBase rhsBase = new(Database);
+        AbstractSimBase lhsBase = new(Database);
+        AbstractSimBase rhsBase = new(Database);
 
         var lhs = lhsBase.MakeComposition();
         var rhs = rhsBase.MakeComposition();
@@ -243,9 +275,9 @@ public class TestNamedComposition : BaseTestClass
     [Fact]
     public void TestToString()
     {
-        SimBase simBase1 = new(Database, "sim1");
-        SimBase simBase2 = new(Database, "sim2");
-        SimBase simBase3 = new(Database, "sim3");
+        AbstractSimBase simBase1 = new(Database, "sim1");
+        AbstractSimBase simBase2 = new(Database, "sim2");
+        AbstractSimBase simBase3 = new(Database, "sim3");
 
         var sim1 = simBase1.MakeComposition();
         var sim2 = simBase2.MakeComposition();
