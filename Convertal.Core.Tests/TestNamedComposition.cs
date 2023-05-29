@@ -13,7 +13,7 @@ abstract class AbstractSimBase : MaybeNamed, IBase, IEquatable<AbstractSimBase>
     public abstract bool IsVector { get; }
 
     public AbstractSimBase(Database database)
-        : base(database, "SimBase" + (++s_id))
+        : base(database, $"SimBase{++s_id}")
     {
         Id = s_id;
     }
@@ -49,10 +49,7 @@ abstract class AbstractSimBase : MaybeNamed, IBase, IEquatable<AbstractSimBase>
         return base.GetHashCode();
     }
 
-    public override MaybeNamedProto ToProto()
-    {
-        throw new NotImplementedException();
-    }
+    public override MaybeNamedProto ToProto() => new(Name, Symbol);
 
     public abstract IVectorOrScalar ToScalar();
     public abstract IVectorOrScalar? ToVector();
@@ -163,10 +160,13 @@ public class TestNamedComposition : BaseTestClass
 
         var scalarComp2 = vectorComp.ToScalar();
         scalarComp2.Should().BeEquivalentTo(scalarComp);
+
+        var vectorComp2 = scalarComp2.ToVector();
+        vectorComp2.Should().BeEquivalentTo(vectorComp);
     }
 
     [Fact]
-    public void ScalarComposition_Multiplication_Works()
+    public void ScalarCompositionScalarComposition_Multiplication_Works()
     {
         ScalarSimBase lhsKey = new(Database);
         ScalarSimBase rhsKey = new(Database);
@@ -198,6 +198,32 @@ public class TestNamedComposition : BaseTestClass
         Assert.Equal(4m, product[lhsKey]);
         Assert.Equal(2m, product[rhsKey]);
         Assert.Equal(1m, product[thirdKey]);
+    }
+
+    [Fact]
+    public void VectorCompositionVectorComposition_DotProduct_Works()
+    {
+        ScalarSimBase lhsScalarKey = new(Database);
+        ScalarSimBase rhsScalarKey = new(Database);
+        VectorSimBase lhsVectorKey = new(lhsScalarKey);
+        VectorSimBase rhsVectorKey = new(rhsScalarKey);
+
+        VectorComposition<AbstractSimBase> lhs = new(lhsVectorKey);
+        VectorComposition<AbstractSimBase> rhs = new(rhsVectorKey);
+
+        var product = lhs * rhs;
+        product.Should().BeOfType<ScalarComposition<AbstractSimBase>>();
+        product.Should().HaveCount(2);
+        product[lhsScalarKey].Should().Be(1m);
+        product[rhsScalarKey].Should().Be(1m);
+
+        lhs = lhs.ScalarAnalog.Pow(3m).VectorAnalog!;
+        rhs = rhs.ScalarAnalog.Pow(-1m).VectorAnalog!;
+        product = lhs * rhs;
+        product.Should().BeOfType<ScalarComposition<AbstractSimBase>>();
+        product.Should().HaveCount(2);
+        product[lhsScalarKey].Should().Be(3m);
+        product[rhsScalarKey].Should().Be(-1m);
     }
 
     [Fact]
@@ -316,52 +342,52 @@ public class TestNamedComposition : BaseTestClass
         Assert.NotEqual(differentResult3, differentResult1);
     }
 
-    //[Fact]
-    //public void TestPow()
-    //{
-    //    AbstractSimBase lhsBase = new(Database);
-    //    AbstractSimBase rhsBase = new(Database);
+    [Fact]
+    public void ScalarComposition_Pow_Works()
+    {
+        ScalarSimBase lhsKey = new(Database);
+        ScalarSimBase rhsKey = new(Database);
 
-    //    var lhs = lhsBase.MakeComposition();
-    //    var rhs = rhsBase.MakeComposition();
+        ScalarComposition<AbstractSimBase> lhs = new(lhsKey);
+        ScalarComposition<AbstractSimBase> rhs = new(rhsKey);
 
-    //    var product = lhs * lhs * lhs / rhs;
-    //    var squared = product.Pow(2);
-    //    Assert.Equal(6m, squared[lhsBase]);
-    //    Assert.Equal(-2m, squared[rhsBase]);
+        var product = lhs * lhs * lhs / rhs;
+        var squared = product.Pow(2);
+        squared[lhsKey].Should().Be(6m);
+        squared[rhsKey].Should().Be(-2m);
 
-    //    var reciprocal = squared.Pow(-1);
-    //    Assert.Equal(-6m, reciprocal[lhsBase]);
-    //    Assert.Equal(2m, reciprocal[rhsBase]);
+        var reciprocal = squared.Pow(-1);
+        reciprocal[lhsKey].Should().Be(-6m);
+        reciprocal[rhsKey].Should().Be(2m);
 
-    //    var sqrRoot1 = reciprocal.Pow(0.5m);
-    //    Assert.Equal(-3m, sqrRoot1[lhsBase]);
-    //    Assert.Equal(1m, sqrRoot1[rhsBase]);
+        var sqrRoot1 = reciprocal.Pow(0.5m);
+        sqrRoot1[lhsKey].Should().Be(-3m);
+        sqrRoot1[rhsKey].Should().Be(1m);
 
-    //    var sqrRoot2 = sqrRoot1.Pow(0.5m);
-    //    Assert.Equal(-1.5m, sqrRoot2[lhsBase]);
-    //    Assert.Equal(0.5m, sqrRoot2[rhsBase]);
-    //}
+        var sqrRoot2 = sqrRoot1.Pow(0.5m);
+        sqrRoot2[lhsKey].Should().Be(-1.5m);
+        sqrRoot2[rhsKey].Should().Be(0.5m);
+    }
 
-    //[Fact]
-    //public void TestToString()
-    //{
-    //    AbstractSimBase simBase1 = new(Database, "sim1");
-    //    AbstractSimBase simBase2 = new(Database, "sim2");
-    //    AbstractSimBase simBase3 = new(Database, "sim3");
+    [Fact]
+    public void ScalarComposition_ToString_Works()
+    {
+        ScalarSimBase simKey1 = new(Database, "sim1");
+        ScalarSimBase simKey2 = new(Database, "sim2");
+        ScalarSimBase simKey3 = new(Database, "sim3");
 
-    //    var sim1 = simBase1.MakeComposition();
-    //    var sim2 = simBase2.MakeComposition();
-    //    var sim3 = simBase3.MakeComposition();
+        ScalarComposition<AbstractSimBase> sim1 = new(simKey1);
+        ScalarComposition<AbstractSimBase> sim2 = new(simKey2);
+        ScalarComposition<AbstractSimBase> sim3 = new(simKey3);
 
-    //    var product = sim2 * sim1 * sim2 / sim3 / sim3;
-    //    Assert.Equal(
-    //        "(sim1^1)*(sim2^2)*(sim3^-2)",
-    //        product.ToString());
+        var product = sim2 * sim1 * sim2 / sim3 / sim3;
+        Assert.Equal(
+            "(sim1^1)*(sim2^2)*(sim3^-2)",
+            product.ToString());
 
-    //    var fourthRoot = product.Pow(0.25m);
-    //    Assert.Equal(
-    //        "(sim1^0.25)*(sim2^0.5)*(sim3^-0.5)",
-    //        fourthRoot.ToString());
-    //}
+        var fourthRoot = product.Pow(0.25m);
+        Assert.Equal(
+            "(sim1^0.25)*(sim2^0.5)*(sim3^-0.5)",
+            fourthRoot.ToString());
+    }
 }

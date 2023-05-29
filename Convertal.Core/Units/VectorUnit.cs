@@ -29,7 +29,7 @@ public abstract class VectorUnit : Unit, IVectorUnit
         //ScalarAnalog.SetVectorAnalog(this);
     }
 
-    public override ScalarUnitProto ToProto() => throw new InvalidOperationException();
+    public override ScalarUnitProto ToProto() => ScalarAnalog.ToProto();
 
     protected override Type GetDatabaseType() => typeof(VectorUnit);
 }

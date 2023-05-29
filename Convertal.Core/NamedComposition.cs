@@ -37,7 +37,10 @@ public abstract class NamedComposition<T> : IVectorOrScalar, IReadOnlyDictionary
 
     internal NamedComposition(IReadOnlyDictionary<T, decimal> composition)
     {
-        _innerDictionary = composition;
+        if (composition.Count > 1 && composition is not SortedDictionary<T, decimal> && composition is not ImmutableSortedDictionary<T, decimal>)
+            _innerDictionary = composition.ToImmutableSortedDictionary();
+        else
+            _innerDictionary = composition.ToImmutableDictionary();
     }
 
     public static NamedComposition<T> Make(T key)
@@ -260,6 +263,10 @@ public abstract class NamedComposition<T> : IVectorOrScalar, IReadOnlyDictionary
         bool multiplication,
         IEnumerable<T> vectorElements)
     {
+        ArgumentNullException.ThrowIfNull(lhs);
+        ArgumentNullException.ThrowIfNull(rhs);
+        ArgumentNullException.ThrowIfNull(vectorElements);
+
         var resultingComposition = MultiplyOrDivide(lhs, rhs, multiplication);
         if (resultingComposition.Count == 0)
             return VectorComposition<T>.Empty;

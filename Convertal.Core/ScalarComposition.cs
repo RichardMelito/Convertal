@@ -96,6 +96,9 @@ public class ScalarComposition<T> : NamedComposition<T>,
 
     public static ScalarComposition<T> operator *(ScalarComposition<T> lhs, ScalarComposition<T> rhs)
     {
+        ArgumentNullException.ThrowIfNull(lhs);
+        ArgumentNullException.ThrowIfNull(rhs);
+
         var comp = MultiplyOrDivide(lhs, rhs, true);
         if (comp.Count == 0)
             return Empty;
@@ -105,6 +108,9 @@ public class ScalarComposition<T> : NamedComposition<T>,
 
     public static ScalarComposition<T> operator /(ScalarComposition<T> lhs, ScalarComposition<T> rhs)
     {
+        ArgumentNullException.ThrowIfNull(lhs);
+        ArgumentNullException.ThrowIfNull(rhs);
+
         var comp = MultiplyOrDivide(lhs, rhs, false);
         if (comp.Count == 0)
             return Empty;
