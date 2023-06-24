@@ -74,12 +74,12 @@ public class VectorComposition<T> : NamedComposition<T>,
     //    return (new (scalarDict), new(vectorDict));
     //}
 
-    public ScalarComposition<T> DotP(VectorComposition<T> other) => ScalarAnalog * other.ScalarAnalog;
+    public ScalarComposition<T> DotP(VectorComposition<T> other) => ScalarAnalog * other.ScalarAnalog.ReturnIfNotNull();
 
     public VectorComposition<T> CrossP(VectorComposition<T> other)
         => VectorMultiplyOrDivide(
             ScalarAnalog,
-            other.ScalarAnalog,
+            other.ScalarAnalog.ReturnIfNotNull(),
             true,
             Keys.Concat(other.Keys).Where(key => key.IsVector));
     //{
@@ -107,8 +107,8 @@ public class VectorComposition<T> : NamedComposition<T>,
     public VectorComposition<T> Multiply(ScalarComposition<T> scalar) => scalar * this;
     public VectorComposition<T> Divide(ScalarComposition<T> scalar) => this / scalar;
 
-    public static ScalarComposition<T> operator *(VectorComposition<T> left, VectorComposition<T> right) => left.DotP(right);
-    public static VectorComposition<T> operator &(VectorComposition<T> left, VectorComposition<T> right) => left.CrossP(right);
+    public static ScalarComposition<T> operator *(VectorComposition<T> left, VectorComposition<T> right) => left.DotP(right.ReturnIfNotNull());
+    public static VectorComposition<T> operator &(VectorComposition<T> left, VectorComposition<T> right) => left.CrossP(right.ReturnIfNotNull());
 
     public static VectorComposition<T> operator /(VectorComposition<T> vector, ScalarComposition<T> scalar)
         => VectorMultiplyOrDivide(

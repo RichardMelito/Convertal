@@ -191,9 +191,20 @@ public abstract class NamedComposition<T> : IVectorOrScalar, IReadOnlyDictionary
     }
 
     protected static IReadOnlyDictionary<T, decimal> MakeAllInDictScalar(
-        IReadOnlyDictionary<T, decimal> composition) =>
-        new SortedDictionary<T, decimal>(composition
-            .ToDictionary(kvp => (T)kvp.Key.ToScalar(), kvp => kvp.Value));
+    IReadOnlyDictionary<T, decimal> composition)
+    {
+        SortedDictionary<T, decimal> res = new();
+        foreach (var kvp in composition)
+        {
+            var scalarKey = (T)kvp.Key.ToScalar();
+            if (res.TryGetValue(scalarKey, out var existingValue))
+                res[scalarKey] = existingValue + kvp.Value;
+            else
+                res.Add(scalarKey, kvp.Value);
+        }
+
+        return res;
+    }
 
     //protected static IReadOnlyDictionary<T, decimal> MakeAllButOneInDictScalar(
     //    IReadOnlyDictionary<T, decimal> composition)

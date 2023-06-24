@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Text.Json;
 
 namespace Convertal.Core.Extensions;
@@ -85,5 +86,11 @@ public static class Extensions
     public static T ForceCast<T>(this object obj)
     {
         return (T)obj;
+    }
+
+    public static T ReturnIfNotNull<T>(this T? value, [CallerArgumentExpression(nameof(value))] string? paramName = null)
+    {
+        ArgumentNullException.ThrowIfNull(value, paramName);
+        return value;
     }
 }

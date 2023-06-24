@@ -218,12 +218,12 @@ public class TestNamedComposition : BaseTestClass
         product[rhsScalarKey].Should().Be(1m);
 
         lhs = lhs.ScalarAnalog.Pow(3m).VectorAnalog!;
-        rhs = rhs.ScalarAnalog.Pow(-1m).VectorAnalog!;
+        rhs = rhs.ScalarAnalog.Pow(2m).VectorAnalog!;
         product = lhs * rhs;
         product.Should().BeOfType<ScalarComposition<AbstractSimBase>>();
         product.Should().HaveCount(2);
         product[lhsScalarKey].Should().Be(3m);
-        product[rhsScalarKey].Should().Be(-1m);
+        product[rhsScalarKey].Should().Be(2m);
     }
 
     [Fact]
