@@ -130,4 +130,12 @@ public abstract class Quantity : MaybeNamed, IQuantity
 
         return ((ScalarQuantity)this).VectorAnalog;
     }
+
+    public override bool Equals(object? obj)
+    {
+        if (!base.Equals(obj))
+            return false;
+
+        return BaseQuantityComposition == ((Quantity)obj).BaseQuantityComposition;
+    }
 }

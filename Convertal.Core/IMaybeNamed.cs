@@ -52,7 +52,8 @@ public interface IMaybeNamed : IDisposable, IComparable<IMaybeNamed>, IEquatable
             return true;
         }
 
-        return ToProto() == other.ToProto();
+        return Name == other.Name;
+        //return ToProto() == other.ToProto();
     }
 
     int CalculateHashCode()
