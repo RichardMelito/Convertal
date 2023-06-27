@@ -69,54 +69,54 @@ public class TestQuantity : BaseTestClass
             prod3.BaseQuantityComposition);
     }
 
-    //[Fact]
-    //public void TestDivision()
-    //{
-    //    var quotient1 = _baseQuantity1 / _baseQuantity2;
-    //    Assert.IsType<DerivedQuantity>(quotient1);
-    //    Assert.Equal(
-    //        _baseQuantity1.BaseQuantityComposition / _baseQuantity2.BaseQuantityComposition,
-    //        quotient1.BaseQuantityComposition);
+    [Fact]
+    public void TestDivision()
+    {
+        var quotient1 = _baseQuantity1 / _baseQuantity2;
+        quotient1.Should().BeOfType<ScalarDerivedQuantity>();
+        Assert.Equal(
+            _baseQuantity1.BaseQuantityComposition / _baseQuantity2.BaseQuantityComposition,
+            quotient1.BaseQuantityComposition);
 
-    //    var quotient2 = _baseQuantity2 / _baseQuantity1;
-    //    Assert.IsType<DerivedQuantity>(quotient2);
-    //    Assert.Equal(
-    //        _baseQuantity2.BaseQuantityComposition / _baseQuantity1.BaseQuantityComposition,
-    //        quotient2.BaseQuantityComposition);
+        var quotient2 = _baseQuantity2 / _baseQuantity1;
+        quotient2.Should().BeOfType<ScalarDerivedQuantity>();
+        Assert.Equal(
+            _baseQuantity2.BaseQuantityComposition / _baseQuantity1.BaseQuantityComposition,
+            quotient2.BaseQuantityComposition);
 
-    //    var quotient3 = quotient1 / quotient2;
-    //    Assert.IsType<DerivedQuantity>(quotient3);
-    //    Assert.Equal(
-    //        quotient1.BaseQuantityComposition / quotient2.BaseQuantityComposition,
-    //        quotient3.BaseQuantityComposition);
-    //}
+        var quotient3 = quotient1 / quotient2;
+        quotient3.Should().BeOfType<ScalarDerivedQuantity>();
+        Assert.Equal(
+            quotient1.BaseQuantityComposition / quotient2.BaseQuantityComposition,
+            quotient3.BaseQuantityComposition);
+    }
 
-    //[Fact]
-    //public void TestMultiplicationAndDivision()
-    //{
-    //    var product1 = _baseQuantity1 * _baseQuantity1;
-    //    var quotient1 = product1 / _baseQuantity1;
-    //    Assert.Same(_baseQuantity1, quotient1);
+    [Fact]
+    public void TestMultiplicationAndDivision()
+    {
+        var product1 = _baseQuantity1 * _baseQuantity1;
+        var quotient1 = product1 / _baseQuantity1;
+        _baseQuantity1.Should().BeSameAs(quotient1);
 
-    //    var product2 = _baseQuantity2 * _baseQuantity2 * _baseQuantity1;
-    //    var quotient2 = product2 / (_baseQuantity1 * _baseQuantity2);
-    //    Assert.Same(_baseQuantity2, quotient2);
-    //}
+        var product2 = _baseQuantity2 * _baseQuantity2 * _baseQuantity1;
+        var quotient2 = product2 / (_baseQuantity1 * _baseQuantity2);
+        _baseQuantity2.Should().BeSameAs(quotient2);
+    }
 
-    //[Fact]
-    //public void TestEmpty()
-    //{
-    //    var quotient1 = _baseQuantity1 / _baseQuantity1;
-    //    Assert.Same(Database.EmptyQuantity, quotient1);
+    [Fact]
+    public void TestEmpty()
+    {
+        var quotient1 = _baseQuantity1 / _baseQuantity1;
+        quotient1.Should().BeSameAs(Database.ScalarEmptyQuantity);
 
-    //    var derived = _baseQuantity1 * _baseQuantity1 / _baseQuantity2;
-    //    var quotient2 = derived / derived;
-    //    Assert.Same(Database.EmptyQuantity, quotient2);
+        var derived = _baseQuantity1 * _baseQuantity1 / _baseQuantity2;
+        var quotient2 = derived / derived;
+        quotient2.Should().BeSameAs(Database.ScalarEmptyQuantity);
 
-    //    var product1 = Database.EmptyQuantity * _baseQuantity1;
-    //    Assert.Same(_baseQuantity1, product1);
+        var product1 = Database.ScalarEmptyQuantity * _baseQuantity1;
+        product1.Should().BeSameAs(_baseQuantity1);
 
-    //    var quotient3 = _baseQuantity2 / Database.EmptyQuantity;
-    //    Assert.Same(_baseQuantity2, quotient3);
-    //}
+        var quotient3 = _baseQuantity2 / Database.ScalarEmptyQuantity;
+        quotient3.Should().BeSameAs(_baseQuantity2);
+    }
 }
