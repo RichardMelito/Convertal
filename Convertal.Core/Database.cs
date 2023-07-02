@@ -802,15 +802,22 @@ public class Database
         return composition switch
         {
             ScalarComposition<IBaseQuantity> s => new ScalarDerivedQuantity(this, s),
-            VectorComposition<IBaseQuantity> v => _GetVectorDerivedQuantityFromComp(v),
+            VectorComposition<IBaseQuantity> v => _GetVectorQuantityFromComp(v),
             _ => throw new NotImplementedException(composition.ToString())
         };
 
-        VectorDerivedQuantity _GetVectorDerivedQuantityFromComp(VectorComposition<IBaseQuantity> comp)
+        VectorQuantity _GetVectorQuantityFromComp(VectorComposition<IBaseQuantity> comp)
         {
             var scalarComp = comp.ToScalar();
-            ScalarDerivedQuantity scalarQuant = new(this, scalarComp);
-            return new(scalarQuant, comp);
+            var scalarQuant = (ScalarQuantity?)QuantitiesByComposition.GetValueOrDefault(scalarComp);
+            return scalarQuant switch
+            {
+                // TODO I think that this throw will cause problems
+                ScalarBaseQuantity q => q.VectorAnalog ?? throw new InvalidOperationException($"No {nameof(ScalarBaseQuantity.VectorAnalog)} defined for {q}"),
+                ScalarDerivedQuantity q => q.VectorAnalog ?? new VectorDerivedQuantity(q, comp),
+                null => new VectorDerivedQuantity(new ScalarDerivedQuantity(this, scalarComp), comp),
+                _ => throw new InvalidOperationException(scalarQuant.ToString()),
+            };
         }
     }
 

@@ -282,7 +282,9 @@ public abstract class NamedComposition<T> : IVectorOrScalar, IReadOnlyDictionary
         if (resultingComposition.Count == 0)
             return VectorComposition<T>.Empty;
 
-        foreach (var vectorElem in vectorElements)
+        
+
+        foreach (var vectorElem in vectorElements.Distinct())
         {
             var scalarKey = (T)vectorElem.ToScalar();
             if (resultingComposition.TryGetValue(scalarKey, out var resultingPower))

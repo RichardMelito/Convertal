@@ -47,7 +47,7 @@ public abstract class VectorQuantity : Quantity, IVector<VectorQuantity, ScalarQ
     }
     public ScalarQuantity DotP(VectorQuantity other)
     {
-        var resultingComposition = BaseQuantityComposition.CrossP(other.BaseQuantityComposition);
+        var resultingComposition = BaseQuantityComposition.DotP(other.BaseQuantityComposition);
         return (ScalarQuantity)Database.GetQuantityFromBaseComposition(resultingComposition);
     }
 
