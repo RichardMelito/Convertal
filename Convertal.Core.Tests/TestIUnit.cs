@@ -1,179 +1,182 @@
-//// Created by Richard Melito and licensed to you under The Clear BSD License.
+// Created by Richard Melito and licensed to you under The Clear BSD License.
 
-//using Xunit;
+using FluentAssertions;
+using Xunit;
 
-//namespace Convertal.Core.Tests;
+namespace Convertal.Core.Tests;
 
-//public class TestIUnit : BaseTestClass
-//{
-//    [Fact]
-//    public void TestUnitCompositions()
-//    {
-//        var quantA = Database.DefineBaseQuantity("quantA",
-//            "a");
+public class TestIUnit : BaseTestClass
+{
+    [Fact]
+    public void TestUnitCompositions()
+    {
+        var quantA = Database.DefineScalarBaseQuantity("quantA",
+            "a");
 
-//        var a = (BaseUnit)quantA.FundamentalUnit;
-//        var b = new BaseUnit(Database, "b", a, 2);
-//        var prefix = new Prefix(Database, "prefix", 4);
-//        var c = Database.GetPrefixedUnit(a, prefix);
+        var a = (ScalarBaseUnit)quantA.FundamentalUnit;
+        var b = new ScalarBaseUnit(Database, "b", a, 2);
+        var prefix = new Prefix(Database, "prefix", 4);
+        var c = Database.GetPrefixedUnit(a, prefix);
 
-//        var composition =
-//            a.UnitComposition *
-//            b.UnitComposition /
-//            c.UnitComposition;
+        var composition =
+            a.UnitComposition *
+            b.UnitComposition /
+            c.UnitComposition;
 
-//        var d = Database.DefineFromComposition("d", composition);
-//        Assert.Same(quantA, d.Quantity);
-//        Assert.IsType<BaseUnit>(d);
-//        Assert.Equal(0.5m, d.FundamentalMultiplier);
-//    }
+        var d = Database.DefineFromScalarComposition("d", composition);
+        quantA.Should().BeSameAs(d.Quantity);
+        d.Should().BeOfType<ScalarBaseUnit>();
+        d.FundamentalMultiplier.Should().Be(0.5m);
+    }
 
-//    [Fact]
-//    public void TestConversionsAndDefinitions()
-//    {
-//        /*  A = fundamental
-//         *      A = 2*B + 40
-//         *      A = 8*C + 360
-//         *  
-//         *  B = (A/2) - 20 = 4*C + 160
-//         *      B.multiplier = 2
-//         *      B.offset = 20
-//         *      
-//         *  C = (B/4) - 40 = (A/8) - 45
-//         *      C.multiplier = 8
-//         *      C.offset = 45
-//         */
+    [Fact]
+    public void TestConversionsAndDefinitions()
+    {
+        /*  A = fundamental
+         *      A = 2*B + 40
+         *      A = 8*C + 360
+         *  
+         *  B = (A/2) - 20 = 4*C + 160
+         *      B.multiplier = 2
+         *      B.offset = 20
+         *      
+         *  C = (B/4) - 40 = (A/8) - 45
+         *      C.multiplier = 8
+         *      C.offset = 45
+         */
 
-//        var quant = Database.DefineBaseQuantity(
-//            "quantity", "a");
+        var quant = Database.DefineScalarBaseQuantity(
+            "quantity", "a");
 
-//        var a = (BaseUnit)quant.FundamentalUnit;
-//        BaseUnit b = new(Database, "b", a,
-//            multiplier: 2m,
-//            offset: 20m);
+        var a = quant.FundamentalUnit;
+        a.Should().BeOfType<ScalarBaseUnit>();
+        IScalarBaseUnit b = new ScalarBaseUnit(Database, "b", a,
+            multiplier: 2m,
+            offset: 20m);
 
-//        BaseUnit c = new(Database, "c", b,
-//            multiplier: 4m,
-//            offset: 40m);
+        IScalarBaseUnit c = new ScalarBaseUnit(Database, "c", b,
+            multiplier: 4m,
+            offset: 40m);
 
+        a.FundamentalMultiplier.Should().Be(1m);
+        a.FundamentalOffset.Should().Be(0m);
 
-//        Assert.Equal(1m, a.FundamentalMultiplier);
-//        Assert.Equal(0m, a.FundamentalOffset);
+        b.FundamentalMultiplier.Should().Be(2m);
+        b.FundamentalOffset.Should().Be(20m);
 
-//        Assert.Equal(2m, b.FundamentalMultiplier);
-//        Assert.Equal(20m, b.FundamentalOffset);
+        c.FundamentalMultiplier.Should().Be(8m);
+        c.FundamentalOffset.Should().Be(45m);
 
-//        Assert.Equal(8m, c.FundamentalMultiplier);
-//        Assert.Equal(45m, c.FundamentalOffset);
+        {
+            // Convert to fundamental
+            var aAsFund = a.ConvertToFundamental(3m);
+            aAsFund.Magnitude.Should().Be(3m);
+            aAsFund.Unit.Should().BeSameAs(a);
 
-//        {
-//            // Convert to fundamental
-//            var aAsFund = a.ConvertToFundamental(3m);
-//            Assert.Equal(3m, aAsFund.Magnitude);
-//            Assert.Same(a, aAsFund.Unit);
+            var bAsFund = b.ConvertToFundamental(3m);
+            bAsFund.Magnitude.Should().Be(46m);
+            bAsFund.Unit.Should().BeSameAs(a);
 
-//            var bAsFund = b.ConvertToFundamental(3m);
-//            Assert.Equal(46m, bAsFund.Magnitude);
-//            Assert.Same(a, bAsFund.Unit);
+            var cAsFund = c.ConvertToFundamental(3m);
+            cAsFund.Magnitude.Should().Be(384m);
+            cAsFund.Unit.Should().BeSameAs(a);
+        }
 
-//            var cAsFund = c.ConvertToFundamental(3m);
-//            Assert.Equal(384m, cAsFund.Magnitude);
-//            Assert.Same(a, cAsFund.Unit);
-//        }
+        {
+            // Convert to A
+            var aAsA = a.ConvertTo(3m, a);
+            aAsA.Magnitude.Should().Be(3m);
+            aAsA.Unit.Should().BeSameAs(a);
 
-//        {
-//            // Convert to A
-//            var aAsA = a.ConvertTo(3m, a);
-//            Assert.Equal(3m, aAsA.Magnitude);
-//            Assert.Same(a, aAsA.Unit);
+            var bAsA = b.ConvertToFundamental(3m);
+            bAsA.Magnitude.Should().Be(46m);
+            bAsA.Unit.Should().BeSameAs(a);
 
-//            var bAsA = b.ConvertToFundamental(3m);
-//            Assert.Equal(46m, bAsA.Magnitude);
-//            Assert.Same(a, bAsA.Unit);
+            var cAsA = c.ConvertToFundamental(3m);
+            cAsA.Magnitude.Should().Be(384m);
+            cAsA.Unit.Should().BeSameAs(a);
+        }
 
-//            var cAsA = c.ConvertToFundamental(3m);
-//            Assert.Equal(384m, cAsA.Magnitude);
-//            Assert.Same(a, cAsA.Unit);
-//        }
+        {
+            // Convert to B
+            var aAsB = a.ConvertTo(4m, b);
+            aAsB.Magnitude.Should().Be(-18m);
+            aAsB.Unit.Should().BeSameAs(b);
 
-//        {
-//            // Convert to B
-//            var aAsB = a.ConvertTo(4m, b);
-//            Assert.Equal(-18m, aAsB.Magnitude);
-//            Assert.Same(b, aAsB.Unit);
+            var bAsB = b.ConvertTo(3m, b);
+            bAsB.Magnitude.Should().Be(3m);
+            bAsB.Unit.Should().BeSameAs(b);
 
-//            var bAsB = b.ConvertTo(3m, b);
-//            Assert.Equal(3m, bAsB.Magnitude);
-//            Assert.Same(b, bAsB.Unit);
+            var cAsB = c.ConvertTo(2m, b);
+            cAsB.Magnitude.Should().Be(168m);
+            cAsB.Unit.Should().BeSameAs(b);
+        }
 
-//            var cAsB = c.ConvertTo(2m, b);
-//            Assert.Equal(168m, cAsB.Magnitude);
-//            Assert.Same(b, cAsB.Unit);
-//        }
+        {
+            // Convert to C
+            var aAsC = a.ConvertTo(16m, c);
+            aAsC.Magnitude.Should().Be(-43m);
+            aAsC.Unit.Should().BeSameAs(c);
 
-//        {
-//            // Convert to C
-//            var aAsC = a.ConvertTo(16m, c);
-//            Assert.Equal(-43m, aAsC.Magnitude);
-//            Assert.Same(c, aAsC.Unit);
+            var bAsC = b.ConvertTo(8m, c);
+            bAsC.Magnitude.Should().Be(-38m);
+            bAsC.Unit.Should().BeSameAs(c);
 
-//            var bAsC = b.ConvertTo(8m, c);
-//            Assert.Equal(-38m, bAsC.Magnitude);
-//            Assert.Same(c, bAsC.Unit);
+            var cAsC = c.ConvertTo(3m, c);
+            cAsC.Magnitude.Should().Be(3m);
+            cAsC.Unit.Should().BeSameAs(c);
+        }
 
-//            var cAsC = c.ConvertTo(3m, c);
-//            Assert.Equal(3m, cAsC.Magnitude);
-//            Assert.Same(c, cAsC.Unit);
-//        }
+        Prefix testPrefix = new(Database, "TestPrefix", 10m);
+        var pA = Database.GetPrefixedUnit((ScalarBaseUnit)a, testPrefix);
+        var pB = Database.GetPrefixedUnit((ScalarBaseUnit)b, testPrefix);
+        var pC = Database.GetPrefixedUnit((ScalarBaseUnit)c, testPrefix);
 
-//        Prefix testPrefix = new(Database, "TestPrefix", 10m);
-//        var pA = Database.GetPrefixedUnit(a, testPrefix);
-//        var pB = Database.GetPrefixedUnit(b, testPrefix);
-//        var pC = Database.GetPrefixedUnit(c, testPrefix);
+        pA.FundamentalMultiplier.Should().Be(10m);
+        pA.FundamentalOffset.Should().Be(0m);
 
-//        Assert.Equal(10m, pA.FundamentalMultiplier);
-//        Assert.Equal(0m, pA.FundamentalOffset);
+        pB.FundamentalMultiplier.Should().Be(20m);
+        pB.FundamentalOffset.Should().Be(2m);
 
-//        Assert.Equal(20m, pB.FundamentalMultiplier);
-//        Assert.Equal(2m, pB.FundamentalOffset);
+        pC.FundamentalMultiplier.Should().Be(80m);
+        pC.FundamentalOffset.Should().Be(4.5m);
 
-//        Assert.Equal(80m, pC.FundamentalMultiplier);
-//        Assert.Equal(4.5m, pC.FundamentalOffset);
+        {
+            var aAsPa = a.ConvertTo(20m, pA);
+            aAsPa.Magnitude.Should().Be(2m);
+            aAsPa.Unit.Should().BeSameAs(pA);
 
-//        {
-//            var aAsPa = a.ConvertTo(20m, pA);
-//            Assert.Equal(2m, aAsPa.Magnitude);
-//            Assert.Same(pA, aAsPa.Unit);
+            var cAsPc = c.ConvertTo(20m, pC);
+            cAsPc.Magnitude.Should().Be(2m);
+            cAsPc.Unit.Should().BeSameAs(pC);
 
-//            var cAsPc = c.ConvertTo(20m, pC);
-//            Assert.Equal(2m, cAsPc.Magnitude);
-//            Assert.Same(pC, cAsPc.Unit);
+            var paAsA = ((IScalarUnit)pA).ConvertTo(2m, a);
+            paAsA.Magnitude.Should().Be(20m);
+            paAsA.Unit.Should().BeSameAs(a);
 
-//            var paAsA = pA.ConvertTo(2m, a);
-//            Assert.Equal(20m, paAsA.Magnitude);
-//            Assert.Same(a, paAsA.Unit);
+            var pcAsC = ((IScalarUnit)pC).ConvertTo(2m, c);
+            pcAsC.Magnitude.Should().Be(20m);
+            pcAsC.Unit.Should().BeSameAs(c);
+        }
 
-//            var pcAsC = pC.ConvertTo(2m, c);
-//            Assert.Equal(20m, pcAsC.Magnitude);
-//            Assert.Same(c, pcAsC.Unit);
-//        }
+        {
+            var aAsPc = a.ConvertTo(3200m, pC);
+            aAsPc.Magnitude.Should().Be(35.5m);
+            aAsPc.Unit.Should().BeSameAs(pC);
 
-//        {
-//            var aAsPc = a.ConvertTo(3200m, pC);
-//            Assert.Equal(35.5m, aAsPc.Magnitude);
-//            Assert.Same(pC, aAsPc.Unit);
+            var cAsPa = c.ConvertTo(30m, pA);
+            cAsPa.Magnitude.Should().Be(60m);
+            cAsPa.Unit.Should().BeSameAs(pA);
 
-//            var cAsPa = c.ConvertTo(30m, pA);
-//            Assert.Equal(60m, cAsPa.Magnitude);
-//            Assert.Same(pA, cAsPa.Unit);
+            var paAsC = ((IScalarUnit)pA).ConvertTo(60m, c);
+            paAsC.Magnitude.Should().Be(30m);
+            paAsC.Unit.Should().BeSameAs(c);
 
-//            var paAsC = pA.ConvertTo(60m, c);
-//            Assert.Equal(30m, paAsC.Magnitude);
-//            Assert.Same(c, paAsC.Unit);
-
-//            var pCAsA = pC.ConvertTo(35.5m, a);
-//            Assert.Equal(3200m, pCAsA.Magnitude);
-//            Assert.Same(a, pCAsA.Unit);
-//        }
-//    }
-//}
+            var pCAsA = ((IScalarUnit)pC).ConvertTo(35.5m, a);
+            pCAsA.Magnitude.Should().Be(3200m);
+            pCAsA.Unit.Should().BeSameAs(a);
+            Assert.Equal(3200m, pCAsA.Magnitude);
+            Assert.Same(a, pCAsA.Unit);
+        }
+    }
+}

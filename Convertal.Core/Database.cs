@@ -821,12 +821,21 @@ public class Database
         }
     }
 
-    //public Unit DefineFromComposition(string name, NamedComposition<IUnit> composition)
-    //{
-    //    var quantity = GetQuantityFromBaseComposition(composition);
-    //    if (quantity is BaseQuantity)
-    //        return new BaseUnit(this, name, composition);
-    //    else
-    //        return new DerivedUnit(this, name, composition);
-    //}
+    public ScalarUnit DefineFromScalarComposition(string name, ScalarComposition<IUnit> composition)
+    {
+        var quantity = (ScalarQuantity)GetQuantityFromBaseComposition(composition);
+        if (quantity is ScalarBaseQuantity)
+            return new ScalarBaseUnit(this, name, composition);
+        else
+            return new ScalarDerivedUnit(this, name, composition);
+    }
+
+    public VectorUnit DefineFromVectorComposition(string name, VectorComposition<IUnit> composition)
+    {
+        var scalarUnit = DefineFromScalarComposition(name, composition.ScalarAnalog);
+        if (scalarUnit is ScalarBaseUnit sbu)
+            return new VectorBaseUnit(sbu);
+        else
+            return new VectorDerivedUnit((ScalarDerivedUnit)scalarUnit);
+    }
 }
