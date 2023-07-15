@@ -347,11 +347,15 @@ public class Database
         decimal offset = 0,
         string? symbol = null) => new(this, name, otherUnit, multiplier, offset, symbol);
 
-    //public VectorBaseUnit DefineVectorBaseUnit(
-    //    string name,
-    //    IVectorBaseUnit otherUnit,
-    //    decimal multiplier,
-    //    string? symbol = null) => new(this, name, otherUnit, multiplier, symbol);
+    public VectorBaseUnit DefineVectorBaseUnit(
+        string name,
+        IVectorBaseUnit otherUnit,
+        decimal multiplier,
+        string? symbol = null)
+    {
+        var scalar = DefineScalarBaseUnit(name, (IScalarBaseUnit)otherUnit.ScalarAnalog, multiplier, symbol: symbol);
+        return new(scalar);
+    }
 
     internal ScalarBaseUnit DefineScalarBaseUnit(ScalarUnitProto proto)
     {
@@ -429,12 +433,12 @@ public class Database
             case 2:
                 {
                     var prefix = GetFromName<Prefix>(split[0], isSymbol);
-                    var unit = GetFromName<Unit>(split[1], isSymbol);
+                    var unit = GetFromName<ScalarUnit>(split[1], isSymbol);
                     return GetPrefixedUnit(unit, prefix);
                 }
 
             case 1:
-                return GetFromName<Unit>(split[0], isSymbol);
+                return GetFromName<ScalarUnit>(split[0], isSymbol);
 
             default:
                 throw new ArgumentException(toParse);
@@ -449,12 +453,15 @@ public class Database
         string? symbol = null)
         => new(this, name, otherUnit, multiplier, offset, symbol);
 
-    //public VectorDerivedUnit DefineVectorDerivedUnit(
-    //    string name,
-    //    IVectorDerivedUnit otherUnit,
-    //    decimal multiplier,
-    //    string? symbol = null)
-    //    => new(this, name, otherUnit, multiplier, symbol);
+    public VectorDerivedUnit DefineVectorDerivedUnit(
+        string name,
+        IVectorDerivedUnit otherUnit,
+        decimal multiplier,
+        string? symbol = null)
+    {
+        var scalar = DefineScalarDerivedUnit(name, (IScalarDerivedUnit)otherUnit.ScalarAnalog, multiplier, symbol: symbol);
+        return new(scalar);
+    }
 
     internal ScalarDerivedUnit DefineScalarDerivedUnit(ScalarUnitProto proto)
     {

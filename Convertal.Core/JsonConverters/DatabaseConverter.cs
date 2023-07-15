@@ -204,7 +204,7 @@ public class DatabaseConverter : JsonConverter<Database>
 
                 foreach (var name in unitNames)
                 {
-                    if (!database.TryGetFromName<Unit>(name, out _))
+                    if (!database.TryGetFromName<ScalarUnit>(name, out _))
                         return false;
                 }
 

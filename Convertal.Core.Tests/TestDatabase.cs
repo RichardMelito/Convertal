@@ -1,107 +1,112 @@
-//// Created by Richard Melito and licensed to you under The Clear BSD License.
+// Created by Richard Melito and licensed to you under The Clear BSD License.
 
-//using System.Text.Json;
-//using System.Text.Json.Serialization;
-//using FluentAssertions;
-//using Xunit;
+using System.Text.Json;
+using System.Text.Json.Serialization;
+using FluentAssertions;
+using Xunit;
 
-//namespace Convertal.Core.Tests;
+namespace Convertal.Core.Tests;
 
-//public class TestDatabase : BaseTestClass
-//{
-//    public readonly Prefix Milli;
-//    public readonly Prefix Kilo;
+public class TestDatabase : BaseTestClass
+{
+    public readonly Prefix Milli;
+    public readonly Prefix Kilo;
 
-//    public readonly ScalarBaseQuantity Length;
-//    public readonly ScalarBaseQuantity Time;
-//    public readonly ScalarBaseQuantity Mass;
+    public readonly ScalarBaseQuantity Length;
+    public readonly ScalarBaseQuantity Time;
+    public readonly ScalarBaseQuantity Mass;
 
-//    public readonly ScalarBaseUnit Meter;
-//    public readonly ScalarBaseUnit Second;
-//    public readonly ScalarBaseUnit Hour;
-//    public readonly ScalarBaseUnit Foot;
+    public readonly VectorBaseQuantity Displacement;
 
-//    public readonly ScalarPrefixedBaseUnit KiloGram;
+    public readonly ScalarBaseUnit Meter;
+    public readonly ScalarBaseUnit Second;
+    public readonly ScalarBaseUnit Hour;
+    public readonly ScalarBaseUnit Foot;
 
-//    public readonly ScalarDerivedQuantity Speed;
-//    public readonly ScalarDerivedQuantity SAcceleration;
-//    public readonly ScalarDerivedQuantity Tension;
+    public readonly ScalarPrefixedBaseUnit KiloGram;
 
-//    public readonly VectorDerivedQuantity Velocity;
-//    public readonly VectorDerivedQuantity VAcceleration;
-//    public readonly VectorDerivedQuantity Force;
+    public readonly ScalarDerivedQuantity Speed;
+    public readonly ScalarDerivedQuantity SAcceleration;
+    public readonly ScalarDerivedQuantity Tension;
 
-//    public readonly ScalarDerivedUnit Newton;
-//    public readonly ScalarDerivedUnit PoundForce;
+    public readonly VectorDerivedQuantity Velocity;
+    public readonly VectorDerivedQuantity VAcceleration;
+    public readonly VectorDerivedQuantity Force;
 
-//    public readonly Unit FeetPerSecond;
+    public readonly VectorDerivedUnit Newton;
+    public readonly VectorDerivedUnit PoundForce;
 
-//    public readonly MeasurementSystem Metric;
-//    public readonly MeasurementSystem Imperial;
+    public readonly Unit FeetPerSecond;
 
-//    public TestDatabase()
-//    {
-//        Milli = Database.DefinePrefix("milli", 1e-3m, "m");
-//        Kilo = Database.DefinePrefix("kilo", 1e3m, "k");
+    public readonly MeasurementSystem Metric;
+    public readonly MeasurementSystem Imperial;
 
-//        Length = Database.DefineScalarBaseQuantity(nameof(Length), "Meter", quantitySymbol: "l", unitSymbol: "m");
-//        Time = Database.DefineScalarBaseQuantity(nameof(Time), "Second", quantitySymbol: "t", unitSymbol: "s");
-//        Mass = Database.DefineScalarBaseQuantity(nameof(Mass), "Gram", unitPrefix: Kilo, quantitySymbol: "m", unitSymbol: "g");
+    public TestDatabase()
+    {
+        Milli = Database.DefinePrefix("milli", 1e-3m, "m");
+        Kilo = Database.DefinePrefix("kilo", 1e3m, "k");
 
-//        Meter = (ScalarBaseUnit)Length.FundamentalUnit;
-//        Second = (ScalarBaseUnit)Time.FundamentalUnit;
-//        KiloGram = (ScalarPrefixedBaseUnit)Mass.FundamentalUnit;
-//        Foot = Database.DefineScalarBaseUnit(nameof(Foot), Meter, 0.3048m);
+        Length = Database.DefineScalarBaseQuantity(nameof(Length), "Meter", quantitySymbol: "l", unitSymbol: "m");
+        Time = Database.DefineScalarBaseQuantity(nameof(Time), "Second", quantitySymbol: "t", unitSymbol: "s");
+        Mass = Database.DefineScalarBaseQuantity(nameof(Mass), "Gram", unitPrefix: Kilo, quantitySymbol: "m", unitSymbol: "g");
 
-//        Hour = Database.DefineScalarBaseUnit(nameof(Hour), Second, 3600m, symbol: "h");
+        // TODO need a mechanism for differentiating vector names from scalar names
+        Displacement = Database.DefineVectorBaseQuantity(Length, nameof(Displacement));
 
-//        Database.DefineScalarDerivedQuantity(() => Length / Time, out Speed, "v");
-//        SAcceleration = Database.DefineScalarDerivedQuantity(() => Speed / Time, "acceleration", "a");
-//        Database.DefineScalarDerivedQuantity(() => Mass * SAcceleration, out Tension, "F");
+        Meter = (ScalarBaseUnit)Length.FundamentalUnit;
+        Second = (ScalarBaseUnit)Time.FundamentalUnit;
+        KiloGram = (ScalarPrefixedBaseUnit)Mass.FundamentalUnit;
+        Foot = Database.DefineScalarBaseUnit(nameof(Foot), Meter, 0.3048m);
 
-//        Velocity = Database.DefineDerivedQuantity(() => Length / Time, nameof(Velocity), "v");
-//        Acceleration = Database.DefineDerivedQuantity(() => Velocity / Time, nameof(Acceleration), "a");
-//        Force = Database.DefineDerivedQuantity(() => Mass * Acceleration, nameof(Force), "F");
+        Hour = Database.DefineScalarBaseUnit(nameof(Hour), Second, 3600m, symbol: "h");
 
-//        Newton = Force.FundamentalUnit.CastAndChangeNameAndSymbol<DerivedUnit>(nameof(Newton), "N");
-//        PoundForce = Database.DefineDerivedUnit(nameof(PoundForce), Newton, 4.4482216282509m, symbol: "lbf");
+        Database.DefineScalarDerivedQuantity(() => Length / Time, out Speed, nameof(Speed));
+        SAcceleration = Database.DefineScalarDerivedQuantity(() => Speed / Time, nameof(SAcceleration), "sa");
+        Database.DefineScalarDerivedQuantity(() => Mass * SAcceleration, out Tension);
 
-//        FeetPerSecond = Database.DefineFromComposition(nameof(FeetPerSecond), Foot.UC / Second.UC);
+        Velocity = Database.DefineVectorDerivedQuantity(() => Displacement / Time, nameof(Velocity), "v");
+        VAcceleration = Database.DefineVectorDerivedQuantity(() => Velocity / Time, nameof(VAcceleration), "va");
+        Force = Database.DefineVectorDerivedQuantity(() => Mass * VAcceleration, nameof(Force), "F");
 
-//        Metric = new(Database, nameof(Metric));
-//        Metric.SetQuantityUnitPairs(new KeyValuePair<Quantity, IUnit>[]
-//        {
-//            new(Length, Meter),
-//            new(Time, Second),
-//            new(Mass, KiloGram),
-//            new(Force, Newton),
-//        });
+        Newton = Force.FundamentalUnit.CastAndChangeNameAndSymbol<VectorDerivedUnit>(nameof(Newton), "N");
+        PoundForce = Database.DefineVectorDerivedUnit(nameof(PoundForce), Newton, 4.4482216282509m, symbol: "lbf");
 
-//        Imperial = new(Database, nameof(Imperial));
-//        Imperial.SetQuantityUnitPairs(new KeyValuePair<Quantity, IUnit>[]
-//        {
-//            new(Length, Foot),
-//            new(Time, Second),
-//            new(Force, PoundForce),
-//        });
-//    }
+        FeetPerSecond = Database.DefineFromScalarComposition(nameof(FeetPerSecond), Foot.UnitComposition / Second.UnitComposition);
 
-//    [Fact]
-//    public void TestSerialization()
-//    {
-//        JsonSerializerOptions jsonSerializerOptions = new()
-//        {
-//            WriteIndented = true,
-//            DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull,
-//        };
-//        var text = JsonSerializer.Serialize(Database, jsonSerializerOptions);
-//        // TODO don't write this out to a file
-//        //File.WriteAllText("database.json", text);
+        Metric = new(Database, nameof(Metric));
+        Metric.SetQuantityUnitPairs(new KeyValuePair<Quantity, IUnit>[]
+        {
+            new(Length, Meter),
+            new(Time, Second),
+            new(Mass, KiloGram),
+            new(Force, Newton),
+        });
 
-//        // TODO check that anonymous units/quantities are tested
+        Imperial = new(Database, nameof(Imperial));
+        Imperial.SetQuantityUnitPairs(new KeyValuePair<Quantity, IUnit>[]
+        {
+            new(Length, Foot),
+            new(Time, Second),
+            new(Force, PoundForce),
+        });
+    }
+
+    [Fact]
+    public void TestSerialization()
+    {
+        JsonSerializerOptions jsonSerializerOptions = new()
+        {
+            WriteIndented = true,
+            DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull,
+        };
+        var text = JsonSerializer.Serialize(Database, jsonSerializerOptions);
+        // TODO don't write this out to a file
+        //File.WriteAllText("database.json", text);
+
+        // TODO check that anonymous units/quantities are tested
 
 
-//        var deserialized = JsonSerializer.Deserialize<Database>(text, jsonSerializerOptions)!;
-//        Database.Should().BeEquivalentTo(deserialized);
-//    }
-//}
+        var deserialized = JsonSerializer.Deserialize<Database>(text, jsonSerializerOptions)!;
+        Database.Should().BeEquivalentTo(deserialized);
+    }
+}

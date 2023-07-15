@@ -45,11 +45,19 @@ public class TestIUnit : BaseTestClass
          *      C.offset = 45
          */
 
-        var quant = Database.DefineScalarBaseQuantity(
-            "quantity", "a");
+        var scalarQuant = Database.DefineScalarBaseQuantity("ScalarQuantity", "a");
+        var vectorQuant = Database.DefineVectorBaseQuantity(scalarQuant, "VectorQuantity");
 
-        var a = quant.FundamentalUnit;
+        var a = scalarQuant.FundamentalUnit;
         a.Should().BeOfType<ScalarBaseUnit>();
+
+        var aVector = vectorQuant.FundamentalUnit;
+        aVector.Should().BeOfType<VectorBaseUnit>();
+        a.VectorAnalog.Should().BeSameAs(aVector);
+        aVector.ScalarAnalog.Should().BeSameAs(a);
+        aVector.Name.Should().BeSameAs(a.Name);
+        aVector.Symbol.Should().BeSameAs(a.Symbol);
+
         IScalarBaseUnit b = new ScalarBaseUnit(Database, "b", a,
             multiplier: 2m,
             offset: 20m);
@@ -175,8 +183,6 @@ public class TestIUnit : BaseTestClass
             var pCAsA = ((IScalarUnit)pC).ConvertTo(35.5m, a);
             pCAsA.Magnitude.Should().Be(3200m);
             pCAsA.Unit.Should().BeSameAs(a);
-            Assert.Equal(3200m, pCAsA.Magnitude);
-            Assert.Same(a, pCAsA.Unit);
         }
     }
 }

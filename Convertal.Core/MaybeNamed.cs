@@ -91,6 +91,19 @@ public abstract class MaybeNamed : IMaybeNamed
         ChangeName(newName);
         if (symbol is not null)
             ChangeSymbol(symbol);
+
+        if (this is ScalarUnit scalarUnit)
+        {
+            var vectorAnalog = scalarUnit.VectorAnalog;
+            if (vectorAnalog is not null && vectorAnalog.Name != Name)
+                vectorAnalog.ChangeNameAndSymbol(newName, symbol);
+        }
+        else if (this is VectorUnit vectorUnit)
+        {
+            var scalarAnalog = vectorUnit.ScalarAnalog;
+            if (scalarAnalog.Name != Name)
+                scalarAnalog.ChangeNameAndSymbol(newName, Symbol);
+        }
     }
 
     public override string ToString()

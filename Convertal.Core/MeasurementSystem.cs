@@ -47,13 +47,28 @@ public class MeasurementSystem : MaybeNamed, INamed
 
     public void SetQuantityUnitPair(Quantity quantity, IUnit unit)
     {
-        if (unit.Quantity != quantity)
-        {
-            throw new InvalidOperationException($"IUnit {unit} has quantity " +
-                $"{unit.Quantity} instead of {quantity}.");
-        }
+        // TODO improve this so that users can have separate preferences for vectors and scalars
+        var scalarUnit = (IScalarUnit)unit.ToScalar();
+        var scalarQuantity = quantity.ToScalar();
 
-        _quantities_units[quantity] = unit;
+        if (scalarUnit.Quantity != scalarQuantity)
+        {
+            throw new InvalidOperationException($"IUnit {scalarUnit} has quantity " +
+                $"{scalarUnit.Quantity} instead of {scalarQuantity}.");
+        }
+        _quantities_units[scalarQuantity] = scalarUnit;
+
+        var vectorUnit = unit.ToVector() as IVectorUnit;
+        var vectorQuantity = quantity.ToVector();
+        if (vectorUnit is not null && vectorQuantity is not null)
+        {
+            if (vectorUnit.Quantity != vectorQuantity)
+            {
+                throw new InvalidOperationException($"IUnit {vectorUnit} has quantity " +
+                    $"{vectorUnit.Quantity} instead of {vectorQuantity}.");
+            }
+            _quantities_units[vectorQuantity] = vectorUnit;
+        }
     }
 
     public void SetQuantityUnitPairs(params KeyValuePair<Quantity, IUnit>[] pairs)
