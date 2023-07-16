@@ -354,7 +354,7 @@ public class Database
         string? symbol = null)
     {
         var scalar = DefineScalarBaseUnit(name, (IScalarBaseUnit)otherUnit.ScalarAnalog, multiplier, symbol: symbol);
-        return new(scalar);
+        return scalar.VectorAnalog!;
     }
 
     internal ScalarBaseUnit DefineScalarBaseUnit(ScalarUnitProto proto)
@@ -372,9 +372,6 @@ public class Database
         {
             if (proto.Symbol is not null)
                 unit.ChangeSymbol(proto.Symbol);
-
-            if (composition is not null)
-                unit.SetUnitComposition(composition);
         }
         else
         {
@@ -388,8 +385,11 @@ public class Database
                 composition);
         }
 
+        composition ??= new(unit);
+        unit.SetUnitComposition(composition);
+
         if (proto.HasVectorAnalog)
-            _ = new VectorBaseUnit(unit);
+            _ = unit.VectorAnalog;
 
         return unit;
     }
@@ -460,7 +460,7 @@ public class Database
         string? symbol = null)
     {
         var scalar = DefineScalarDerivedUnit(name, (IScalarDerivedUnit)otherUnit.ScalarAnalog, multiplier, symbol: symbol);
-        return new(scalar);
+        return scalar.VectorAnalog!;
     }
 
     internal ScalarDerivedUnit DefineScalarDerivedUnit(ScalarUnitProto proto)
@@ -494,8 +494,14 @@ public class Database
                 composition);
         }
 
+        if (unit.UnitComposition is null)
+        {
+            composition ??= new(unit);
+            unit.SetUnitComposition(composition);
+        }
+
         if (proto.HasVectorAnalog)
-            _ = new VectorDerivedUnit(unit);
+            _ = unit.VectorAnalog;
 
         return unit;
     }
@@ -840,9 +846,10 @@ public class Database
     public VectorUnit DefineFromVectorComposition(string name, VectorComposition<IUnit> composition)
     {
         var scalarUnit = DefineFromScalarComposition(name, composition.ScalarAnalog);
-        if (scalarUnit is ScalarBaseUnit sbu)
-            return new VectorBaseUnit(sbu);
-        else
-            return new VectorDerivedUnit((ScalarDerivedUnit)scalarUnit);
+        return scalarUnit.VectorAnalog!;
+        //if (scalarUnit is ScalarBaseUnit sbu)
+        //    return new VectorBaseUnit(sbu);
+        //else
+        //    return new VectorDerivedUnit((ScalarDerivedUnit)scalarUnit);
     }
 }

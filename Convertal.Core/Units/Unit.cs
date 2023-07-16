@@ -94,7 +94,7 @@ public abstract class Unit : MaybeNamed, IUnit
     /// <see cref="Database.DefineScalarDerivedUnit(ScalarUnitProto)"/>.
     internal void SetUnitComposition(NamedComposition<IUnit> unitComposition)
     {
-        if (!UnitComposition.IsComposedOfOne(this))
+        if (UnitComposition?.IsComposedOfOne(this) == false)
             throw new InvalidOperationException();
 
         if (IsVector != unitComposition.IsVector)
