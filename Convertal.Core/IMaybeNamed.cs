@@ -41,7 +41,7 @@ public interface IMaybeNamed : IDisposable, IComparable<IMaybeNamed>, IEquatable
             return true;
 
         var type = GetType();
-        if (other is null || Database != other.Database || type != other.GetType())
+        if (other is null || type != other.GetType())
             return false;
 
         if (type == typeof(ScalarEmptyUnit) ||

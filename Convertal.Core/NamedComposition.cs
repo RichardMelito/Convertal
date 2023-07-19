@@ -37,10 +37,8 @@ public abstract class NamedComposition<T> : IVectorOrScalar, IReadOnlyDictionary
 
     internal NamedComposition(IReadOnlyDictionary<T, decimal> composition)
     {
-        if (composition.Count > 1 && composition is not SortedDictionary<T, decimal> && composition is not ImmutableSortedDictionary<T, decimal>)
-            _innerDictionary = composition.ToImmutableSortedDictionary();
-        else
-            _innerDictionary = composition.ToImmutableDictionary();
+        // TODO remove sorting in other places, probably.
+        _innerDictionary = composition.ToImmutableSortedDictionary();
     }
 
     public static NamedComposition<T> Make(T key)

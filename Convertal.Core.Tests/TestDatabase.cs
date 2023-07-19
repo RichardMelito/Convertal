@@ -100,13 +100,13 @@ public class TestDatabase : BaseTestClass
             DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull,
         };
         var text = JsonSerializer.Serialize(Database, jsonSerializerOptions);
-        // TODO don't write this out to a file
-        //File.WriteAllText("database.json", text);
 
         // TODO check that anonymous units/quantities are tested
 
 
         var deserialized = JsonSerializer.Deserialize<Database>(text, jsonSerializerOptions)!;
+        Database.CompositionAndQuantitiesDictionary.Should().Equal(deserialized.CompositionAndQuantitiesDictionary);
+
         Database.Should().BeEquivalentTo(deserialized);
     }
 }
