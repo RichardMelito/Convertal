@@ -105,8 +105,30 @@ public class TestDatabase : BaseTestClass
 
 
         var deserialized = JsonSerializer.Deserialize<Database>(text, jsonSerializerOptions)!;
-        Database.CompositionAndQuantitiesDictionary.Should().Equal(deserialized.CompositionAndQuantitiesDictionary);
+        
+        Database.Prefixes.Should().BeEquivalentTo(deserialized.Prefixes);
+        Database.ScalarBaseQuantitys.Should().BeEquivalentTo(deserialized.ScalarBaseQuantitys);
+        Database.VectorBaseQuantitys.Should().BeEquivalentTo(deserialized.VectorBaseQuantitys);
+        Database.ScalarDerivedQuantitys.Should().BeEquivalentTo(deserialized.ScalarDerivedQuantitys);
+        Database.VectorDerivedQuantitys.Should().BeEquivalentTo(deserialized.VectorDerivedQuantitys);
+        Database.ScalarBaseUnits.Should().BeEquivalentTo(deserialized.ScalarBaseUnits);
+        Database.VectorBaseUnits.Should().BeEquivalentTo(deserialized.VectorBaseUnits);
+        Database.ScalarPrefixedBaseUnits.Should().BeEquivalentTo(deserialized.ScalarPrefixedBaseUnits);
+        Database.VectorPrefixedBaseUnits.Should().BeEquivalentTo(deserialized.VectorPrefixedBaseUnits);
+        Database.ScalarDerivedUnits.Should().BeEquivalentTo(deserialized.ScalarDerivedUnits);
+        Database.VectorDerivedUnits.Should().BeEquivalentTo(deserialized.VectorDerivedUnits);
+        Database.ScalarPrefixedDerivedUnits.Should().BeEquivalentTo(deserialized.ScalarPrefixedDerivedUnits);
+        Database.VectorPrefixedDerivedUnits.Should().BeEquivalentTo(deserialized.VectorPrefixedDerivedUnits);
+        Database.MeasurementSystems.Should().BeEquivalentTo(deserialized.MeasurementSystems);
+        Database.MaybeNamedsByType.Should().BeEquivalentTo(deserialized.MaybeNamedsByType);
+        Database.QuantitiesByComposition.Should().BeEquivalentTo(deserialized.QuantitiesByComposition);
+        Database.ScalarEmptyQuantity.Should().BeEquivalentTo(deserialized.ScalarEmptyQuantity);
+        Database.VectorEmptyQuantity.Should().BeEquivalentTo(deserialized.VectorEmptyQuantity);
+        Database.ScalarEmptyUnit.Should().BeEquivalentTo(deserialized.ScalarEmptyUnit);
+        Database.VectorEmptyUnit.Should().BeEquivalentTo(deserialized.VectorEmptyUnit);
+        Database.PrefixedUnits.Should().BeEquivalentTo(deserialized.PrefixedUnits);
 
-        Database.Should().BeEquivalentTo(deserialized);
+        // Needs 'Equal' or else the dictionary comparison messes up
+        Database.CompositionAndQuantitiesDictionary.Should().Equal(deserialized.CompositionAndQuantitiesDictionary);
     }
 }
