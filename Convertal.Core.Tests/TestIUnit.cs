@@ -55,8 +55,8 @@ public class TestIUnit : BaseTestClass
         aVector.Should().BeOfType<VectorBaseUnit>();
         a.VectorAnalog.Should().BeSameAs(aVector);
         aVector.ScalarAnalog.Should().BeSameAs(a);
-        aVector.Name.Should().BeSameAs(a.Name);
-        aVector.Symbol.Should().BeSameAs(a.Symbol);
+        aVector.Name.Should().Be("`" + a.Name);
+        aVector.Symbol.Should().BeNull();
 
         IScalarBaseUnit b = new ScalarBaseUnit(Database, "b", a,
             multiplier: 2m,

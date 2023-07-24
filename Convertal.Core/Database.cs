@@ -279,14 +279,16 @@ public class Database
 
     public void ThrowIfNameNotValid(string name, Type type, bool isSymbol = false)
     {
-        if (string.IsNullOrWhiteSpace(name))
+        var toValidate = name.StartsWith('`') ? name[1..] : name;
+
+        if (string.IsNullOrWhiteSpace(toValidate))
             throw new ArgumentException("Name must not be empty.");
 
-        if (decimal.TryParse(name, out _))
+        if (decimal.TryParse(toValidate, out _))
             throw new ArgumentException("Name must not be a number.");
 
-        if (!name.All(char.IsLetterOrDigit))
-            throw new ArgumentException("Name must be composed of alphanumeric characters.");
+        if (!toValidate.All(char.IsLetterOrDigit))
+            throw new ArgumentException("Name must be composed of alphanumeric characters, except for a leading '`' for vectors.");
 
         if (NameAlreadyRegistered(name, type, isSymbol))
         {
@@ -428,17 +430,26 @@ public class Database
     public IUnit ParseIUnit(string toParse, bool isSymbol = false)
     {
         var split = toParse.Split('_');
+        var isVector = toParse[0] == '`';
         switch (split.Length)
         {
             case 2:
                 {
                     var prefix = GetFromName<Prefix>(split[0], isSymbol);
-                    var unit = GetFromName<ScalarUnit>(split[1], isSymbol);
+                    Unit unit;
+                    if (isVector)
+                        unit = GetFromName<VectorUnit>(split[1], isSymbol);
+                    else
+                        unit = GetFromName<ScalarUnit>(split[1], isSymbol);
+
                     return GetPrefixedUnit(unit, prefix);
                 }
 
             case 1:
-                return GetFromName<ScalarUnit>(split[0], isSymbol);
+                if (isVector)
+                    return GetFromName<VectorUnit>(split[0], isSymbol);
+                else
+                    return GetFromName<ScalarUnit>(split[0], isSymbol);
 
             default:
                 throw new ArgumentException(toParse);

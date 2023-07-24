@@ -25,7 +25,7 @@ public abstract class PrefixedUnit : IUnit, INamed
 
     public virtual Quantity Quantity => Unit.Quantity;
 
-    public string? Name => Prefix.Name! + "_" + Unit.Name!;
+    public string? Name => (IsVector ? "`" : "") + Prefix.Name! + "_" + Unit.Name!.TrimStart('`')!;
 
     public string? Symbol
     {
@@ -34,7 +34,7 @@ public abstract class PrefixedUnit : IUnit, INamed
             if (Prefix.Symbol is null || Unit.Symbol is null)
                 return null;
 
-            return Prefix.Symbol + "_" + Unit.Symbol;
+            return (IsVector ? "`" : "") + Prefix.Symbol + "_" + Unit.Symbol.TrimStart('`');
         }
     }
 
@@ -53,7 +53,7 @@ public abstract class PrefixedUnit : IUnit, INamed
 
     public string ToStringSymbol()
     {
-        return Prefix.ToStringSymbol() + "_" + Unit.ToStringSymbol();
+        return (IsVector ? "`" : "") + Prefix.ToStringSymbol() + "_" + Unit.ToStringSymbol().TrimStart('`');
     }
 
     public Database Database => Unit.Database;

@@ -2,6 +2,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using Convertal.Core.Extensions;
 
@@ -51,6 +52,8 @@ public abstract class MaybeNamed : IMaybeNamed
         Database.AddTypeToDictionary(GetDatabaseType());
         //Database.AddToSerializationList(this);
 
+        name = PrependIfVector(name);
+        symbol = PrependIfVector(symbol);
         if (name is null)
             return;
 
@@ -63,12 +66,36 @@ public abstract class MaybeNamed : IMaybeNamed
             ChangeSymbol(symbol);
     }
 
+    [return: NotNullIfNotNull(nameof(input))]
+    private string? PrependIfVector( string? input)
+    {
+        if (input is null)
+            return null;
+
+        var vOrS = this as IVectorOrScalar;
+        if (vOrS is null)
+            return input;
+
+        if (vOrS.IsVector)
+        {
+            if (input.StartsWith('`'))
+                return input;
+            else
+                return "`" + input;
+        }
+        else
+        {
+            return input.TrimStart('`');
+        }
+    }
+
     protected virtual Type GetDatabaseType() => GetType();
 
     public abstract IOrderedEnumerable<IMaybeNamed> GetAllDependents(ref IEnumerable<IMaybeNamed> toIgnore);
 
     public void ChangeName(string newName)
     {
+        newName = PrependIfVector(newName);
         Database.ThrowIfNameNotValid(newName, GetTypeWithinDictionary());
 
         var needToAddToDictionary = Name is null;
@@ -79,6 +106,8 @@ public abstract class MaybeNamed : IMaybeNamed
 
     public void ChangeSymbol(string symbol)
     {
+        ArgumentNullException.ThrowIfNull(symbol);
+        symbol = PrependIfVector(symbol);
         if (Name is null)
             throw new InvalidOperationException("Must assign a name before assigning a symbol.");
 
@@ -95,13 +124,13 @@ public abstract class MaybeNamed : IMaybeNamed
         if (this is ScalarUnit scalarUnit)
         {
             var vectorAnalog = scalarUnit.VectorAnalog;
-            if (vectorAnalog is not null && vectorAnalog.Name != Name)
+            if (vectorAnalog is not null && vectorAnalog.Name != "`" + Name)
                 vectorAnalog.ChangeNameAndSymbol(newName, symbol);
         }
         else if (this is VectorUnit vectorUnit)
         {
             var scalarAnalog = vectorUnit.ScalarAnalog;
-            if (scalarAnalog.Name != Name)
+            if ("`" + scalarAnalog.Name != Name)
                 scalarAnalog.ChangeNameAndSymbol(newName, Symbol);
         }
     }

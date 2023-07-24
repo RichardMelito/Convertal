@@ -50,7 +50,6 @@ public class TestDatabase : BaseTestClass
         Time = Database.DefineScalarBaseQuantity(nameof(Time), "Second", quantitySymbol: "t", unitSymbol: "s");
         Mass = Database.DefineScalarBaseQuantity(nameof(Mass), "Gram", unitPrefix: Kilo, quantitySymbol: "m", unitSymbol: "g");
 
-        // TODO need a mechanism for differentiating vector names from scalar names
         Displacement = Database.DefineVectorBaseQuantity(Length, nameof(Displacement));
 
         Meter = (ScalarBaseUnit)Length.FundamentalUnit;
@@ -61,11 +60,11 @@ public class TestDatabase : BaseTestClass
         Hour = Database.DefineScalarBaseUnit(nameof(Hour), Second, 3600m, symbol: "h");
 
         Database.DefineScalarDerivedQuantity(() => Length / Time, out Speed, nameof(Speed));
-        SAcceleration = Database.DefineScalarDerivedQuantity(() => Speed / Time, nameof(SAcceleration), "sa");
+        SAcceleration = Database.DefineScalarDerivedQuantity(() => Speed / Time, nameof(SAcceleration), "a");
         Database.DefineScalarDerivedQuantity(() => Mass * SAcceleration, out Tension);
 
         Velocity = Database.DefineVectorDerivedQuantity(() => Displacement / Time, nameof(Velocity), "v");
-        VAcceleration = Database.DefineVectorDerivedQuantity(() => Velocity / Time, nameof(VAcceleration), "va");
+        VAcceleration = Database.DefineVectorDerivedQuantity(() => Velocity / Time, nameof(VAcceleration), "a");
         Force = Database.DefineVectorDerivedQuantity(() => Mass * VAcceleration, nameof(Force), "F");
 
         Newton = Force.FundamentalUnit.CastAndChangeNameAndSymbol<VectorDerivedUnit>(nameof(Newton), "N");
