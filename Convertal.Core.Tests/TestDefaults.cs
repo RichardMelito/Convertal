@@ -9,9 +9,9 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 namespace Convertal.Defaults.Tests;
 
 [TestClass]
-public class TestAll
+public class TestDefaults
 {
-    static TestAll()
+    static TestDefaults()
     {
         Global.InitializeAssembly();
         JsonSettings.Converters.Add(new MaybeNamedDictionaryJsonConverter<Quantity, decimal>());

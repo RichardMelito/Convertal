@@ -68,6 +68,19 @@ public class Database
     internal bool RemoveFromPrefixedUnitsList(PrefixedUnit toRemove) => _prefixedUnits.Remove(toRemove);
 
     public Prefix DefinePrefix(string name, decimal multiplier, string? symbol = null) => new(this, name, multiplier, symbol);
+    public Prefix GetOrDefinePrefix(string name, decimal multiplier, string? symbol = null)
+    {
+        if (TryGetFromName<Prefix>(name, out var existing))
+        {
+            if (existing.Multiplier != multiplier || existing.Symbol != symbol)
+                throw new InvalidOperationException($"Existing {nameof(Prefix)} '{existing.ToProto()}' does not match {new PrefixProto(name, symbol, multiplier)}");
+
+            return existing;
+        }
+
+        return DefinePrefix(name, multiplier, symbol);
+    }
+
     internal Prefix DefinePrefix(PrefixProto proto) => new(this, proto.Name!, proto.Multiplier, proto.Symbol);
 
     public ScalarPrefixedBaseUnit GetPrefixedUnit(ScalarBaseUnit unit, Prefix prefix)
@@ -661,32 +674,64 @@ public class Database
         return quantity;
     }
 
+    public ScalarBaseQuantity GetOrDefineScalarBaseQuantity(
+        string quantityName,
+        string fundamentalUnitName,
+        Prefix? unitPrefix = null,
+        string? quantitySymbol = null,
+        string? unitSymbol = null)
+    {
+        if (TryGetFromName<ScalarBaseQuantity>(quantityName, out var existing))
+        {
+            if (existing.FundamentalUnit.Name != fundamentalUnitName ||
+                existing.Symbol != quantitySymbol ||
+                existing.FundamentalUnit.Symbol != unitSymbol ||
+                (existing.FundamentalUnit as PrefixedUnit)?.Prefix != unitPrefix)
+            {
+                var ex = new InvalidOperationException($"Existing {nameof(ScalarBaseQuantity)} '{existing}' does not match given definition.");
+                // TODO
+                throw ex;
+            }
+
+            return existing;
+        }
+
+        return DefineScalarBaseQuantity(quantityName, fundamentalUnitName, unitPrefix, quantitySymbol, unitSymbol);
+    }
+
+
+
     public VectorBaseQuantity DefineVectorBaseQuantity(
         ScalarBaseQuantity scalarAnalog,
-        string quantityName,
-        //string fundamentalUnitName,
-        //Prefix? unitPrefix = null,
-        string? quantitySymbol = null)
-        //string? unitSymbol = null)
+        string name,
+        string? symbol = null)
     {
-        //ThrowIfNameNotValid<Unit>(fundamentalUnitName);
-        ThrowIfNameNotValid<Quantity>(quantityName);
+        ThrowIfNameNotValid<Quantity>(name);
 
-        VectorBaseQuantity quantity = new(scalarAnalog, quantityName, quantitySymbol);
-
-        //if (unitPrefix is null)
-        //{
-        //    VectorBaseUnit unit = new(this, fundamentalUnitName, quantity, 1m, unitSymbol);
-        //    quantity.SettableFundamentalUnit = unit;
-        //}
-        //else
-        //{
-        //    var fundamentalMultiplier = 1m / unitPrefix.Multiplier;
-        //    VectorBaseUnit unit = new(this, fundamentalUnitName, quantity, fundamentalMultiplier, unitSymbol);
-        //    quantity.SettableFundamentalUnit = new VectorPrefixedBaseUnit(this, unit, unitPrefix);
-        //}
-
+        VectorBaseQuantity quantity = new(scalarAnalog, name, symbol);
         return quantity;
+    }
+
+    public VectorBaseQuantity GetOrDefineVectorBaseQuantity(
+        ScalarBaseQuantity scalarAnalog,
+        string name,
+        string? symbol = null)
+    {
+        if (TryGetFromName<VectorBaseQuantity>(name, out var existing))
+        {
+            if (existing.ScalarAnalog != scalarAnalog ||
+                existing.Name != name ||
+                existing.Symbol != symbol)
+            {
+                var ex = new InvalidOperationException($"Existing {nameof(VectorBaseQuantity)} '{existing}' does not match given definition.");
+                // TODO
+                throw ex;
+            }
+
+            return existing;
+        }
+
+        return DefineVectorBaseQuantity(scalarAnalog, name, symbol);
     }
 
     internal ScalarBaseQuantity DefineScalarBaseQuantity(ScalarBaseQuantityProto proto)
