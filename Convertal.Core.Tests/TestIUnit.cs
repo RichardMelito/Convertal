@@ -23,7 +23,7 @@ public class TestIUnit : BaseTestClass
             b.UnitComposition /
             c.UnitComposition;
 
-        var d = Database.DefineFromScalarComposition("d", composition);
+        var d = Database.DefineScalarUnitFromComposition("d", composition);
         quantA.Should().BeSameAs(d.Quantity);
         d.Should().BeOfType<ScalarBaseUnit>();
         d.FundamentalMultiplier.Should().Be(0.5m);

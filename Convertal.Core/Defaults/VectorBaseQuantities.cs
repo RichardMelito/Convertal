@@ -1,13 +1,13 @@
 ﻿// Created by Richard Melito and licensed to you under The Clear BSD License.
 
-namespace Convertal.Core;
+namespace Convertal.Core.Defaults;
 
-public class DefaultVectorBaseQuantities
+public class VectorBaseQuantities
 {
     public readonly VectorBaseQuantity AngularDisplacement;
     public readonly VectorBaseQuantity Displacement;
 
-    public DefaultVectorBaseQuantities(DefaultDatabase defaultDatabase)
+    internal VectorBaseQuantities(DefaultDatabaseWrapper defaultDatabase)
     {
         AngularDisplacement = defaultDatabase.Database.GetOrDefineVectorBaseQuantity(
             defaultDatabase.ScalarBaseQuantities.Angle,

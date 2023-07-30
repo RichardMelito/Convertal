@@ -1,8 +1,8 @@
 ﻿// Created by Richard Melito and licensed to you under The Clear BSD License.
 
-namespace Convertal.Core;
+namespace Convertal.Core.Defaults;
 
-public class DefaultScalarBaseQuantities
+public class ScalarBaseQuantities
 {
     public readonly ScalarBaseQuantity Angle;
     public readonly ScalarBaseQuantity SolidAngle;
@@ -14,7 +14,7 @@ public class DefaultScalarBaseQuantities
     public readonly ScalarBaseQuantity Time;
     public readonly ScalarBaseQuantity LuminousIntensity;
 
-    public DefaultScalarBaseQuantities(DefaultDatabase defaultDatabase)
+    internal ScalarBaseQuantities(DefaultDatabaseWrapper defaultDatabase)
     {
         var database = defaultDatabase.Database;
         var prefixes = defaultDatabase.Prefixes;

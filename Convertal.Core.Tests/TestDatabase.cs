@@ -70,7 +70,7 @@ public class TestDatabase : BaseTestClass
         Newton = Force.FundamentalUnit.CastAndChangeNameAndSymbol<VectorDerivedUnit>(nameof(Newton), "N");
         PoundForce = Database.DefineVectorDerivedUnit(nameof(PoundForce), Newton, 4.4482216282509m, symbol: "lbf");
 
-        FeetPerSecond = Database.DefineFromScalarComposition(nameof(FeetPerSecond), Foot.UnitComposition / Second.UnitComposition);
+        FeetPerSecond = Database.DefineScalarUnitFromComposition(nameof(FeetPerSecond), Foot.UnitComposition / Second.UnitComposition);
 
         Metric = new(Database, nameof(Metric));
         Metric.SetQuantityUnitPairs(new KeyValuePair<Quantity, IUnit>[]

@@ -6,279 +6,9 @@ using System.Reflection.Metadata;
 using DecimalMath;
 using Microsoft.VisualBasic;
 
-namespace Convertal.Core;
+namespace Convertal.Core.Defaults;
 
-
-public class DefaultScalarDerivedQuantities
-{
-    public readonly DerivedQuantity Frequency;
-    public readonly DerivedQuantity Area;
-    public readonly DerivedQuantity Volume;
-    public readonly DerivedQuantity VolumeFlowRate;
-    public readonly DerivedQuantity Speed;
-    public readonly DerivedQuantity Acceleration;
-    public readonly DerivedQuantity Force;
-    public readonly DerivedQuantity Pressure;
-    public readonly DerivedQuantity EnergyAndTorque; // the same until vector stuff is implemented
-    public readonly DerivedQuantity Power;
-    //public readonly DerivedQuantity Torque;
-    public readonly DerivedQuantity AngularVelocity;
-    public readonly DerivedQuantity AngularAcceleration;
-    public readonly DerivedQuantity WaveNumber;
-    public readonly DerivedQuantity Density;
-    public readonly DerivedQuantity SurfaceDensity;
-    public readonly DerivedQuantity ElectricCharge;
-    public readonly DerivedQuantity Voltage;
-    public readonly DerivedQuantity ElectricCapacitance;
-    public readonly DerivedQuantity ElectricResistance;
-    public readonly DerivedQuantity ElectricConductance;
-    public readonly DerivedQuantity MagneticFlux;
-    public readonly DerivedQuantity MagneticFluxDensity;
-    public readonly DerivedQuantity Inductance;
-    public readonly DerivedQuantity LuminousFlux;
-    public readonly DerivedQuantity Illuminance;
-    public readonly DerivedQuantity SpecificVolume;
-    public readonly DerivedQuantity ElectricCurrentDensity;
-    public readonly DerivedQuantity MagneticFieldStrength;
-    public readonly DerivedQuantity Luminance;
-    public readonly DerivedQuantity DynamicViscosity;
-    public readonly DerivedQuantity KinematicViscosity;
-    public readonly DerivedQuantity PowerFlux;
-    public readonly DerivedQuantity HeatCapacity;
-    public readonly DerivedQuantity SpecificHeatCapacity;
-    public readonly DerivedQuantity SpecificEnergy;
-    public readonly DerivedQuantity ThermalConductivity;
-    //public readonly DerivedQuantity EnergyDensity;
-    public readonly DerivedQuantity ElectricFieldStrength;
-    public readonly DerivedQuantity ElectricChargeDensity;
-    public readonly DerivedQuantity SurfaceChargeDensity;
-    public readonly DerivedQuantity Permittivity;
-    public readonly DerivedQuantity Permeability;
-
-    DerivedQuantities()
-    {
-        Frequency = (DerivedQuantity)Time.Pow(-1m);
-        Area = (DerivedQuantity)(Length * Length);
-        Volume = (DerivedQuantity)(Area * Length);
-        VolumeFlowRate = (DerivedQuantity)(Volume / Time);
-        Speed = (DerivedQuantity)(Length / Time);
-        Acceleration = (DerivedQuantity)(Speed / Time);
-        Force = (DerivedQuantity)(Mass * Acceleration);
-        Pressure = (DerivedQuantity)(Force / Area);
-        EnergyAndTorque = (DerivedQuantity)(Force * Length);
-        Power = (DerivedQuantity)(EnergyAndTorque / Time);
-        //Torque = (DerivedQuantity)(Force * Length);
-        AngularVelocity = (DerivedQuantity)(Angle / Time);
-        AngularAcceleration = (DerivedQuantity)(AngularVelocity / Time);
-        WaveNumber = (DerivedQuantity)(Length.Pow(-1m));
-        Density = (DerivedQuantity)(Mass / Volume);
-        SurfaceDensity = (DerivedQuantity)(Mass / Area);
-        ElectricCharge = (DerivedQuantity)(ElectricCurrent * Time);
-        Voltage = (DerivedQuantity)(EnergyAndTorque / ElectricCharge);
-        ElectricCapacitance = (DerivedQuantity)(ElectricCharge / Voltage);
-        ElectricResistance = (DerivedQuantity)(Voltage / ElectricCurrent);
-        ElectricConductance = (DerivedQuantity)(ElectricResistance.Pow(-1m));
-        MagneticFlux = (DerivedQuantity)(Voltage * Time);
-        MagneticFluxDensity = (DerivedQuantity)(MagneticFlux / Area);
-        Inductance = (DerivedQuantity)(MagneticFlux / ElectricCurrent);
-        LuminousFlux = (DerivedQuantity)(LuminousIntensity * SolidAngle);
-        Illuminance = (DerivedQuantity)(LuminousFlux / Area);
-        SpecificVolume = (DerivedQuantity)(Density.Pow(-1m));
-        ElectricCurrentDensity = (DerivedQuantity)(ElectricCurrent / Area);
-        MagneticFieldStrength = (DerivedQuantity)(ElectricCurrent / Length);
-        Luminance = (DerivedQuantity)(LuminousIntensity / Area);
-        DynamicViscosity = (DerivedQuantity)(Pressure * Time);
-        KinematicViscosity = (DerivedQuantity)(DynamicViscosity / Density);
-        PowerFlux = (DerivedQuantity)(Power / Area);
-        HeatCapacity = (DerivedQuantity)(EnergyAndTorque / Temperature);
-        SpecificHeatCapacity = (DerivedQuantity)(HeatCapacity / Mass);
-        SpecificEnergy = (DerivedQuantity)(EnergyAndTorque / Mass);
-        ThermalConductivity = (DerivedQuantity)(Power / (Length * Temperature));
-        //EnergyDensity = (DerivedQuantity)(Energy / Volume);
-        ElectricFieldStrength = (DerivedQuantity)(Voltage / Length);
-        ElectricChargeDensity = (DerivedQuantity)(ElectricCharge / Volume);
-        SurfaceChargeDensity = (DerivedQuantity)(ElectricCharge / Area);
-        Permittivity = (DerivedQuantity)(ElectricCapacitance / Length);
-        Permeability = (DerivedQuantity)(Inductance / Length);
-
-        foreach (var field in typeof(DerivedQuantities).GetFields())
-        {
-            var quantity = (DerivedQuantity)field.GetValue(field.Name)!;
-            quantity.ChangeName(field.Name);
-        }
-
-        Frequency.ChangeSymbol("f");
-        Area.ChangeSymbol("A");
-        Volume.ChangeSymbol("V");
-        VolumeFlowRate.ChangeSymbol("Vdot");
-        Speed.ChangeSymbol("v");
-        Acceleration.ChangeSymbol("a");
-        Force.ChangeSymbol("F");
-        Pressure.ChangeSymbol("p");
-        EnergyAndTorque.ChangeSymbol("E");
-        Power.ChangeSymbol("P");
-        //Torque.ChangeSymbol("τ");
-        AngularVelocity.ChangeSymbol("ω");
-        AngularAcceleration.ChangeSymbol("α");
-        WaveNumber.ChangeSymbol("σ");
-        Density.ChangeSymbol("ρ");
-        ElectricCharge.ChangeSymbol("q");
-        Voltage.ChangeSymbol("ℰ");
-        ElectricCapacitance.ChangeSymbol("C");
-        ElectricResistance.ChangeSymbol("R");
-        MagneticFlux.ChangeSymbol("Φ");
-        MagneticFluxDensity.ChangeSymbol("B");
-        Inductance.ChangeSymbol("L");
-        LuminousFlux.ChangeSymbol("Φv");
-        Illuminance.ChangeSymbol("Ev");
-        ElectricCurrentDensity.ChangeSymbol("j");
-        MagneticFieldStrength.ChangeSymbol("H");
-        Luminance.ChangeSymbol("Lv");
-        DynamicViscosity.ChangeSymbol("μ");
-        KinematicViscosity.ChangeSymbol("ν");
-        SpecificHeatCapacity.ChangeSymbol("cp");
-        SpecificEnergy.ChangeSymbol("e");
-        ThermalConductivity.ChangeSymbol("k");
-        Permittivity.ChangeSymbol("ε");
-    }
-}
-
-
-public class DefaultVectorDerivedQuantities
-{
-    public readonly DerivedQuantity Frequency;
-    public readonly DerivedQuantity Area;
-    public readonly DerivedQuantity Volume;
-    public readonly DerivedQuantity VolumeFlowRate;
-    public readonly DerivedQuantity Speed;
-    public readonly DerivedQuantity Acceleration;
-    public readonly DerivedQuantity Force;
-    public readonly DerivedQuantity Pressure;
-    public readonly DerivedQuantity EnergyAndTorque; // the same until vector stuff is implemented
-    public readonly DerivedQuantity Power;
-    //public readonly DerivedQuantity Torque;
-    public readonly DerivedQuantity AngularVelocity;
-    public readonly DerivedQuantity AngularAcceleration;
-    public readonly DerivedQuantity WaveNumber;
-    public readonly DerivedQuantity Density;
-    public readonly DerivedQuantity SurfaceDensity;
-    public readonly DerivedQuantity ElectricCharge;
-    public readonly DerivedQuantity Voltage;
-    public readonly DerivedQuantity ElectricCapacitance;
-    public readonly DerivedQuantity ElectricResistance;
-    public readonly DerivedQuantity ElectricConductance;
-    public readonly DerivedQuantity MagneticFlux;
-    public readonly DerivedQuantity MagneticFluxDensity;
-    public readonly DerivedQuantity Inductance;
-    public readonly DerivedQuantity LuminousFlux;
-    public readonly DerivedQuantity Illuminance;
-    public readonly DerivedQuantity SpecificVolume;
-    public readonly DerivedQuantity ElectricCurrentDensity;
-    public readonly DerivedQuantity MagneticFieldStrength;
-    public readonly DerivedQuantity Luminance;
-    public readonly DerivedQuantity DynamicViscosity;
-    public readonly DerivedQuantity KinematicViscosity;
-    public readonly DerivedQuantity PowerFlux;
-    public readonly DerivedQuantity HeatCapacity;
-    public readonly DerivedQuantity SpecificHeatCapacity;
-    public readonly DerivedQuantity SpecificEnergy;
-    public readonly DerivedQuantity ThermalConductivity;
-    //public readonly DerivedQuantity EnergyDensity;
-    public readonly DerivedQuantity ElectricFieldStrength;
-    public readonly DerivedQuantity ElectricChargeDensity;
-    public readonly DerivedQuantity SurfaceChargeDensity;
-    public readonly DerivedQuantity Permittivity;
-    public readonly DerivedQuantity Permeability;
-
-    DerivedQuantities()
-    {
-        Frequency = (DerivedQuantity)Time.Pow(-1m);
-        Area = (DerivedQuantity)(Length * Length);
-        Volume = (DerivedQuantity)(Area * Length);
-        VolumeFlowRate = (DerivedQuantity)(Volume / Time);
-        Speed = (DerivedQuantity)(Length / Time);
-        Acceleration = (DerivedQuantity)(Speed / Time);
-        Force = (DerivedQuantity)(Mass * Acceleration);
-        Pressure = (DerivedQuantity)(Force / Area);
-        EnergyAndTorque = (DerivedQuantity)(Force * Length);
-        Power = (DerivedQuantity)(EnergyAndTorque / Time);
-        //Torque = (DerivedQuantity)(Force * Length);
-        AngularVelocity = (DerivedQuantity)(Angle / Time);
-        AngularAcceleration = (DerivedQuantity)(AngularVelocity / Time);
-        WaveNumber = (DerivedQuantity)(Length.Pow(-1m));
-        Density = (DerivedQuantity)(Mass / Volume);
-        SurfaceDensity = (DerivedQuantity)(Mass / Area);
-        ElectricCharge = (DerivedQuantity)(ElectricCurrent * Time);
-        Voltage = (DerivedQuantity)(EnergyAndTorque / ElectricCharge);
-        ElectricCapacitance = (DerivedQuantity)(ElectricCharge / Voltage);
-        ElectricResistance = (DerivedQuantity)(Voltage / ElectricCurrent);
-        ElectricConductance = (DerivedQuantity)(ElectricResistance.Pow(-1m));
-        MagneticFlux = (DerivedQuantity)(Voltage * Time);
-        MagneticFluxDensity = (DerivedQuantity)(MagneticFlux / Area);
-        Inductance = (DerivedQuantity)(MagneticFlux / ElectricCurrent);
-        LuminousFlux = (DerivedQuantity)(LuminousIntensity * SolidAngle);
-        Illuminance = (DerivedQuantity)(LuminousFlux / Area);
-        SpecificVolume = (DerivedQuantity)(Density.Pow(-1m));
-        ElectricCurrentDensity = (DerivedQuantity)(ElectricCurrent / Area);
-        MagneticFieldStrength = (DerivedQuantity)(ElectricCurrent / Length);
-        Luminance = (DerivedQuantity)(LuminousIntensity / Area);
-        DynamicViscosity = (DerivedQuantity)(Pressure * Time);
-        KinematicViscosity = (DerivedQuantity)(DynamicViscosity / Density);
-        PowerFlux = (DerivedQuantity)(Power / Area);
-        HeatCapacity = (DerivedQuantity)(EnergyAndTorque / Temperature);
-        SpecificHeatCapacity = (DerivedQuantity)(HeatCapacity / Mass);
-        SpecificEnergy = (DerivedQuantity)(EnergyAndTorque / Mass);
-        ThermalConductivity = (DerivedQuantity)(Power / (Length * Temperature));
-        //EnergyDensity = (DerivedQuantity)(Energy / Volume);
-        ElectricFieldStrength = (DerivedQuantity)(Voltage / Length);
-        ElectricChargeDensity = (DerivedQuantity)(ElectricCharge / Volume);
-        SurfaceChargeDensity = (DerivedQuantity)(ElectricCharge / Area);
-        Permittivity = (DerivedQuantity)(ElectricCapacitance / Length);
-        Permeability = (DerivedQuantity)(Inductance / Length);
-
-        foreach (var field in typeof(DerivedQuantities).GetFields())
-        {
-            var quantity = (DerivedQuantity)field.GetValue(field.Name)!;
-            quantity.ChangeName(field.Name);
-        }
-
-        Frequency.ChangeSymbol("f");
-        Area.ChangeSymbol("A");
-        Volume.ChangeSymbol("V");
-        VolumeFlowRate.ChangeSymbol("Vdot");
-        Speed.ChangeSymbol("v");
-        Acceleration.ChangeSymbol("a");
-        Force.ChangeSymbol("F");
-        Pressure.ChangeSymbol("p");
-        EnergyAndTorque.ChangeSymbol("E");
-        Power.ChangeSymbol("P");
-        //Torque.ChangeSymbol("τ");
-        AngularVelocity.ChangeSymbol("ω");
-        AngularAcceleration.ChangeSymbol("α");
-        WaveNumber.ChangeSymbol("σ");
-        Density.ChangeSymbol("ρ");
-        ElectricCharge.ChangeSymbol("q");
-        Voltage.ChangeSymbol("ℰ");
-        ElectricCapacitance.ChangeSymbol("C");
-        ElectricResistance.ChangeSymbol("R");
-        MagneticFlux.ChangeSymbol("Φ");
-        MagneticFluxDensity.ChangeSymbol("B");
-        Inductance.ChangeSymbol("L");
-        LuminousFlux.ChangeSymbol("Φv");
-        Illuminance.ChangeSymbol("Ev");
-        ElectricCurrentDensity.ChangeSymbol("j");
-        MagneticFieldStrength.ChangeSymbol("H");
-        Luminance.ChangeSymbol("Lv");
-        DynamicViscosity.ChangeSymbol("μ");
-        KinematicViscosity.ChangeSymbol("ν");
-        SpecificHeatCapacity.ChangeSymbol("cp");
-        SpecificEnergy.ChangeSymbol("e");
-        ThermalConductivity.ChangeSymbol("k");
-        Permittivity.ChangeSymbol("ε");
-    }
-}
-
-public class DefaultScalarBaseUnits
+public class ScalarBaseUnits
 {
     #region Fundamental units
     public readonly BaseUnit Radian = (BaseUnit)Angle.FundamentalUnit;
@@ -384,7 +114,7 @@ public class DefaultScalarBaseUnits
     public readonly BaseUnit Voille = new(nameof(Voille), Candela, 20.17m);
     #endregion
 
-    BaseUnits()
+    ScalarBaseUnits()
     {
         #region Angle
         //Degree.ChangeSymbol("°");
@@ -414,7 +144,7 @@ public class DefaultScalarBaseUnits
     }
 }
 
-public class DefaultVectorBaseUnits
+public class VectorBaseUnits
 {
     #region Fundamental units
     public readonly BaseUnit Radian = (BaseUnit)Angle.FundamentalUnit;
@@ -520,7 +250,7 @@ public class DefaultVectorBaseUnits
     public readonly BaseUnit Voille = new(nameof(Voille), Candela, 20.17m);
     #endregion
 
-    BaseUnits()
+    VectorBaseUnits()
     {
         #region Angle
         //Degree.ChangeSymbol("°");
@@ -550,7 +280,7 @@ public class DefaultVectorBaseUnits
     }
 }
 
-public class DefaultScalarDerivedUnits
+public class ScalarDerivedUnits
 {
     #region Fundamental units
     public readonly DerivedUnit Hertz = (DerivedUnit)Frequency.FundamentalUnit;
@@ -646,7 +376,7 @@ public class DefaultScalarDerivedUnits
     public readonly DerivedUnit Teaspoon;
     #endregion
 
-    DerivedUnits()
+    ScalarDerivedUnits()
     {
         #region Area
         SquareFoot = Make(nameof(SquareFoot), Foot, 2m);
@@ -706,7 +436,7 @@ public class DefaultScalarDerivedUnits
         return (DerivedUnit)DefineFromComposition(name, unit.UnitComposition.Pow(power));
     }
 }
-public class DefaultVectorDerivedUnits
+public class VectorDerivedUnits
 {
     #region Fundamental units
     public readonly DerivedUnit Hertz = (DerivedUnit)Frequency.FundamentalUnit;
@@ -802,7 +532,7 @@ public class DefaultVectorDerivedUnits
     public readonly DerivedUnit Teaspoon;
     #endregion
 
-    DerivedUnits()
+    VectorDerivedUnits()
     {
         #region Area
         SquareFoot = Make(nameof(SquareFoot), Foot, 2m);
@@ -896,7 +626,7 @@ public class DefaultPrefixes
     public readonly Prefix Zebi;
     public readonly Prefix Yobi;
 
-    public DefaultPrefixes(DefaultDatabase defaultDatabase)
+    internal DefaultPrefixes(DefaultDatabaseWrapper defaultDatabase)
     {
         Yotta = defaultDatabase.Database.GetOrDefinePrefix("yotta", 1e24m, "Y");
         Zetta = defaultDatabase.Database.GetOrDefinePrefix("zetta", 1e21m, "Z");
@@ -931,7 +661,7 @@ public class DefaultPrefixes
     }
 }
 
-public class DefaultMeasurementSystems
+public class MeasurementSystems
 {
     // TODO
 }

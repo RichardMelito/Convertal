@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
+using System.Xml.Linq;
 using Convertal.Core.Extensions;
 
 namespace Convertal.Core;
@@ -93,8 +94,31 @@ public abstract class MaybeNamed : IMaybeNamed
 
     public abstract IOrderedEnumerable<IMaybeNamed> GetAllDependents(ref IEnumerable<IMaybeNamed> toIgnore);
 
+    public T CastAndChangeNameAndSymbol<T>(string newName, string? symbol = null)
+        where T : MaybeNamed
+    {
+        ArgumentException.ThrowIfNullOrEmpty(newName);
+        var cast = (T)this;
+
+        if ((Name != newName && Name is not null) || (Symbol != symbol && Symbol is not null))
+        {
+            var ex = new InvalidOperationException($"Existing {GetType().Name} '{this}' does not match given definition.");
+            // TODO
+            throw ex;
+        }
+
+        if (Name is null)
+            ChangeName(newName);
+
+        if (Symbol is null && symbol is not null)
+            ChangeSymbol(symbol);
+
+        return cast;
+    }
+
     public void ChangeName(string newName)
     {
+        ArgumentException.ThrowIfNullOrEmpty(newName);
         newName = PrependIfVector(newName);
         Database.ThrowIfNameNotValid(newName, GetTypeWithinDictionary());
 
@@ -106,7 +130,7 @@ public abstract class MaybeNamed : IMaybeNamed
 
     public void ChangeSymbol(string symbol)
     {
-        ArgumentNullException.ThrowIfNull(symbol);
+        ArgumentException.ThrowIfNullOrEmpty(symbol);
         symbol = PrependIfVector(symbol);
         if (Name is null)
             throw new InvalidOperationException("Must assign a name before assigning a symbol.");
@@ -185,7 +209,7 @@ public abstract class MaybeNamed : IMaybeNamed
 
 
 
-
+    // TODO check operations against disposal and throw if disposed
     #region IDisposable 
     void IMaybeNamed.DisposeThisAndDependents(bool disposeDependents)
     {

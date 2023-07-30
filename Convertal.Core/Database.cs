@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Runtime.CompilerServices;
@@ -32,6 +33,7 @@ public class Database
     public IEnumerable<VectorPrefixedDerivedUnit> VectorPrefixedDerivedUnits => _prefixedUnits.Where(x => x is VectorPrefixedDerivedUnit).Cast<VectorPrefixedDerivedUnit>();
     public IEnumerable<MeasurementSystem> MeasurementSystems => GetAllMaybeNameds<MeasurementSystem>();
 
+    // TODO use something better than a list
     internal Dictionary<Type, List<MaybeNamed>> MaybeNamedsByType { get; } = new();
     internal Dictionary<NamedComposition<IBaseQuantity>, Quantity> QuantitiesByComposition { get; } = new();
 
@@ -107,9 +109,9 @@ public class Database
     {
         var existingPrefixedUnits =
             (from prefixedUnit in PrefixedUnits
-            where prefixedUnit.Unit == unit &&
-            prefixedUnit.Prefix == prefix
-            select prefixedUnit)
+             where prefixedUnit.Unit == unit &&
+             prefixedUnit.Prefix == prefix
+             select prefixedUnit)
             .ToImmutableArray();
 
         if (existingPrefixedUnits.Length == 0)
@@ -292,6 +294,9 @@ public class Database
 
     public void ThrowIfNameNotValid(string name, Type type, bool isSymbol = false)
     {
+        ArgumentException.ThrowIfNullOrEmpty(name);
+        ArgumentNullException.ThrowIfNull(type);
+
         var toValidate = name.StartsWith('`') ? name[1..] : name;
 
         if (string.IsNullOrWhiteSpace(toValidate))
@@ -369,6 +374,16 @@ public class Database
         string? symbol = null)
     {
         var scalar = DefineScalarBaseUnit(name, (IScalarBaseUnit)otherUnit.ScalarAnalog, multiplier, symbol: symbol);
+        return scalar.VectorAnalog!;
+    }
+
+    public VectorDerivedUnit DefineVectorDerivedUnit(
+        string name,
+        IVectorDerivedUnit otherUnit,
+        decimal multiplier,
+        string? symbol = null)
+    {
+        var scalar = DefineScalarDerivedUnit(name, (IScalarDerivedUnit)otherUnit.ScalarAnalog, multiplier, symbol: symbol);
         return scalar.VectorAnalog!;
     }
 
@@ -863,6 +878,28 @@ public class Database
     public VectorBaseQuantity GetVectorBaseQuantityFromBaseComposition(VectorComposition<IBaseQuantity> composition) => (VectorBaseQuantity)GetQuantityFromBaseComposition(composition);
     public VectorDerivedQuantity GetVectorDerivedQuantityFromBaseComposition(VectorComposition<IBaseQuantity> composition) => (VectorDerivedQuantity)GetQuantityFromBaseComposition(composition);
 
+    //public ScalarQuantity (
+    //    ScalarComposition<IBaseQuantity> composition,
+    //    string name,
+    //    string? symbol = null)
+    //{
+    //    var res = GetScalarDerivedQuantityFromBaseComposition(composition);
+    //    if ((res.Name != name && res.Name is not null) || (res.Symbol != symbol && res.Symbol is not null))
+    //    {
+    //        var ex = new InvalidOperationException($"Existing {nameof(ScalarDerivedQuantity)} '{res}' does not match given definition.");
+    //        // TODO
+    //        throw ex;
+    //    }
+
+    //    if (res.Name is null)
+    //        res.ChangeName(name);
+
+    //    if (res.Symbol is null && symbol is not null)
+    //        res.ChangeSymbol(symbol);
+
+    //    return res;
+    }
+
     public Quantity GetQuantityFromBaseComposition(NamedComposition<IBaseQuantity> composition)
     {
         if (QuantitiesByComposition.TryGetValue(composition, out var res))
@@ -890,7 +927,7 @@ public class Database
         }
     }
 
-    public ScalarUnit DefineFromScalarComposition(string name, ScalarComposition<IUnit> composition)
+    public ScalarUnit DefineScalarUnitFromComposition(string name, ScalarComposition<IUnit> composition)
     {
         var quantity = (ScalarQuantity)GetQuantityFromBaseComposition(composition);
         if (quantity is ScalarBaseQuantity)
@@ -899,9 +936,9 @@ public class Database
             return new ScalarDerivedUnit(this, name, composition);
     }
 
-    public VectorUnit DefineFromVectorComposition(string name, VectorComposition<IUnit> composition)
+    public VectorUnit DefineVectorUnitFromComposition(string name, VectorComposition<IUnit> composition)
     {
-        var scalarUnit = DefineFromScalarComposition(name, composition.ScalarAnalog);
+        var scalarUnit = DefineScalarUnitFromComposition(name, composition.ScalarAnalog);
         return scalarUnit.VectorAnalog!;
         //if (scalarUnit is ScalarBaseUnit sbu)
         //    return new VectorBaseUnit(sbu);
