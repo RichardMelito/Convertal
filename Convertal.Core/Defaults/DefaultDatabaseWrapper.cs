@@ -31,7 +31,7 @@ public class DefaultDatabaseWrapper
         ScalarBaseQuantities = new(this);
         VectorBaseQuantities = new(this);
         ScalarDerivedQuantities = new(this);
-        VectorDerivedQuantities = new(database);
+        VectorDerivedQuantities = new(this);
         ScalarBaseUnits = new(database);
         VectorBaseUnits = new(database);
         ScalarDerivedUnits = new(database);

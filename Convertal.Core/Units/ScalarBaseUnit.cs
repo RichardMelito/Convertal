@@ -61,6 +61,7 @@ public class ScalarBaseUnit : ScalarUnit, IScalarBaseUnit
         ScalarComposition<IUnit>? composition)
         : base(database, name, symbol, quantity, fundamentalMultiplier, fundamentalOffset, composition)
     {
+        // TODO it should be set up so that a vector analog is immediately made if the quantity has a vector analog
     }
 
     protected override VectorBaseUnit MakeVectorAnalog() => new(this);

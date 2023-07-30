@@ -377,16 +377,6 @@ public class Database
         return scalar.VectorAnalog!;
     }
 
-    public VectorDerivedUnit DefineVectorDerivedUnit(
-        string name,
-        IVectorDerivedUnit otherUnit,
-        decimal multiplier,
-        string? symbol = null)
-    {
-        var scalar = DefineScalarDerivedUnit(name, (IScalarDerivedUnit)otherUnit.ScalarAnalog, multiplier, symbol: symbol);
-        return scalar.VectorAnalog!;
-    }
-
     internal ScalarBaseUnit DefineScalarBaseUnit(ScalarUnitProto proto)
     {
         ScalarComposition<IUnit>? composition = null;
@@ -626,6 +616,17 @@ public class Database
         return res;
     }
 
+    //public VectorDerivedQuantity DefineVectorDerivedQuantity(
+    //    ScalarDerivedQuantity scalarAnalog,
+    //    string quantityName,
+    //    string? quantitySymbol = null)
+    //{
+    //    if (scalarAnalog.VectorAnalog is not null)
+    //        throw new InvalidOperationException($"{nameof(ScalarDerivedQuantity)} {scalarAnalog} already has a {nameof(ScalarDerivedQuantity.VectorAnalog)}, {scalarAnalog.VectorAnalog}");
+
+    //    return new(scalarAnalog, )
+    //}
+
     internal ScalarDerivedQuantity DefineScalarDerivedQuantity(ScalarDerivedQuantityProto proto)
     {
         ScalarComposition<IBaseQuantity> composition = new(proto.BaseQuantityComposition
@@ -747,6 +748,28 @@ public class Database
         }
 
         return DefineVectorBaseQuantity(scalarAnalog, name, symbol);
+    }
+
+    public VectorDerivedQuantity GetOrDefineVectorDerivedQuantity(
+        ScalarDerivedQuantity scalarAnalog,
+        string name,
+        string? symbol = null)
+    {
+        if (TryGetFromName<VectorDerivedQuantity>(name, out var existing))
+        {
+            if (existing.ScalarAnalog != scalarAnalog ||
+                existing.Name != name ||
+                existing.Symbol != symbol)
+            {
+                var ex = new InvalidOperationException($"Existing {nameof(VectorDerivedQuantity)} '{existing}' does not match given definition.");
+                // TODO
+                throw ex;
+            }
+
+            return existing;
+        }
+
+        return DefineVectorDerivedQuantity(scalarAnalog, name, symbol);
     }
 
     internal ScalarBaseQuantity DefineScalarBaseQuantity(ScalarBaseQuantityProto proto)
@@ -898,7 +921,7 @@ public class Database
     //        res.ChangeSymbol(symbol);
 
     //    return res;
-    }
+    //}
 
     public Quantity GetQuantityFromBaseComposition(NamedComposition<IBaseQuantity> composition)
     {
