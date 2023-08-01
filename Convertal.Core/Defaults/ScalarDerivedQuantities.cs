@@ -14,7 +14,7 @@ public class ScalarDerivedQuantities
     public readonly ScalarDerivedQuantity Pressure;
     public readonly ScalarDerivedQuantity Energy;
     public readonly ScalarDerivedQuantity Power;
-    public readonly ScalarDerivedQuantity AngularVelocity;
+    public readonly ScalarDerivedQuantity AngularSpeed;
     public readonly ScalarDerivedQuantity AngularAcceleration;
     public readonly ScalarDerivedQuantity WaveNumber;
     public readonly ScalarDerivedQuantity Density;
@@ -60,8 +60,8 @@ public class ScalarDerivedQuantities
         Pressure = (Force / Area).CastAndChangeNameAndSymbol<ScalarDerivedQuantity>(nameof(Pressure), "p");
         Energy = (Force * sbqs.Length).CastAndChangeNameAndSymbol<ScalarDerivedQuantity>(nameof(Energy), "E");
         Power = (Energy / sbqs.Time).CastAndChangeNameAndSymbol<ScalarDerivedQuantity>(nameof(Power), "P");
-        AngularVelocity = (sbqs.Angle / sbqs.Time).CastAndChangeNameAndSymbol<ScalarDerivedQuantity>(nameof(AngularVelocity), "ω");
-        AngularAcceleration = (AngularVelocity / sbqs.Time).CastAndChangeNameAndSymbol<ScalarDerivedQuantity>(nameof(AngularAcceleration), "α");
+        AngularSpeed = (sbqs.Angle / sbqs.Time).CastAndChangeNameAndSymbol<ScalarDerivedQuantity>(nameof(AngularSpeed), "ω");
+        AngularAcceleration = (AngularSpeed / sbqs.Time).CastAndChangeNameAndSymbol<ScalarDerivedQuantity>(nameof(AngularAcceleration), "α");
         WaveNumber = sbqs.Length.Pow(-1m).CastAndChangeNameAndSymbol<ScalarDerivedQuantity>(nameof(WaveNumber), "σ");
         Density = (sbqs.Mass / Volume).CastAndChangeNameAndSymbol<ScalarDerivedQuantity>(nameof(Density), "ρ");
         SurfaceDensity = (sbqs.Mass / Area).CastAndChangeNameAndSymbol<ScalarDerivedQuantity>(nameof(SurfaceDensity));

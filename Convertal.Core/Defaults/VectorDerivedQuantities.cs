@@ -17,7 +17,12 @@ public class VectorDerivedQuantities
         var sbqs = defaultDatabase.ScalarBaseQuantities;
         var sdqs = defaultDatabase.ScalarDerivedQuantities;
         var vbqs = defaultDatabase.VectorBaseQuantities;
-        Area = (vbqs.Displacement & vbqs.Displacement).CastAndChangeNameAndSymbol<VectorDerivedQuantity>(nameof(Area), "A");
-        //Torque.ChangeSymbol("τ");
+        Area = (vbqs.Displacement & vbqs.Displacement).CastAndChangeNameAndSymbol<VectorDerivedQuantity>(nameof(Area), "`A");
+        Velocity = (vbqs.Displacement / sbqs.Time).CastAndChangeNameAndSymbol<VectorDerivedQuantity>(nameof(Velocity), "`v");
+        Acceleration = (Velocity / sbqs.Time).CastAndChangeNameAndSymbol<VectorDerivedQuantity>(nameof(Acceleration), "`a");
+        Force = (Acceleration * sbqs.Mass).CastAndChangeNameAndSymbol<VectorDerivedQuantity>(nameof(Force), "`F");
+        Torque = (vbqs.Displacement & Force).CastAndChangeNameAndSymbol<VectorDerivedQuantity>(nameof(Torque), "`τ");
+        AngularVelocity = (vbqs.AngularDisplacement / sbqs.Time).CastAndChangeNameAndSymbol<VectorDerivedQuantity>(nameof(AngularVelocity), "`ω");
+        AngularAcceleration = (AngularVelocity / sbqs.Time).CastAndChangeNameAndSymbol<VectorDerivedQuantity>(nameof(AngularAcceleration), "`α");
     }
 }
