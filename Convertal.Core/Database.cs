@@ -367,6 +367,32 @@ public class Database
         decimal offset = 0,
         string? symbol = null) => new(this, name, otherUnit, multiplier, offset, symbol);
 
+    public ScalarBaseUnit GetOrDefineScalarBaseUnit(
+        string name,
+        IScalarBaseUnit otherUnit,
+        decimal multiplier,
+        decimal offset = 0,
+        string? symbol = null)
+    {
+        if (TryGetFromName<ScalarBaseUnit>(name, out var existing))
+        {
+            if (existing.Quantity != otherUnit.Quantity ||
+                existing.FundamentalMultiplier != multiplier ||
+                existing.FundamentalOffset != offset ||
+                existing.Symbol != symbol)
+            {
+                var ex = new InvalidOperationException($"Existing {nameof(ScalarBaseUnit)} '{existing}' does not match given definition.");
+                // TODO
+                throw ex;
+            }
+
+            return existing;
+        }
+
+        return DefineScalarBaseUnit(name, otherUnit, multiplier, offset, symbol);
+    }
+
+    // TODO throw if user tries to create a vector analog for a quantity where one of the units has an offset
     public VectorBaseUnit DefineVectorBaseUnit(
         string name,
         IVectorBaseUnit otherUnit,

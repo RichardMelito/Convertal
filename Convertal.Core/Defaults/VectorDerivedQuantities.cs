@@ -15,7 +15,6 @@ public class VectorDerivedQuantities
     public VectorDerivedQuantities(DefaultDatabaseWrapper defaultDatabase)
     {
         var sbqs = defaultDatabase.ScalarBaseQuantities;
-        var sdqs = defaultDatabase.ScalarDerivedQuantities;
         var vbqs = defaultDatabase.VectorBaseQuantities;
         Area = (vbqs.Displacement & vbqs.Displacement).CastAndChangeNameAndSymbol<VectorDerivedQuantity>(nameof(Area), "`A");
         Velocity = (vbqs.Displacement / sbqs.Time).CastAndChangeNameAndSymbol<VectorDerivedQuantity>(nameof(Velocity), "`v");
