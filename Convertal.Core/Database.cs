@@ -371,8 +371,8 @@ public class Database
         string name,
         IScalarBaseUnit otherUnit,
         decimal multiplier,
-        decimal offset = 0,
-        string? symbol = null)
+        string? symbol = null,
+        decimal offset = 0)
     {
         if (TryGetFromName<ScalarBaseUnit>(name, out var existing))
         {

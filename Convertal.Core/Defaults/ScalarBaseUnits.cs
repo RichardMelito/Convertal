@@ -75,38 +75,35 @@ public class ScalarBaseUnits
     #endregion
 
     #region Mass
-    public readonly ScalarBaseUnit Carat = new(nameof(Carat), Gram, 0.2m);
-    public readonly ScalarBaseUnit PoundMass = new(nameof(PoundMass), Kilogram, 0.4536m);
-    public readonly ScalarBaseUnit Ounce = new(nameof(Ounce), PoundMass, 1m / 16m);
-    public readonly ScalarBaseUnit Dram = new(nameof(Dram), Ounce, 1m / 16m);
-    public readonly ScalarBaseUnit Stone = new(nameof(Stone), PoundMass, 14m);
-    public readonly ScalarBaseUnit Slug = new(nameof(Slug), PoundMass, 32.174m);
-    public readonly ScalarBaseUnit ShortTon = new(nameof(ShortTon), PoundMass, 2000m);
-    public readonly ScalarBaseUnit LongTon = new(nameof(LongTon), PoundMass, 2240m);
-    public readonly ScalarBaseUnit Tonne = new(nameof(Tonne), Kilogram, 1000m);
-    public readonly ScalarBaseUnit AtomicMass = new(nameof(AtomicMass), Kilogram, 1.66054e-27m);
-    public readonly ScalarBaseUnit Scruple = new(nameof(Scruple), Ounce, 1m / 24m);
+    public readonly ScalarBaseUnit Carat;
+    public readonly ScalarBaseUnit PoundMass;
+    public readonly ScalarBaseUnit Ounce;
+    public readonly ScalarBaseUnit Dram;
+    public readonly ScalarBaseUnit Stone;
+    public readonly ScalarBaseUnit Slug;
+    public readonly ScalarBaseUnit ShortTon;
+    public readonly ScalarBaseUnit LongTon;
+    public readonly ScalarBaseUnit Tonne;
+    public readonly ScalarBaseUnit AtomicMass;
+    public readonly ScalarBaseUnit Scruple;
     #endregion
 
     #region Temperature
-    public readonly ScalarBaseUnit Celsius = new(nameof(Celsius), Kelvin, 1m, 273.15m);
-    public readonly ScalarBaseUnit Rankine = new(nameof(Rankine), Kelvin, 4m / 9m);
-    public readonly ScalarBaseUnit Fahrenheit = new(nameof(Fahrenheit), Rankine, 1m, 459.67m);
+    public readonly ScalarBaseUnit Celsius;
+    public readonly ScalarBaseUnit Rankine;
+    public readonly ScalarBaseUnit Fahrenheit;
     #endregion
 
     #region Time
-    public readonly ScalarBaseUnit Minute = new(nameof(Minute), Second, 60m);
-    public readonly ScalarBaseUnit Hour = new(nameof(Hour), Minute, 60m);
-    public readonly ScalarBaseUnit Day = new(nameof(Day), Hour, 24m);
-    public readonly ScalarBaseUnit Week = new(nameof(Week), Day, 7m);
-    public readonly ScalarBaseUnit Month = new(nameof(Month), Minute, 4330m);
-    public readonly ScalarBaseUnit Year = new(nameof(Year), Month, 12m);
+    public readonly ScalarBaseUnit Minute;
+    public readonly ScalarBaseUnit Hour;
+    public readonly ScalarBaseUnit Day;
+    public readonly ScalarBaseUnit Week;
+    public readonly ScalarBaseUnit Year;
     #endregion
 
     #region LuminousIntensity
-    public readonly ScalarBaseUnit CandlePower = new(nameof(CandlePower), Candela, 0.981m);
-    public readonly ScalarBaseUnit Hefnerkerze = new(nameof(Hefnerkerze), Candela, 0.90337m);
-    public readonly ScalarBaseUnit Voille = new(nameof(Voille), Candela, 20.17m);
+    public readonly ScalarBaseUnit CandlePower;
     #endregion
 
     internal ScalarBaseUnits(DefaultDatabaseWrapper defaultDatabase)
@@ -128,11 +125,11 @@ public class ScalarBaseUnits
         #endregion
 
         #region Angle
-        Degree = db.GetOrDefineScalarBaseUnit(nameof(Degree), Radian, Pi / 180m, symbol: "°");
-        Gradian = db.GetOrDefineScalarBaseUnit(nameof(Gradian), Radian, Pi / 200m, symbol: "grad");
-        ArcMinute = db.GetOrDefineScalarBaseUnit(nameof(ArcMinute), Degree, 1m / 60m, symbol: "arcmin");
-        ArcSecond = db.GetOrDefineScalarBaseUnit(nameof(ArcSecond), ArcMinute, 1m / 60m, symbol: "arcs");
-        Revolution = db.GetOrDefineScalarBaseUnit(nameof(Revolution), Radian, TwoPi, symbol: "rev");
+        Degree = db.GetOrDefineScalarBaseUnit(nameof(Degree), Radian, Pi / 180m, "°");
+        Gradian = db.GetOrDefineScalarBaseUnit(nameof(Gradian), Radian, Pi / 200m, "grad");
+        ArcMinute = db.GetOrDefineScalarBaseUnit(nameof(ArcMinute), Degree, 1m / 60m, "arcmin");
+        ArcSecond = db.GetOrDefineScalarBaseUnit(nameof(ArcSecond), ArcMinute, 1m / 60m, "arcs");
+        Revolution = db.GetOrDefineScalarBaseUnit(nameof(Revolution), Radian, TwoPi, "rev");
         Quadrant = db.GetOrDefineScalarBaseUnit(nameof(Quadrant), Radian, PiHalf);
         Sign = db.GetOrDefineScalarBaseUnit(nameof(Sign), Degree, 30m);
         #endregion
@@ -144,7 +141,7 @@ public class ScalarBaseUnits
         #endregion
 
         #region ElectricCurrent
-        Abampere = db.GetOrDefineScalarBaseUnit(nameof(Abampere), Ampere, 10m, symbol: "abA");
+        Abampere = db.GetOrDefineScalarBaseUnit(nameof(Abampere), Ampere, 10m, "abA");
         Biot = db.GetOrDefineScalarBaseUnit(nameof(Biot), Abampere, 1m);
         #endregion
 
@@ -156,11 +153,11 @@ public class ScalarBaseUnits
         #endregion
 
         #region Length
-        Inch = db.GetOrDefineScalarBaseUnit(nameof(Inch), Meter, 0.0254m, symbol: "in");
-        Foot = db.GetOrDefineScalarBaseUnit(nameof(Foot), Inch, 12m, symbol: "ft");
-        Yard = db.GetOrDefineScalarBaseUnit(nameof(Yard), Foot, 3m, symbol: "yd");
-        Mile = db.GetOrDefineScalarBaseUnit(nameof(Mile), Foot, 5280m, symbol: "mi");
-        NauticalMile = db.GetOrDefineScalarBaseUnit(nameof(NauticalMile), Meter, 1852m, symbol: "nmi");
+        Inch = db.GetOrDefineScalarBaseUnit(nameof(Inch), Meter, 0.0254m, "in");
+        Foot = db.GetOrDefineScalarBaseUnit(nameof(Foot), Inch, 12m, "ft");
+        Yard = db.GetOrDefineScalarBaseUnit(nameof(Yard), Foot, 3m, "yd");
+        Mile = db.GetOrDefineScalarBaseUnit(nameof(Mile), Foot, 5280m, "mi");
+        NauticalMile = db.GetOrDefineScalarBaseUnit(nameof(NauticalMile), Meter, 1852m, "nmi");
         Cable = db.GetOrDefineScalarBaseUnit(nameof(Cable), NauticalMile, 0.1m);
         CableUsSurvey = db.GetOrDefineScalarBaseUnit(nameof(CableUsSurvey), Yard, 240m);
         Caliber = db.GetOrDefineScalarBaseUnit(nameof(Caliber), Inch, 0.01m);
@@ -169,17 +166,46 @@ public class ScalarBaseUnits
         Cubit = db.GetOrDefineScalarBaseUnit(nameof(Cubit), Foot, 1.5m);
         FootUsSurvey = db.GetOrDefineScalarBaseUnit(nameof(FootUsSurvey), Foot, 1.000002m);
         Fathom = db.GetOrDefineScalarBaseUnit(nameof(Fathom), Yard, 2m);
-        Furlong = db.GetOrDefineScalarBaseUnit(nameof(Furlong), Foot, 660m, symbol: "fur");
-        Hand = db.GetOrDefineScalarBaseUnit(nameof(Hand), Inch, 4m, symbol: "hh");
+        Furlong = db.GetOrDefineScalarBaseUnit(nameof(Furlong), Foot, 660m, "fur");
+        Hand = db.GetOrDefineScalarBaseUnit(nameof(Hand), Inch, 4m, "hh");
         LandLeague = db.GetOrDefineScalarBaseUnit(nameof(LandLeague), Mile, 3m);
         Pica = db.GetOrDefineScalarBaseUnit(nameof(Pica), Inch, 0.166m);
         Point = db.GetOrDefineScalarBaseUnit(nameof(Point), Pica, 1m / 12m);
         Rod = db.GetOrDefineScalarBaseUnit(nameof(Rod), Yard, 5.5m);
-        Angstrom = db.GetOrDefineScalarBaseUnit(nameof(Angstrom), Meter, 1e-10m, symbol: "Å");
-        AstronomicalUnit = db.GetOrDefineScalarBaseUnit(nameof(AstronomicalUnit), Meter, 1.495978e11m, symbol: "AU");
-        Parsec = db.GetOrDefineScalarBaseUnit(nameof(Parsec), AstronomicalUnit, 206265m, symbol: "pc");
-        LightYear = db.GetOrDefineScalarBaseUnit(nameof(LightYear), Parsec, 0.306601m, symbol: "ly");
-        Mil = db.GetOrDefineScalarBaseUnit(nameof(Mil), Inch, 0.001m);
+        Angstrom = db.GetOrDefineScalarBaseUnit(nameof(Angstrom), Meter, 1e-10m, "Å");
+        AstronomicalUnit = db.GetOrDefineScalarBaseUnit(nameof(AstronomicalUnit), Meter, 1.495978e11m, "AU");
+        Parsec = db.GetOrDefineScalarBaseUnit(nameof(Parsec), AstronomicalUnit, 206265m, "pc");
+        LightYear = db.GetOrDefineScalarBaseUnit(nameof(LightYear), Parsec, 0.306601m, "ly");
+        Mil = db.GetOrDefineScalarBaseUnit(nameof(Mil), Inch, 0.001m, "mil");
+        #endregion
+
+        #region Mass
+        Carat = db.GetOrDefineScalarBaseUnit(nameof(Carat), Gram, 0.2m, "ct");
+        PoundMass = db.GetOrDefineScalarBaseUnit(nameof(PoundMass), Kilogram, 0.4536m, "lbm");
+        Ounce = db.GetOrDefineScalarBaseUnit(nameof(Ounce), PoundMass, 1m / 16m, "oz");
+        Dram = db.GetOrDefineScalarBaseUnit(nameof(Dram), Ounce, 1m / 16m);
+        Stone = db.GetOrDefineScalarBaseUnit(nameof(Stone), PoundMass, 14m, "st");
+        Slug = db.GetOrDefineScalarBaseUnit(nameof(Slug), PoundMass, 32.174m);
+        ShortTon = db.GetOrDefineScalarBaseUnit(nameof(ShortTon), PoundMass, 2000m, "tn");
+        LongTon = db.GetOrDefineScalarBaseUnit(nameof(LongTon), PoundMass, 2240m, "LT");
+        Tonne = db.GetOrDefineScalarBaseUnit(nameof(Tonne), Kilogram, 1000m, "t");
+        AtomicMass = db.GetOrDefineScalarBaseUnit(nameof(AtomicMass), Kilogram, 1.66054e-27m, "Da");
+        Scruple = db.GetOrDefineScalarBaseUnit(nameof(Scruple), Ounce, 1m / 24m);
+        #endregion
+        #region Temperature
+        Celsius = db.GetOrDefineScalarBaseUnit(nameof(Celsius), Kelvin, 1m, "°C", 273.15m);
+        Rankine = db.GetOrDefineScalarBaseUnit(nameof(Rankine), Kelvin, 4m / 9m, "°R");
+        Fahrenheit = db.GetOrDefineScalarBaseUnit(nameof(Fahrenheit), Rankine, 1m, "°F", 459.67m);
+        #endregion
+        #region Time
+        Minute = db.GetOrDefineScalarBaseUnit(nameof(Minute), Second, 60m, "min");
+        Hour = db.GetOrDefineScalarBaseUnit(nameof(Hour), Minute, 60m, "h");
+        Day = db.GetOrDefineScalarBaseUnit(nameof(Day), Hour, 24m, "d");
+        Week = db.GetOrDefineScalarBaseUnit(nameof(Week), Day, 7m);
+        Year = db.GetOrDefineScalarBaseUnit(nameof(Year), Day, 365.25m, "y");
+        #endregion
+        #region LuminousIntensity
+        CandlePower = db.GetOrDefineScalarBaseUnit(nameof(CandlePower), Candela, 0.981m, "cp");
         #endregion
     }
 }
