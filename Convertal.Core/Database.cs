@@ -377,8 +377,8 @@ public class Database
         if (TryGetFromName<ScalarBaseUnit>(name, out var existing))
         {
             if (existing.Quantity != otherUnit.Quantity ||
-                existing.FundamentalMultiplier != multiplier ||
-                existing.FundamentalOffset != offset ||
+                (existing.FundamentalMultiplier / otherUnit.FundamentalMultiplier) != multiplier ||
+                existing.FundamentalOffset != offset || // TODO this is wrong
                 existing.Symbol != symbol)
             {
                 var ex = new InvalidOperationException($"Existing {nameof(ScalarBaseUnit)} '{existing}' does not match given definition.");
@@ -500,13 +500,39 @@ public class Database
         }
     }
 
+    // TODO reorder symbol and offset
     public ScalarDerivedUnit DefineScalarDerivedUnit(
         string name,
         IScalarDerivedUnit otherUnit,
         decimal multiplier,
-        decimal offset = 0,
-        string? symbol = null)
+        string? symbol = null,
+        decimal offset = 0)
         => new(this, name, otherUnit, multiplier, offset, symbol);
+
+    public ScalarDerivedUnit GetOrDefineScalarDerivedUnit(
+        string name,
+        IScalarDerivedUnit otherUnit,
+        decimal multiplier,
+        string? symbol = null,
+        decimal offset = 0)
+    {
+        if (TryGetFromName<ScalarDerivedUnit>(name, out var existing))
+        {
+            if (existing.Quantity != otherUnit.Quantity ||
+                (existing.FundamentalMultiplier / otherUnit.FundamentalMultiplier) != multiplier ||
+                existing.FundamentalOffset != offset || // TODO this is wrong
+                existing.Symbol != symbol)
+            {
+                var ex = new InvalidOperationException($"Existing {nameof(ScalarDerivedUnit)} '{existing}' does not match given definition.");
+                // TODO
+                throw ex;
+            }
+
+            return existing;
+        }
+
+        return DefineScalarDerivedUnit(name, otherUnit, multiplier, symbol, offset);
+    }
 
     public VectorDerivedUnit DefineVectorDerivedUnit(
         string name,
